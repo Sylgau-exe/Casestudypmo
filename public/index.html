@@ -325,8 +325,8 @@
             <div style="width:120px;height:120px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);overflow:hidden;margin-bottom:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,0.3)">
                 <img id="loginMarcusAvatar" style="width:100%;height:100%;object-fit:cover" alt="MARCUS">
             </div>
-            <h2 style="font-family:'Fraunces',serif;font-size:1.6rem;margin:0 0 0.5rem;font-weight:700">Bonjour, je suis MARCUS</h2>
-            <p style="font-size:0.95rem;opacity:0.9;margin:0 0 1rem;line-height:1.5">Votre assistant PMO intelligent</p>
+            <h2 style="font-family:'Fraunces',serif;font-size:1.6rem;margin:0 0 0.5rem;font-weight:700">Hi, I'm MARCUS</h2>
+            <p style="font-size:0.95rem;opacity:0.9;margin:0 0 1rem;line-height:1.5">Your intelligent PMO assistant</p>
             <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:1rem;font-size:0.85rem;line-height:1.6">
                 <p style="margin:0 0 0.75rem">I am here to help you:</p>
                 <div style="text-align:left;display:inline-block">
@@ -419,59 +419,35 @@
         <!-- Decision Criteria Reference -->
         <div style="margin-bottom:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
             <div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-                <span style="font-size:1.1rem">📋</span> Decision Criteria
+                <span style="font-size:1.1rem">📋</span> Decision Criteria — Project or Operations?
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem">
                 <!-- PROJECT -->
-                <div style="background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:10px;padding:0.85rem">
-                    <div style="font-size:0.85rem;font-weight:700;color:var(--project-color);margin-bottom:0.5rem">📋 PROJECT</div>
-                    <div style="font-size:0.72rem;color:var(--text);line-height:1.6">
-                        <div>✓ Multi-department resources</div>
-                        <div>✓ New capability to create</div>
-                        <div>✓ External resources required</div>
+                <div style="background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:10px;padding:1rem">
+                    <div style="font-size:0.9rem;font-weight:700;color:var(--project-color);margin-bottom:0.6rem">📋 PROJECT</div>
+                    <div style="font-size:0.75rem;color:var(--text);line-height:1.7">
+                        <div>✓ Defined start and end date</div>
+                        <div>✓ Unique — not a repetitive activity</div>
+                        <div>✓ Multi-department resources needed</div>
+                        <div>✓ Creates a new capability</div>
                         <div>✓ Dedicated budget outside operations</div>
-                        <div>✓ Duration > 90 jours</div>
                         <div>✓ Strategic impact if it fails</div>
                     </div>
-                    <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--primary);font-weight:600">→ Charter → Scoring → Gate 0</div>
-                </div>
-                
-                <!-- CONTINUOUS IMPROVEMENT -->
-                <div style="background:rgba(56,161,105,0.08);border:1px solid rgba(56,161,105,0.2);border-radius:10px;padding:0.85rem">
-                    <div style="font-size:0.85rem;font-weight:700;color:var(--improvement-color);margin-bottom:0.5rem">🔄 CONTINUOUS IMPROVEMENT</div>
-                    <div style="font-size:0.72rem;color:var(--text);line-height:1.6">
-                        <div>✓ Existing process to improve</div>
-                        <div>✓ No major system change</div>
-                        <div>✓ Current team can handle it</div>
-                        <div>✗ Not multi-departmental</div>
-                        <div>✗ No external resources</div>
-                    </div>
-                    <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--success);font-weight:600">→ Gabarit DMAIC</div>
-                </div>
-                
-                <!-- IT TICKET -->
-                <div style="background:rgba(128,90,213,0.08);border:1px solid rgba(128,90,213,0.2);border-radius:10px;padding:0.85rem">
-                    <div style="font-size:0.85rem;font-weight:700;color:var(--it-color);margin-bottom:0.5rem">🎫 IT TICKET</div>
-                    <div style="font-size:0.72rem;color:var(--text);line-height:1.6">
-                        <div>✓ Bug or technical issue</div>
-                        <div>✓ Access or equipment request</div>
-                        <div>✓ System error to fix</div>
-                        <div>✓ Support technique requis</div>
-                    </div>
-                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#805ad5;font-weight:600">→ IT ticketing system</div>
+                    <div style="margin-top:0.6rem;font-size:0.72rem;color:var(--primary);font-weight:600">→ Charter → Scoring → Resource Allocation → Gate 0</div>
                 </div>
                 
                 <!-- OPERATIONS -->
-                <div style="background:rgba(221,107,32,0.08);border:1px solid rgba(221,107,32,0.2);border-radius:10px;padding:0.85rem">
-                    <div style="font-size:0.85rem;font-weight:700;color:var(--ops-color);margin-bottom:0.5rem">⚙️ OPERATIONS</div>
-                    <div style="font-size:0.72rem;color:var(--text);line-height:1.6">
-                        <div>✓ Existing process</div>
-                        <div>✓ Current team can do it</div>
+                <div style="background:rgba(221,107,32,0.08);border:1px solid rgba(221,107,32,0.2);border-radius:10px;padding:1rem">
+                    <div style="font-size:0.9rem;font-weight:700;color:var(--ops-color);margin-bottom:0.6rem">⚙️ OPERATIONS</div>
+                    <div style="font-size:0.75rem;color:var(--text);line-height:1.7">
+                        <div>✓ Repetitive or ongoing activity</div>
+                        <div>✓ Current team can handle it</div>
                         <div>✓ Part of regular duties</div>
-                        <div>✗ No additional resources</div>
-                        <div>✗ No dedicated budget</div>
+                        <div>✓ No cross-functional coordination</div>
+                        <div>✗ No dedicated budget needed</div>
+                        <div>✗ No defined end date</div>
                     </div>
-                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#dd6b20;font-weight:600">→ Retour DMS / Huddle</div>
+                    <div style="margin-top:0.6rem;font-size:0.72rem;color:#dd6b20;font-weight:600">→ Handle through normal operational channels</div>
                 </div>
             </div>
         </div>
@@ -1017,11 +993,11 @@ function renderWorkflow() {
     html += stepCard(3, '⭐', 'Scoring / Prioritization', '6 weighted criteria × 10 points — prioritize by weighted score', '#2c7a7b', 'Score', 'scoring');
     html += `</div>
         <div class="workflow-arrow-left">◀</div>
-        <div class="workflow-side-input" onclick="openWeightsEditor()" style="cursor:pointer" title="Cliquer pour modifier les poids">
+        <div class="workflow-side-input" onclick="openWeightsEditor()" style="cursor:pointer" title="Click to edit weights">
             <div class="side-input-freq">Once per quarter — Executives</div>
             <div class="side-input-title">Strategic Criteria Weights</div>
             <div class="side-input-desc">Prioritization criteria weighting validated by executive committee</div>
-            <div style="margin-top:0.4rem;font-size:0.72rem;font-weight:600;color:var(--primary-light)">✎ Cliquer pour modifier</div>
+            <div style="margin-top:0.4rem;font-size:0.72rem;font-weight:600;color:var(--primary-light)">✎ Click to edit</div>
         </div>
     </div>`;
     html += connector();
@@ -1044,11 +1020,11 @@ function renderWorkflow() {
     html += stepCard(5, '👥', 'Capacity Analysis', 'Results: demand vs. capacity over 10 months', 'var(--success)', 'Analyze', 'recommend');
     html += `</div>
         <div class="workflow-arrow-left">◀</div>
-        <div class="workflow-side-input" onclick="goTab('people')" style="cursor:pointer" title="Cliquer pour configurer">
+        <div class="workflow-side-input" onclick="goTab('people')" style="cursor:pointer" title="Click to configure">
             <div class="side-input-freq">Once per quarter — Functional leaders</div>
             <div class="side-input-title">Available Resources (10 months)</div>
             <div class="side-input-desc">Named resources and h/month availability including summer vacations</div>
-            <div style="margin-top:0.4rem;font-size:0.72rem;font-weight:600;color:var(--primary-light)">✎ Cliquer pour configurer</div>
+            <div style="margin-top:0.4rem;font-size:0.72rem;font-weight:600;color:var(--primary-light)">✎ Click to configure</div>
         </div>
     </div>`;
     html += connector();
@@ -1094,7 +1070,7 @@ function renderTriage() {
     let ihtml = '';
     if (S.step === 'desc') {
         ihtml = `<div style="display:flex;gap:0.5rem">
-            <input class="form-control" id="triageDescInput" placeholder="Ex: Implanter un nouveau CRM..." onkeydown="if(event.key==='Enter')triageDesc()" style="flex:1">
+            <input class="form-control" id="triageDescInput" placeholder="E.g., NR-400 Warehouse Robot Development..." onkeydown="if(event.key==='Enter')triageDesc()" style="flex:1">
             <button class="btn btn-gold" onclick="triageDesc()">Next →</button>
         </div>`;
     } else if (S.step === 'source') {
@@ -1528,7 +1504,7 @@ function renderScoring() {
 
     // Weight warning
     if (warnW) {
-        html += `<div style="margin-top:0.75rem;padding:0.6rem 1rem;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;font-size:0.82rem;color:#92400e">⚠️ Les poids totalisent <b>${totalW}%</b> au lieu de 100%. <button onclick="openCriteriaEditor()" style="margin-left:0.5rem;background:var(--accent);color:white;border:none;padding:0.25rem 0.65rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600">Ajuster les poids</button></div>`;
+        html += `<div style="margin-top:0.75rem;padding:0.6rem 1rem;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;font-size:0.82rem;color:#92400e">⚠️ Weights total <b>${totalW}%</b> instead of 100%. <button onclick="openCriteriaEditor()" style="margin-left:0.5rem;background:var(--accent);color:white;border:none;padding:0.25rem 0.65rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600">Adjust weights</button></div>`;
     }
     document.getElementById('scoringTableWrap').innerHTML = html;
 
@@ -1550,7 +1526,7 @@ function renderScoring() {
     // Criteria legend + edit button
     lhtml += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div style="font-size:0.78rem;font-weight:600;color:var(--text-dim);text-transform:uppercase">Criteria Legend</div>
-        <button onclick="openCriteriaEditor()" class="btn" style="padding:0.3rem 0.75rem;font-size:0.78rem;background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0">⚙️ Gérer criteria & poids</button>
+        <button onclick="openCriteriaEditor()" class="btn" style="padding:0.3rem 0.75rem;font-size:0.78rem;background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0">⚙️ Manage criteria & weights</button>
     </div>`;
     lhtml += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem">';
     STATE.criteria.forEach(c => lhtml += `<div style="font-size:0.78rem;color:var(--text-muted)"><b>${c.short}</b> (${w[c.id]||0}%) — ${c.label}<br><span style="color:var(--text-dim)">${c.hint}</span></div>`);
@@ -1575,7 +1551,7 @@ function openCriteriaEditor() {
         <div class="charter-modal-header">
             <div style="display:flex;align-items:center;gap:0.6rem">
                 <div class="charter-logo-icon">⚙️</div>
-                <span class="charter-modal-title">Criteria de scoring & weighting</span>
+                <span class="charter-modal-title">Scoring Criteria & Weights</span>
             </div>
             <div style="display:flex;gap:0.5rem;align-items:center">
                 <button class="charter-btn-close" onclick="closeCriteria()">✕ Close</button>
@@ -1583,7 +1559,7 @@ function openCriteriaEditor() {
             </div>
         </div>
         <div style="padding:1.5rem">
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.25rem">Personnalisez les criteria et leur importance relative pour le calcul du score weighted.</p>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.25rem">Customize criteria and their relative importance for the weighted score calculation.</p>
             <p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1.25rem;font-style:italic">🔄 Validated once per quarter by the executive committee. Weights must total 100%.</p>
 
             <table style="width:100%;border-collapse:collapse" id="criteriaTable">
@@ -1619,7 +1595,7 @@ function openCriteriaEditor() {
             </div>
 
             <div style="margin-top:1rem;padding:0.6rem 0.85rem;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:0.78rem;color:#0369a1">
-                💡 <b>Conseil:</b> The most important criteria for your strategy should have higher weights. The total must equal 100%.
+                💡 <b>Tip:</b> The most important criteria for your strategy should have higher weights. The total must equal 100%.
             </div>
         </div>
     </div></div>`;
@@ -1664,7 +1640,7 @@ function updateCriteriaWeightTotal() {
 
 function addCriterion() {
     const newId = 'crit_' + Date.now();
-    const newCrit = { id: newId, label: 'Nouveau criterion', short: 'Nouv.', hint: 'Description du criterion' };
+    const newCrit = { id: newId, label: 'New criterion', short: 'New', hint: 'Criterion description' };
     STATE.criteria.push(newCrit);
     STATE.weights[newId] = 0;
     
@@ -1678,7 +1654,7 @@ function removeCriterion(id) {
         alert('Vous devez conserver au moins un criterion.');
         return;
     }
-    if (!confirm('Delete ce criterion? Les scores existants pour ce criterion seront perdus.')) return;
+    if (!confirm('Delete this criterion? Existing scores for this criterion will be lost.')) return;
     
     const row = document.querySelector(`#criteriaRows tr[data-id="${id}"]`);
     if (row) row.remove();
@@ -1730,12 +1706,12 @@ function saveCriteria() {
     });
     
     if (newCriteria.length === 0) {
-        alert('Vous devez avoir au moins un criterion.');
+        alert('You must have at least one criterion.');
         return;
     }
     
     if (totalWeight !== 100) {
-        if (!confirm(`Les poids totalisent ${totalWeight}% au lieu de 100%. Save quand même?`)) return;
+        if (!confirm(`Weights total ${totalWeight}% instead of 100%. Save quand même?`)) return;
     }
     
     const removedIds = STATE.criteria.map(c => c.id).filter(id => !newCriteria.find(nc => nc.id === id));
@@ -1891,7 +1867,7 @@ function addPerson() {
     saveState(); renderPeople(); renderAssign();
 }
 function removePerson(pid) {
-    if (!confirm('Delete cette ressource?')) return;
+    if (!confirm('Delete this resource?')) return;
     STATE.people = STATE.people.filter(p => p.id !== pid);
     Object.keys(STATE.assignments).forEach(projId => { delete STATE.assignments[projId][pid]; });
     saveState(); renderAll();
@@ -1998,12 +1974,12 @@ function renderAssign() {
 
     // Hint
     html += `<div style="margin-top:0.75rem;padding:0.6rem 1rem;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:0.82rem;color:#0369a1">
-        💡 Assignez les hours/month pour <b>${MONTH_LABELS[selectedMonth]}</b>. Changez de mois avec le sélecteur ou les boutons ci-dessus. Les colonnes en rouge indiquent une surcharge.
+        💡 Assign hours/month for <b>${MONTH_LABELS[selectedMonth]}</b>. Change months using the selector or buttons above. Red columns indicate overload.
     </div>`;
     
     // Copy to all months button
     html += `<div style="margin-top:0.5rem;text-align:right">
-        <button class="btn" style="font-size:0.78rem;padding:0.4rem 0.8rem" onclick="copyMonthToAll()" title="Copy les valeurs de ${MONTH_LABELS[selectedMonth]} vers tous les autres mois">📋 Copy ce mois → tous les mois</button>
+        <button class="btn" style="font-size:0.78rem;padding:0.4rem 0.8rem" onclick="copyMonthToAll()" title="Copy values from ${MONTH_LABELS[selectedMonth]} to all other months">📋 Copy this month → all months</button>
     </div>`;
 
     document.getElementById('assignTableWrap').innerHTML = html;
@@ -2048,7 +2024,7 @@ function updateAssignmentMonth(projId, personId, month, val) {
 }
 
 function copyMonthToAll() {
-    if (!confirm(`Copy les valeurs de ${MONTH_LABELS[selectedMonth]} vers tous les autres mois?`)) return;
+    if (!confirm(`Copy values from ${MONTH_LABELS[selectedMonth]} to all other months?`)) return;
     
     const projs = sorted();
     projs.forEach(proj => {
@@ -2067,7 +2043,7 @@ function copyMonthToAll() {
     
     saveState();
     renderAll();
-    notify('Valeurs copiées vers tous les mois');
+    notify('Values copied to all months');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2200,7 +2176,7 @@ function renderRecommend() {
             </div>
             <div class="card" style="text-align:center;padding:0.85rem;border-color:${blockP.length?'rgba(229,62,62,0.3)':'rgba(56,161,105,0.3)'}">
                 <div style="font-size:1.5rem;font-weight:700;color:${blockP.length?'var(--error)':'var(--success)'}">${blockP.length}</div>
-                <div style="font-size:0.75rem;color:var(--text-dim)">Projets avec bottlenecks</div>
+                <div style="font-size:0.75rem;color:var(--text-dim)">Projects with bottlenecks</div>
             </div>
             <div class="card" style="text-align:center;padding:0.85rem;border-color:rgba(198,160,82,0.3)">
                 <div style="font-size:1.5rem;font-weight:700;color:${mGap>=0?'var(--success)':'var(--error)'}">${mGap>=0?'+':''}${mGap}h</div>
@@ -2328,7 +2304,7 @@ function renderAnalysis() {
     
     html += `</div>
         <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.75rem;color:var(--text-dim)">
-            <span>Cliquez sur un mois pour voir les details</span>
+            <span>Click a month to see details</span>
             <span style="font-weight:600;color:${monthlyData.filter(d=>d.assigned>d.avail).length?'var(--error)':'var(--success)'}">${monthlyData.filter(d=>d.assigned>d.avail).length} mois en surcharge</span>
         </div>
     </div>`;
@@ -2478,7 +2454,7 @@ function renderGate0() {
 
     html += `<div style="margin-top:1.5rem;background:var(--bg-card-hover);border-radius:12px;padding:1rem;border:1px dashed var(--border);text-align:center">
         <p style="margin:0;font-size:0.85rem;color:var(--text-dim)">📌 Après approbation Gate 0 → <b style="color:var(--text-muted)">Microsoft Teams Planner</b> (Chantal) → Gate 1 → Execution → Gate 2 → Benefits → Gate 3</p>
-        <p style="margin:0.5rem 0 0;font-size:0.82rem;color:var(--text-dim)">💡 Besoin d'aide? Cliquez sur <b style="color:#8b5cf6">MARCUS</b> en bas à droite pour une analyse IA</p>
+        <p style="margin:0.5rem 0 0;font-size:0.82rem;color:var(--text-dim)">💡 Need help? Click on <b style="color:#8b5cf6">MARCUS</b> at the bottom right for AI analysis</p>
     </div>`;
     document.getElementById('gate0Content').innerHTML = html;
 }
@@ -2495,7 +2471,7 @@ function copyGate0Report() {
         '─── PROJECTS GOULOT ───',...blockP.map((p,i)=>(i+1)+'. '+p.name+' | '+pct(p.scores)+'% | '+p.totalH+'h/yr | Month bloqués: '+p.blockedMonths.map(m=>MONTH_LABELS[m]).join(', ')),'',
         '─── NON-PROJECT ───',...np.map(p=>'• '+p.name+' → '+(BRANCHES[p.branch]?.label||p.branch)),'',
         '═══════════════════════════════════════','Préparé par: Sylvain PMO Consulting','═══════════════════════════════════════'];
-    navigator.clipboard?.writeText(lines.join('\n')).then(()=>notify('Rapport copié!'));
+    navigator.clipboard?.writeText(lines.join('\n')).then(()=>notify('Report copied!'));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2662,7 +2638,7 @@ async function openMarcus() {
                 <img src="${MARCUS_AVATAR}" style="width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);object-fit:cover">
                 <div>
                     <span class="charter-modal-title" style="color:white">MARCUS</span>
-                    <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);margin-top:0.1rem">Comment puis-je t'aider?</div>
+                    <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);margin-top:0.1rem">How can I help you?</div>
                 </div>
             </div>
             <button class="charter-btn-close" style="background:rgba(255,255,255,0.2);color:white" onclick="closeMarcus()">✕</button>
@@ -2676,8 +2652,8 @@ async function openMarcus() {
                         <span style="font-size:1.5rem">📊</span>
                     </div>
                     <div>
-                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Analyze mon portfolio</div>
-                        <div style="font-size:0.82rem;color:var(--text-dim)">Diagnostic complet et recommandations stratégiques.</div>
+                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Analyze my portfolio</div>
+                        <div style="font-size:0.82rem;color:var(--text-dim)">Full diagnostic and strategic recommendations.</div>
                     </div>
                 </button>
                 
@@ -2687,8 +2663,8 @@ async function openMarcus() {
                         <span style="font-size:1.5rem">❓</span>
                     </div>
                     <div>
-                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Aide avec cette section</div>
-                        <div style="font-size:0.82rem;color:var(--text-dim)">Je ne sais pas quoi faire dans <b>${context.title}</b>.</div>
+                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Help with this section</div>
+                        <div style="font-size:0.82rem;color:var(--text-dim)">I need help with <b>${context.title}</b>.</div>
                     </div>
                 </button>
                 
@@ -2698,8 +2674,8 @@ async function openMarcus() {
                         <span style="font-size:1.5rem">🚀</span>
                     </div>
                     <div style="flex:1">
-                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Première configuration</div>
-                        <div style="font-size:0.82rem;color:var(--text-dim)">Guide pas à pas pour démarrer de zéro.</div>
+                        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">First-time setup</div>
+                        <div style="font-size:0.82rem;color:var(--text-dim)">Step-by-step guide to get started.</div>
                     </div>
                     ${isNewSetup ? '<div style="position:absolute;top:-8px;right:-8px;background:#8b5cf6;color:white;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:10px">RECOMMENDED</div>' : ''}
                 </button>
@@ -2707,16 +2683,16 @@ async function openMarcus() {
                 <!-- Separator -->
                 <div style="border-top:1px dashed var(--border);margin:0.5rem 0"></div>
                 
-                <!-- 4. Reset / Start fresh - with DANGEREUX tag -->
+                <!-- 4. Reset / Start fresh - with DANGER tag -->
                 <button onclick="closeMarcus();startResetProcess()" style="display:flex;align-items:center;gap:1rem;padding:0.9rem;background:var(--bg-card);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;transition:all 0.2s;opacity:0.7;position:relative" onmouseover="this.style.borderColor='var(--error)';this.style.background='rgba(229,62,62,0.05)';this.style.opacity='1'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg-card)';this.style.opacity='0.7'">
                     <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0">
                         <span style="font-size:1.2rem">🗑️</span>
                     </div>
                     <div style="flex:1">
-                        <div style="font-size:0.9rem;font-weight:700;color:var(--error);margin-bottom:0.15rem">Repartir à zéro</div>
-                        <div style="font-size:0.75rem;color:var(--text-dim)">Effacer tous les projects et recommencer.</div>
+                        <div style="font-size:0.9rem;font-weight:700;color:var(--error);margin-bottom:0.15rem">Reset to zero</div>
+                        <div style="font-size:0.75rem;color:var(--text-dim)">Delete all projects and start over.</div>
                     </div>
-                    <div style="background:#dc2626;color:white;font-size:0.6rem;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:0.5px">⚠️ DANGEREUX</div>
+                    <div style="background:#dc2626;color:white;font-size:0.6rem;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:0.5px">⚠️ DANGER</div>
                 </button>
             </div>
         </div>
@@ -2733,7 +2709,7 @@ async function runMarcusAnalysis(mode) {
         <div style="text-align:center;padding:3rem">
             <img src="${MARCUS_AVATAR}" style="width:80px;height:80px;border-radius:50%;border:3px solid var(--primary);margin-bottom:1rem;animation:pulse 1.5s infinite">
             <div style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:0.5rem">MARCUS analyse...</div>
-            <div style="font-size:0.85rem;color:var(--text-dim)">${mode === 'setup' ? 'Préparation du guide de démarrage...' : mode === 'process' ? 'Préparation des instructions...' : 'Examen de votre portfolio en cours'}</div>
+            <div style="font-size:0.85rem;color:var(--text-dim)">${mode === 'setup' ? 'Preparing setup guide...' : mode === 'process' ? 'Preparing instructions...' : 'Analyzing your portfolio...'}</div>
         </div>
         <style>@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }</style>`;
     
@@ -2911,7 +2887,7 @@ Respond in English with practical recommendations.`;
             throw new Error(data.error || 'Error API');
         }
         
-        const aiResponse = data.content?.[0]?.text || "Error: Pas de réponse";
+        const aiResponse = data.content?.[0]?.text || "Error: No response";
         
         // Format and display response
         const formattedResponse = formatMarcusResponse(aiResponse, mode);
@@ -2921,9 +2897,9 @@ Respond in English with practical recommendations.`;
         document.getElementById('marcusContent').innerHTML = `
             <div style="text-align:center;padding:2rem">
                 <div style="font-size:2rem;margin-bottom:1rem">⚠️</div>
-                <div style="font-size:1rem;font-weight:600;color:var(--error);margin-bottom:0.5rem">Login impossible</div>
+                <div style="font-size:1rem;font-weight:600;color:var(--error);margin-bottom:0.5rem">Connection failed</div>
                 <div style="font-size:0.85rem;color:var(--text-dim)">${error.message}</div>
-                <button onclick="openMarcus()" class="btn" style="margin-top:1rem">🔄 Réessayer</button>
+                <button onclick="openMarcus()" class="btn" style="margin-top:1rem">🔄 Retry</button>
             </div>`;
     }
 }
@@ -2950,19 +2926,19 @@ function formatMarcusResponse(text, mode) {
     html = '<p>' + html + '</p>';
     
     // Section styling for SETUP mode
-    html = html.replace(/<strong>([^<]*BIENVENUE[^<]*)<\/strong>/gi, '<h3 style="color:#8b5cf6;font-size:1.05rem;margin:0.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.2rem">👋</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPE 1[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">1</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPE 2[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">2</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPE 3[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">3</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPE 4[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">4</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPE 5[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">5</span> $1</h3>')
-               .replace(/<strong>([^<]*CONSEIL CLÉ[^<]*|[^<]*CONSEIL[^<]*CLÉ[^<]*)<\/strong>/gi, '<h3 style="color:var(--success);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="font-size:1.1rem">💎</span> $1</h3>');
+    html = html.replace(/<strong>([^<]*WELCOME[^<]*)<\/strong>/gi, '<h3 style="color:#8b5cf6;font-size:1.05rem;margin:0.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.2rem">👋</span> $1</h3>')
+               .replace(/<strong>([^<]*STEP 1[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">1</span> $1</h3>')
+               .replace(/<strong>([^<]*STEP 2[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">2</span> $1</h3>')
+               .replace(/<strong>([^<]*STEP 3[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">3</span> $1</h3>')
+               .replace(/<strong>([^<]*STEP 4[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">4</span> $1</h3>')
+               .replace(/<strong>([^<]*STEP 5[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="background:var(--primary);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">5</span> $1</h3>')
+               .replace(/<strong>([^<]*KEY TIP[^<]*|[^<]*CONSEIL[^<]*CLÉ[^<]*)<\/strong>/gi, '<h3 style="color:var(--success);font-size:0.95rem;margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;padding-top:0.75rem;border-top:1px solid var(--border)"><span style="font-size:1.1rem">💎</span> $1</h3>');
     
     // Section styling for PROCESS mode
-    html = html.replace(/<strong>([^<]*OBJECTIF[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">🎯</span> $1</h3>')
-               .replace(/<strong>([^<]*ÉTAPES[^<]*|[^<]*SUIVRE[^<]*)<\/strong>/gi, '<h3 style="color:var(--success);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">📋</span> $1</h3>')
-               .replace(/<strong>([^<]*CONSEILS[^<]*|[^<]*PRATIQUES[^<]*)<\/strong>/gi, '<h3 style="color:#8b5cf6;font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">💡</span> $1</h3>')
-               .replace(/<strong>([^<]*PROCHAINE[^<]*|[^<]*SUITE[^<]*)<\/strong>/gi, '<h3 style="color:var(--accent);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">➡️</span> $1</h3>');
+    html = html.replace(/<strong>([^<]*OBJECTIVE[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">🎯</span> $1</h3>')
+               .replace(/<strong>([^<]*STEPS[^<]*|[^<]*FOLLOW[^<]*)<\/strong>/gi, '<h3 style="color:var(--success);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">📋</span> $1</h3>')
+               .replace(/<strong>([^<]*TIPS[^<]*|[^<]*PRACTICAL[^<]*)<\/strong>/gi, '<h3 style="color:#8b5cf6;font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">💡</span> $1</h3>')
+               .replace(/<strong>([^<]*NEXT[^<]*|[^<]*SUITE[^<]*)<\/strong>/gi, '<h3 style="color:var(--accent);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">➡️</span> $1</h3>');
     
     // Section styling for PORTFOLIO mode
     html = html.replace(/<strong>([^<]*DIAGNOSTIC[^<]*)<\/strong>/gi, '<h3 style="color:var(--primary);font-size:0.95rem;margin:1.25rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem"><span style="font-size:1.1rem">🔍</span> $1</h3>')
@@ -3017,7 +2993,7 @@ function startResetProcess() {
             <div style="display:flex;align-items:center;gap:0.6rem">
                 <span style="font-size:1.5rem">⚠️</span>
                 <div>
-                    <span class="charter-modal-title" style="color:white">Repartir à zéro</span>
+                    <span class="charter-modal-title" style="color:white">Reset to zero</span>
                     <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);margin-top:0.1rem">Step 1 de 3</div>
                 </div>
             </div>
@@ -3026,7 +3002,7 @@ function startResetProcess() {
         <div style="padding:1.5rem" id="resetContent">
             <div style="text-align:center;margin-bottom:1.5rem">
                 <div style="font-size:3rem;margin-bottom:1rem">🗑️</div>
-                <h3 style="color:var(--error);margin:0 0 0.5rem">Attention: Action irreversible</h3>
+                <h3 style="color:var(--error);margin:0 0 0.5rem">Warning: Irreversible action</h3>
                 <p style="color:var(--text-dim);font-size:0.9rem;margin:0">This will <b>permanently</b> delete all data.</p>
             </div>
             
@@ -3035,13 +3011,13 @@ function startResetProcess() {
                 <div style="font-size:0.9rem;color:var(--text)">
                     <div>• <b>${projectCount}</b> project(s)</div>
                     <div>• <b>${peopleCount}</b> ressource(s)</div>
-                    <div>• Toutes les affectations</div>
+                    <div>• • All resource allocations</div>
                     <div>• Tous les scores</div>
                 </div>
             </div>
             
             <p style="font-size:0.85rem;color:var(--text-dim);text-align:center;margin-bottom:1.5rem">
-                💡 Conseil: Exportez vos data avant de continuer.
+                💡 Tip: Export your data before continuing.
             </p>
             
             <div style="display:flex;gap:0.75rem">
@@ -3058,12 +3034,12 @@ function resetStep2() {
     document.getElementById('resetContent').innerHTML = `
         <div style="text-align:center;margin-bottom:1.5rem">
             <div style="font-size:3rem;margin-bottom:1rem">🔐</div>
-            <h3 style="color:var(--error);margin:0 0 0.5rem">Confirmation requise</h3>
-            <p style="color:var(--text-dim);font-size:0.9rem;margin:0">Step 2 de 3: Tapez <b>EFFACER</b> pour confirmer.</p>
+            <h3 style="color:var(--error);margin:0 0 0.5rem">Confirmation required</h3>
+            <p style="color:var(--text-dim);font-size:0.9rem;margin:0">Step 2 of 3: Type <b>DELETE</b> to confirm.</p>
         </div>
         
         <div style="margin-bottom:1.5rem">
-            <input type="text" id="resetConfirmInput" placeholder="Tapez EFFACER ici" style="width:100%;padding:0.85rem;border:2px solid var(--error);border-radius:8px;font-size:1.1rem;text-align:center;text-transform:uppercase;box-sizing:border-box" oninput="checkResetInput()">
+            <input type="text" id="resetConfirmInput" placeholder="Type DELETE here" style="width:100%;padding:0.85rem;border:2px solid var(--error);border-radius:8px;font-size:1.1rem;text-align:center;text-transform:uppercase;box-sizing:border-box" oninput="checkResetInput()">
             <div id="resetInputFeedback" style="font-size:0.8rem;text-align:center;margin-top:0.5rem;color:var(--text-dim)"></div>
         </div>
         
@@ -3081,7 +3057,7 @@ function checkResetInput() {
     const btn = document.getElementById('resetStep2Btn');
     const feedback = document.getElementById('resetInputFeedback');
     
-    if (input === 'EFFACER') {
+    if (input === 'DELETE') {
         btn.disabled = false;
         btn.style.background = 'var(--error)';
         btn.style.borderColor = 'var(--error)';
@@ -3093,7 +3069,7 @@ function checkResetInput() {
         btn.style.background = '#ccc';
         btn.style.borderColor = '#ccc';
         btn.style.cursor = 'not-allowed';
-        feedback.innerHTML = input.length > 0 ? '✗ Tapez exactement "EFFACER"' : '';
+        feedback.innerHTML = input.length > 0 ? '✗ Type exactly "DELETE"' : '';
         feedback.style.color = 'var(--error)';
     }
 }
@@ -3110,7 +3086,7 @@ function resetStep3() {
             <div style="font-size:1.1rem;font-weight:700;color:var(--error);margin-bottom:0.5rem">⚠️ POINT DE NON-RETOUR ⚠️</div>
             <div style="font-size:0.9rem;color:var(--text)">
                 This action is <b>PERMANENT</b> and <b>IRREVERSIBLE</b>.<br>
-                Toutes vos data seront perdues pour toujours.
+                All your data will be lost forever.
             </div>
         </div>
         
@@ -3144,7 +3120,7 @@ function executeReset() {
     document.querySelector('#resetOverlay .charter-modal-header').style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
     document.querySelector('#resetOverlay .charter-modal-header span').textContent = '✓';
     document.querySelector('#resetOverlay .charter-modal-header .charter-modal-title').textContent = 'Complete';
-    document.querySelector('#resetOverlay .charter-modal-header > div > div > div:last-child').textContent = 'Système réinitialisé';
+    document.querySelector('#resetOverlay .charter-modal-header > div > div > div:last-child').textContent = 'System reset complete';
 }
 
 function closeResetModal() {
