@@ -369,8 +369,10 @@
             </div>
             <div id="loginError" style="display:none;background:#fed7d7;color:#c53030;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;text-align:center"></div>
             <div style="margin-bottom:1rem">
-                <label style="display:block;font-size:0.8rem;font-weight:600;color:#4a5568;margin-bottom:0.4rem">Username</label>
-                <input type="text" id="loginUser" style="width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem;box-sizing:border-box" placeholder="Enter your team name" onkeypress="if(event.key==='Enter')doLogin()">
+                <label style="display:block;font-size:0.8rem;font-weight:600;color:#4a5568;margin-bottom:0.4rem">Select Your Team</label>
+                <select id="loginTeam" style="width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem;box-sizing:border-box;background:white;cursor:pointer">
+                    <option value="">— Choose your team —</option>
+                </select>
             </div>
             <div style="margin-bottom:1.5rem">
                 <label style="display:block;font-size:0.8rem;font-weight:600;color:#4a5568;margin-bottom:0.4rem">Password</label>
@@ -394,6 +396,7 @@
         </div>
     </div>
     <div class="app-header-right">
+        <span style="background:linear-gradient(135deg,#3182ce,#2b6cb0);color:white;padding:0.35rem 0.85rem;border-radius:20px;font-size:0.82rem;font-weight:700;letter-spacing:0.3px" id="headerTeamName">—</span>
         <span class="header-badge" id="headerStats">—</span>
         <button class="header-btn" onclick="exportData()">💾 Export</button>
         <label class="header-btn" style="cursor:pointer">📂 Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
@@ -900,9 +903,20 @@ let lastSyncTime = 0;
 let isSyncing = false;
 
 async function init() {
+    if (!currentTeam) {
+        // No team selected, use defaults
+        STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+        STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
+        STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+        setupTabs();
+        renderAll();
+        return;
+    }
+    
+    const tenant = currentTeam;
     try {
         // Try to load from API first
-        const response = await fetch('/api/state');
+        const response = await fetch('/api/state?tenant=' + encodeURIComponent(tenant));
         if (response.ok) {
             const d = await response.json();
             STATE.projects = Array.isArray(d.projects) ? d.projects : DEFAULT_PROJECTS; 
@@ -921,7 +935,8 @@ async function init() {
         // Fallback to localStorage
         console.log('⚠ Fallback to localStorage:', e.message);
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const teamKey = STORAGE_KEY + '_' + (currentTeam || 'default');
+            const raw = localStorage.getItem(teamKey);
             if (raw) { 
                 const d = JSON.parse(raw); 
                 STATE.projects = Array.isArray(d.projects) ? d.projects : DEFAULT_PROJECTS; 
@@ -942,19 +957,20 @@ async function init() {
 }
 
 async function saveState() {
-    // Always save to localStorage as backup
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e) {}
+    // Always save to localStorage as backup (team-specific key)
+    const teamKey = STORAGE_KEY + '_' + (currentTeam || 'default');
+    try { localStorage.setItem(teamKey, JSON.stringify(STATE)); } catch(e) {}
     
-    // Save to API
-    if (isSyncing) return;
+    // Save to API with tenant
+    if (isSyncing || !currentTeam) return;
     isSyncing = true;
     
     try {
-        const response = await fetch('/api/state', {
+        const response = await fetch('/api/state?tenant=' + encodeURIComponent(currentTeam), {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-User-Name': localStorage.getItem('pmo_user_name') || 'Anonyme'
+                'X-User-Name': TEAMS[currentTeam] || 'Anonymous'
             },
             body: JSON.stringify({
                 projects: STATE.projects,
@@ -977,9 +993,9 @@ async function saveState() {
 }
 
 async function checkForUpdates() {
-    if (isSyncing) return;
+    if (isSyncing || !currentTeam) return;
     try {
-        const response = await fetch('/api/state');
+        const response = await fetch('/api/state?tenant=' + encodeURIComponent(currentTeam));
         if (response.ok) {
             const d = await response.json();
             const serverTime = new Date(d.updatedAt).getTime();
@@ -2671,7 +2687,7 @@ function copyGate0Report() {
 // ═══════════════════════════════════════════════════════════════
 // MARCUS — AI ADVISOR
 // ═══════════════════════════════════════════════════════════════
-const MARCUS_AVATAR = 'data:image/jpeg;base64,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';
+const MARCUS_AVATAR = 'data:image/jpeg;base64,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';
 let currentTab = 'projects';
 
 function getPortfolioSummary() {
@@ -2909,7 +2925,7 @@ async function runMarcusAnalysis(mode) {
     
     // Update modal title
     document.querySelector('#marcusOverlay .charter-modal-header > div > div > div:last-child').textContent = 
-        mode === 'setup' ? 'Guide de première configuration' : mode === 'process' ? `Aide — ${context.title}` : 'Portfolio Analysis';
+        mode === 'setup' ? 'First-time Setup Guide' : mode === 'process' ? `Help — ${context.title}` : 'Portfolio Analysis';
     
     // Expand modal for results
     document.querySelector('#marcusOverlay .modal-box').style.maxWidth = '800px';
@@ -2921,8 +2937,58 @@ async function runMarcusAnalysis(mode) {
     // Build prompts based on mode
     let systemPrompt, userPrompt;
     
+    const teamName = TEAMS[currentTeam] || 'Unknown Team';
+    
+    const CASE_CONTEXT = `
+TEAM: ${teamName}
+CASE STUDY: NOVATECH ROBOTICS (YCBS 288 — Strategic Project Leadership)
+NovaTech Robotics is a mid-size industrial robotics manufacturer in Sherbrooke, QC. 127 employees, $42M revenue, 3 product lines (NR-200 food processing, NR-300 automotive, NR-400 warehouse in development).
+
+STRATEGIC THEMES:
+- GROW: Launch NR-400 warehouse robot. First-mover window closing — competitor RoboFlow targeting Q4 2026.
+- PROTECT: Safeguard NR-200/NR-300 revenue. Customer satisfaction dropping, ISO cert at risk.
+
+2 PROJECTS ALREADY IN PROGRESS (LOCKED CAPACITY):
+1. NR-300 Firmware v3.2 Update (Nov 2025 → Apr 2026) — PM: Raj Patel. $3.2M in orders waiting. Locked: Raj 30h/mo Jan-Apr, Line 5-10h/mo Jan-Apr.
+2. ISO 9001:2015 Recertification (Oct 2025 → Mar 2026) — PM: Amir Hassan. Audit March 17-21. 28% revenue at risk. Locked: Amir 25-35h/mo Jan-Mar, Yuki 10-20h/mo Jan-Mar.
+
+6 NEW INITIATIVES TO TRIAGE:
+1. NR-400 Warehouse Robot Development [GROW] — $2.1M, 18mo, needs ALL resources. MegaLogistics LOI $1.8M. RoboFlow competitor.
+2. NR-200 Safety Compliance Retrofit [PROTECT] — $380K, 6mo, new CSA Z434 standards Jan 2027. 47 field units. Dominique+Yuki+Amir.
+3. MegaLogistics Pilot Contract [GROW] — $450K, 8mo, depends on NR-400 progress. Dominique+Yuki+Steve.
+4. ERP System Migration [PROTECT] — $520K, 12mo, legacy end-of-life Dec 2026. Steve 40-60h/mo + all depts.
+5. Customer Service Portal [PROTECT] — $280K, 9mo, satisfaction dropped 4.2→3.6. Steve+Line.
+6. Production Line Automation Upgrade [GROW] — $750K, 10mo, 35% throughput increase needed for NR-400 production. Dominique+Yuki+Steve.
+
+6 NAMED RESOURCES (hrs/month for projects):
+- Dominique Lafleur (Mechanical Eng): 80h/mo, 40h summer
+- Raj Patel (Software): 60h/mo, NET 30h Jan-Apr (Firmware locked)
+- Yuki Tanaka (Manufacturing): 60h/mo, NET 40-50h Jan-Mar (ISO locked)
+- Amir Hassan (Quality): 40h/mo, NET 5-15h Jan-Mar (ISO locked)
+- Steve Moreau (IT Systems): 80h/mo, 40-60h summer — HEAVIEST DEMAND resource
+- Line Bhatt (Product Mgmt): 60h/mo, NET 50-55h Jan-Apr (Firmware locked)
+
+KEY BOTTLENECK INSIGHTS:
+- Dominique is needed by initiatives 1, 2, 3, and 6 — she's the #1 bottleneck
+- Steve is needed by initiatives 1, 3, 4, 5, and 6 — he's #2
+- Amir is nearly fully locked Jan-Mar by ISO, only 5-15h net available
+- Initiative 3 (MegaLogistics) DEPENDS on Initiative 1 (NR-400) — can't start without prototypes
+- Summer months (Jun-Aug) reduce everyone's capacity by 25-50%
+
+7 QUESTIONS STUDENTS MUST ANSWER:
+Q1 — Triage: Which initiatives are PMO projects vs. operations?
+Q2 — Bottleneck ID: Top 3 bottleneck resources + overallocation hours if all run simultaneously
+Q3 — Hiring: What hires needed if CEO insists ALL projects in 2026?
+Q4 — Phased Rollout: Month-by-month plan if NO new hires until Q3
+Q5 — Strategic Trade-off: Risk of deferring NR-400 (growth) vs NR-200 safety + ISO (protect)
+Q6 — Tightest Month: Which month(s) are worst? Impact on operations?
+Q7 — Creative Solution: One creative solution to increase throughput without hiring
+`;
+
     if (mode === 'setup') {
         systemPrompt = `You are MARCUS, a PMO assistant integrated into the project portfolio management tool for NovaTech Robotics.
+
+${CASE_CONTEXT}
 
 The user has just opened the application and needs a complete guide to configure the system.
 
@@ -2933,102 +2999,115 @@ IMPORTANT CONTEXT:
 - 6 new initiatives need to be triaged, scored, and resource-planned
 
 THE TOOL CONTAINS THESE TABS (in order):
-1. PROCESS - PMO workflow diagram (informational)
-2. TRIAGE - Determine if an initiative is a Project or Operations
-3. PORTFOLIO - List of projects with charters
-4. SCORING - Evaluate projects against weighted criteria
-5. RESOURCES - Define people and their monthly availability
-6. ALLOCATION - Assign hours per project/person/month
-7. RECOMMENDATION - See which projects are feasible vs. blocked
-8. ANALYSIS - Capacity vs. demand charts
-9. GATE 0 - Final report for executive decision
+1. CASE BRIEF - Full case study reference (read first!)
+2. PROCESS - PMO workflow diagram (informational)
+3. TRIAGE - Determine if an initiative is a Project or Operations
+4. PORTFOLIO - List of projects with charters
+5. SCORING - Evaluate projects against weighted criteria
+6. RESOURCES - Define people and their monthly availability
+7. ALLOCATION - Assign hours per project/person/month
+8. RECOMMENDATION - See which projects are feasible vs. blocked
+9. ANALYSIS - Capacity vs. demand charts
+10. GATE 0 - Final report for executive decision
 
-YOUR ROLE: Guide the user step by step through the tool.
+YOUR ROLE: Guide the user step by step. Point out what they still need to do based on their current progress. Reference the case study specifics (initiative names, resource names, budget figures) to make guidance concrete.
 
 STYLE:
 - Be encouraging and pedagogical
-- Give concrete examples
-- Explain the WHY behind each step
+- Reference specific case details (e.g., "Don't forget Dominique is needed for 4 initiatives")
+- Flag the 7 questions they need to answer
+- Warn about common traps (e.g., forgetting locked capacity, ignoring summer reductions)
 
 FORMAT: Use ONLY **BOLD TITLES** for sections (no # or ##). Use dashes - for lists.`;
 
-        userPrompt = `The user is starting with the NovaTech Robotics case study and needs guidance.
+        // Calculate progress
+        const triagedCount = STATE.projects.filter(p => p.branch).length;
+        const scoredCount = STATE.projects.filter(p => p.scores && Object.keys(p.scores).length > 0).length;
+        const assignedCount = Object.keys(STATE.assignments || {}).length;
+        const charterCount = STATE.projects.filter(p => p.charter && p.charter.overview).length;
+        const inProgressCount = STATE.projects.filter(p => p.status === 'in_progress').length;
+        const newProjectCount = triagedCount - inProgressCount;
+        const resourceCount = Object.values(STATE.people || {}).flat().length;
 
-CURRENT STATE:
-- Projects: ${summary.totalProjects}
-- Resources: ${Object.values(summary.resources).flat().length}
+        userPrompt = `The user is working on the NovaTech Robotics case study.
 
-Provide a complete startup guide with these sections:
+THEIR CURRENT PROGRESS:
+- Projects in portfolio: ${summary.totalProjects} (${inProgressCount} in-progress, ${newProjectCount} triaged by user)
+- Initiatives triaged: ${newProjectCount} of 6 needed
+- Charters filled in: ${charterCount}
+- Projects scored: ${scoredCount}
+- Resources configured: ${resourceCount} of 6 needed
+- Projects with allocations: ${assignedCount}
 
-**WELCOME TO THE PMO TOOL**
-(2-3 encouraging introductory sentences. Mention the NovaTech case study context.)
+WHAT'S STILL MISSING (flag these specifically):
+${newProjectCount < 6 ? '- ⚠️ Only ' + newProjectCount + ' of 6 initiatives triaged — they need to triage all 6 from the case' : '- ✓ All 6 initiatives triaged'}
+${charterCount < triagedCount ? '- ⚠️ ' + (triagedCount - charterCount) + ' projects missing charter details' : '- ✓ All charters filled'}
+${scoredCount < triagedCount ? '- ⚠️ ' + (triagedCount - scoredCount) + ' projects not yet scored' : '- ✓ All projects scored'}
+${resourceCount < 6 ? '- ⚠️ Only ' + resourceCount + ' of 6 resources configured — need all 6 from the case' : '- ✓ All 6 resources configured'}
+${assignedCount === 0 ? '- ⚠️ No resource allocations yet' : '- ' + assignedCount + ' projects have allocations'}
 
-**STEP 1: REVIEW EXISTING PROJECTS**
-(Check the Portfolio tab - 2 projects are already in progress with locked resource commitments.)
+Based on their progress, provide a PERSONALIZED guide. If they're just starting, give the full walkthrough. If they're partway through, acknowledge what they've done and focus on NEXT STEPS.
 
-**STEP 2: TRIAGE NEW INITIATIVES**
-(Go to the Triage tab. Use the guided questions to classify each of the 6 new initiatives as Project or Operations.)
-
-**STEP 3: CREATE CHARTERS**
-(For each project, fill in the charter with sponsor, objectives, scope, risks, and milestones.)
-
-**STEP 4: SCORE AND PRIORITIZE**
-(Go to Scoring tab, rate each project on 6 criteria. Consider NovaTech's Grow vs. Protect strategic themes.)
-
-**STEP 5: ALLOCATE RESOURCES**
-(Go to Allocation tab, assign hours per person/project/month. Watch for overloads on key resources like Dominique Lafleur.)
-
-**STEP 6: ANALYZE AND DECIDE**
-(Check Recommendation tab for bottlenecks, then use Gate 0 for the final GO/WAIT/STOP report.)
-
-**KEY TIP**
-(One important tip for succeeding with the tool)
+Always remind them about:
+- The 7 key questions they need to answer (Q1-Q7)
+- The locked capacity on Raj, Amir, Yuki, and Line from in-progress projects
+- Dominique and Steve as the biggest bottlenecks for new initiatives
 
 Respond in English, clearly and in an encouraging tone.`;
 
     } else if (mode === 'process') {
         systemPrompt = `You are MARCUS, a PMO assistant integrated into the project portfolio management tool for NovaTech Robotics.
 
+${CASE_CONTEXT}
+
 The user is in the "${contextInfo.title}" section and needs help understanding what to do.
 
 ${contextInfo.help}
 
-YOUR ROLE: Guide the user step by step, simply and practically. Explain WHAT to do and HOW to do it in this specific section.
+YOUR ROLE: Guide the user step by step, simply and practically. Explain WHAT to do and HOW to do it in this specific section. Reference case study specifics — use real initiative names, resource names, and budget figures from the NovaTech case.
 
 STYLE:
 - Be concise and direct
 - Number the steps
-- Give concrete examples based on their data
+- Give concrete examples using NovaTech case data (e.g., "Score NR-400 Development on Strategic Fit — it's the growth flagship")
+- Flag which of the 7 questions (Q1-Q7) this section helps answer
 
 FORMAT: Use ONLY **BOLD TITLES** for sections (no # or ##). Use dashes - for lists.`;
 
+        const pTriaged = STATE.projects.filter(p => p.branch).length;
+        const pScored = STATE.projects.filter(p => p.scores && Object.keys(p.scores).length > 0).length;
+        const pChartered = STATE.projects.filter(p => p.charter && p.charter.overview).length;
+        const pAssigned = Object.keys(STATE.assignments || {}).length;
+        const pResources = Object.values(STATE.people || {}).flat().length;
+
         userPrompt = `The user is in the "${contextInfo.title}" section and needs guidance.
 
-CURRENT DATA:
-- Number of projects: ${summary.totalProjects}
-- Feasible projects: ${summary.feasibleProjects}
-- Blocked projects: ${summary.blockedProjects}
+CURRENT PROGRESS:
+- Projects in portfolio: ${summary.totalProjects} (triaged: ${pTriaged}, scored: ${pScored}, with charters: ${pChartered})
+- Feasible projects: ${summary.feasibleProjects} | Blocked: ${summary.blockedProjects}
+- Resources configured: ${pResources}/6 | Projects with allocations: ${pAssigned}
 - Selected month: ${summary.selectedMonth}
-- Number of resources: ${Object.values(summary.resources).flat().length}
 
 Provide exactly these 4 sections (use **TITLE** for each):
 
 **PURPOSE OF THIS SECTION**
-(1-2 sentences: what this tab is for)
+(1-2 sentences: what this tab is for, and which case questions Q1-Q7 it helps answer)
 
 **STEPS TO FOLLOW**
-(3-5 concrete, actionable steps with dashes)
+(3-5 concrete steps using NovaTech case specifics — name the initiatives, resources, budgets)
 
-**PRACTICAL TIPS**
-(2-3 tips with dashes)
+**WATCH OUT FOR**
+(2-3 common traps specific to this section. E.g., on Allocation: "Don't forget Raj only has 30h net Jan-Apr"; on Scoring: "NR-400 scores high on growth but consider feasibility given resource constraints")
 
 **NEXT STEP**
-(where to go after this)
+(where to go after this, and what case questions they can now answer)
 
 Respond in English, clearly and encouragingly.`;
 
     } else {
         systemPrompt = `You are MARCUS, an expert PMO portfolio management advisor for NovaTech Robotics, an industrial robotics manufacturer in Sherbrooke, Quebec.
+
+${CASE_CONTEXT}
 
 You analyze their project portfolio data and provide strategic recommendations in English to:
 1. Optimize resource allocation
@@ -3036,30 +3115,49 @@ You analyze their project portfolio data and provide strategic recommendations i
 3. Prioritize projects for Gate 0
 4. Identify capacity risks
 
+YOUR ROLE: Be a tough but fair PMO advisor. Point out what's missing, what's wrong, and what's great. Reference the 7 case questions (Q1-Q7) and tell them which ones their current data can answer and which ones still need work.
+
 STYLE:
 - Be concise and practical
-- Give actionable recommendations
+- Give actionable recommendations using real NovaTech names/numbers
+- Flag gaps (e.g., "You haven't triaged Initiative #2 NR-200 Safety Retrofit yet — that's a compliance deadline")
+- Challenge their assumptions (e.g., "You scored NR-400 at 9 for feasibility but haven't accounted for Dominique's bottleneck")
 
 FORMAT: Use ONLY **BOLD TITLES** for sections (no # or ##). Use dashes - for lists.`;
+
+        const aTriaged = STATE.projects.filter(p => p.branch && p.status !== 'in_progress').length;
+        const aScored = STATE.projects.filter(p => p.scores && Object.keys(p.scores).length > 0).length;
+        const aChartered = STATE.projects.filter(p => p.charter && p.charter.overview).length;
+        const aAssigned = Object.keys(STATE.assignments || {}).length;
+        const aResources = Object.values(STATE.people || {}).flat().length;
+        const projectNames = STATE.projects.map(p => p.name).join(', ');
 
         userPrompt = `PORTFOLIO DATA:
 ${JSON.stringify(summary, null, 2)}
 
-Provide exactly these 4 sections (use **TITLE** for each):
+PROGRESS CHECK:
+- Initiatives triaged by user: ${aTriaged}/6 (names in portfolio: ${projectNames})
+- Charters completed: ${aChartered} | Scored: ${aScored} | With allocations: ${aAssigned}
+- Resources configured: ${aResources}/6
+
+Provide exactly these 5 sections (use **TITLE** for each):
 
 **DIAGNOSTIC**
-(2-3 sentences on portfolio health)
+(2-3 sentences on portfolio health. Compare what they've done vs. what the case requires.)
+
+**PROGRESS GAPS**
+(List what's missing: untriaged initiatives by name, incomplete charters, unscored projects, missing resources. Be specific — e.g., "Initiative #6 Production Line Upgrade hasn't been triaged yet")
 
 **PRIORITY ACTIONS**
-(3-5 concrete actions with dashes)
+(3-5 concrete next actions with dashes)
 
-**BLOCKED PROJECTS**
-(for each bottleneck, a specific solution with dashes)
+**BOTTLENECK ANALYSIS**
+(For each blocked project, identify the bottleneck resource and suggest a specific solution)
 
-**ALERTS**
-(risks or urgent issues with dashes)
+**CASE QUESTIONS STATUS**
+(For each of Q1-Q7, indicate: ✓ data sufficient to answer, or ⚠️ more work needed and what specifically)
 
-Respond in English with practical recommendations.`;
+Respond in English with practical, specific recommendations.`;
     }
 
     try {
@@ -3068,7 +3166,7 @@ Respond in English with practical recommendations.`;
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 system: systemPrompt,
-                max_tokens: mode === 'setup' ? 2500 : 1500,
+                max_tokens: mode === 'setup' ? 2500 : mode === 'portfolio' ? 2500 : 1500,
                 messages: [
                     { role: "user", content: userPrompt }
                 ]
@@ -3176,7 +3274,7 @@ function startResetProcess() {
     const peopleCount = Object.values(STATE.people).flat().length;
     
     if (projectCount === 0 && peopleCount === 0) {
-        notify('Le système est déjà vide!', 'info');
+        notify('System is already empty!', 'info');
         return;
     }
     
@@ -3307,7 +3405,7 @@ function executeReset() {
         <div style="text-align:center;padding:2rem">
             <div style="font-size:4rem;margin-bottom:1rem">✨</div>
             <h3 style="color:var(--success);margin:0 0 0.5rem">Réinitialisation complète!</h3>
-            <p style="color:var(--text-dim);font-size:0.9rem;margin:0 0 1.5rem">Le système est maintenant vide et prêt pour une nouvelle configuration.</p>
+            <p style="color:var(--text-dim);font-size:0.9rem;margin:0 0 1.5rem">The system is now empty and ready for a fresh setup.</p>
             <button onclick="closeResetModal();location.reload()" class="btn" style="background:var(--success);color:white;border-color:var(--success)">🚀 Commencer</button>
         </div>`;
     
@@ -3351,9 +3449,22 @@ function importData(e) {
 // LOGIN / AUTHENTICATION
 // ═══════════════════════════════════════════════════════════════
 const AUTH_CREDENTIALS = {
-    username: 'admin',
     password: 'novatech2026'
 };
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  TEAM CONFIGURATION — Edit team names here before class     ║
+// ╚══════════════════════════════════════════════════════════════╝
+const TEAMS = {
+    'team-1': 'Alpha',
+    'team-2': 'Bravo',
+    'team-3': 'Charlie',
+    'team-4': 'Delta',
+    'team-5': 'Echo'
+};
+// ════════════════════════════════════════════════════════════════
+
+let currentTeam = sessionStorage.getItem('pmo_team') || null;
 
 function checkLogin() {
     const isLoggedIn = sessionStorage.getItem('pmo_logged_in') === 'true';
@@ -3363,24 +3474,49 @@ function checkLogin() {
     const loginAvatar = document.getElementById('loginMarcusAvatar');
     if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
     
-    if (isLoggedIn) {
+    // Populate team dropdown from config
+    const teamSelect = document.getElementById('loginTeam');
+    if (teamSelect && teamSelect.options.length <= 1) {
+        Object.entries(TEAMS).forEach(([id, name]) => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.textContent = name;
+            teamSelect.appendChild(opt);
+        });
+    }
+    
+    if (isLoggedIn && currentTeam) {
         loginScreen.style.display = 'none';
+        // Restore team name in header
+        document.getElementById('headerTeamName').textContent = TEAMS[currentTeam] || currentTeam;
     } else {
         loginScreen.style.display = 'flex';
     }
 }
 
 function doLogin() {
-    const user = document.getElementById('loginUser').value.trim().toLowerCase();
+    const team = document.getElementById('loginTeam').value;
     const pass = document.getElementById('loginPass').value;
     const errorDiv = document.getElementById('loginError');
     
-    if (user === AUTH_CREDENTIALS.username && pass === AUTH_CREDENTIALS.password) {
+    if (!team) {
+        errorDiv.textContent = 'Please select a team';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (pass === AUTH_CREDENTIALS.password) {
+        currentTeam = team;
         sessionStorage.setItem('pmo_logged_in', 'true');
+        sessionStorage.setItem('pmo_team', team);
         document.getElementById('loginScreen').style.display = 'none';
         errorDiv.style.display = 'none';
+        // Update header with team name
+        document.getElementById('headerTeamName').textContent = TEAMS[team];
+        // Reload state for this team
+        init();
     } else {
-        errorDiv.textContent = 'Username ou mot de passe incorrect';
+        errorDiv.textContent = 'Incorrect password';
         errorDiv.style.display = 'block';
         document.getElementById('loginPass').value = '';
     }
@@ -3389,16 +3525,18 @@ function doLogin() {
 function doLogout() {
     try {
         sessionStorage.removeItem('pmo_logged_in');
+        sessionStorage.removeItem('pmo_team');
+        currentTeam = null;
         const loginScreen = document.getElementById('loginScreen');
         if (loginScreen) {
             loginScreen.style.display = 'flex';
             const loginAvatar = document.getElementById('loginMarcusAvatar');
             if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
         }
-        const loginUser = document.getElementById('loginUser');
+        const loginTeam = document.getElementById('loginTeam');
         const loginPass = document.getElementById('loginPass');
         const loginError = document.getElementById('loginError');
-        if (loginUser) loginUser.value = '';
+        if (loginTeam) loginTeam.value = '';
         if (loginPass) loginPass.value = '';
         if (loginError) loginError.style.display = 'none';
     } catch(e) {
