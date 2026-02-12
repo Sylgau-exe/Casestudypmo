@@ -312,6 +312,28 @@
             .workflow-arrow-left { transform: rotate(90deg); }
             .workflow-side-input { width: 100%; }
         }
+        /* ─── CASE BRIEF ─── */
+        .case-section { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .case-section-title { font-family:'Fraunces',serif; font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        .case-initiative { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0.85rem; margin-bottom:0.6rem; }
+        .case-initiative-name { font-weight:700; font-size:0.9rem; color:var(--primary); }
+        .case-initiative-detail { font-size:0.78rem; color:var(--text-dim); margin-top:0.3rem; line-height:1.5; }
+        .case-resource-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:0.6rem; }
+        .case-resource-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.75rem; }
+        .case-locked { background:#fef3c7; border-color:#fbbf24; }
+        .case-question { background:var(--bg); border-left:3px solid var(--primary); border-radius:0 8px 8px 0; padding:0.6rem 0.85rem; margin-bottom:0.5rem; font-size:0.82rem; }
+        .case-tag { display:inline-block; padding:2px 8px; border-radius:12px; font-size:0.68rem; font-weight:600; }
+        .case-tag-grow { background:#dbeafe; color:#1e40af; }
+        .case-tag-protect { background:#fce7f3; color:#9d174d; }
+        .case-tag-locked { background:#fef3c7; color:#92400e; }
+
+        /* ─── FLOATING CASE BUTTON & SLIDE PANEL ─── */
+        .case-float-btn { position:fixed; bottom:5rem; right:1.5rem; z-index:9998; background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; border:none; border-radius:50px; padding:0.65rem 1.1rem; font-size:0.82rem; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(30,64,175,0.35); transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; }
+        .case-float-btn:hover { transform:scale(1.05); box-shadow:0 6px 20px rgba(30,64,175,0.45); }
+        .case-slide-panel { position:fixed; top:0; right:-520px; width:500px; max-width:90vw; height:100vh; background:var(--bg); border-left:1px solid var(--border); z-index:99998; transition:right 0.3s ease; overflow-y:auto; padding:1rem 1.25rem 2rem; box-shadow:-5px 0 25px rgba(0,0,0,0.15); }
+        .case-slide-panel.open { right:0; }
+        .case-slide-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:99997; display:none; }
+        .case-slide-overlay.open { display:block; }
     </style>
 </head>
 <body>
@@ -381,7 +403,8 @@
 
 <!-- ═══ NAV ═══ -->
 <nav class="nav-tabs no-print" id="navTabs">
-    <button class="nav-tab active" data-tab="workflow"><span class="nav-tab-icon">🔄</span>Process</button>
+    <button class="nav-tab active" data-tab="casebrief"><span class="nav-tab-icon">📖</span>Case Brief</button>
+    <button class="nav-tab" data-tab="workflow"><span class="nav-tab-icon">🔄</span>Process</button>
     <button class="nav-tab" data-tab="triage"><span class="nav-tab-icon">🎯</span>Triage</button>
     <button class="nav-tab" data-tab="portfolio"><span class="nav-tab-icon">📊</span>Portfolio</button>
     <button class="nav-tab" data-tab="scoring"><span class="nav-tab-icon">⭐</span>Scoring</button>
@@ -395,8 +418,177 @@
 <!-- ═══ CONTENT ═══ -->
 <div class="app-content">
 
+<!-- ─── CASE BRIEF PAGE ─── -->
+<div class="page active" id="page-casebrief">
+    <div style="text-align:center;margin-bottom:1.5rem">
+        <h2 style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700">📖 NovaTech Robotics — Case Brief</h2>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.3rem">YCBS 288 — Strategic Project Leadership</p>
+    </div>
+
+    <!-- Company Overview -->
+    <div class="case-section">
+        <div class="case-section-title">🏭 Company Overview</div>
+        <div style="font-size:0.85rem;color:var(--text);line-height:1.7">
+            <b>NovaTech Robotics Inc.</b> is a mid-size industrial robotics manufacturer headquartered in Sherbrooke, Quebec. Founded in 2008, the company designs, builds, and services robotic systems for food processing, automotive parts handling, and warehouse logistics.<br><br>
+            <b>127 employees</b> · <b>$42M revenue</b> · <b>3 product lines</b>: NR-200 (food), NR-300 (auto), NR-400 (warehouse, in development)<br><br>
+            <b>CEO:</b> Isabelle Chen &nbsp;|&nbsp; <b>VP Engineering:</b> Thomas Bergeron &nbsp;|&nbsp; <b>VP Operations:</b> Fatima Alvarez &nbsp;|&nbsp; <b>VP Sales:</b> Marc-André Dupont &nbsp;|&nbsp; <b>CFO:</b> Jean-François Morin
+        </div>
+    </div>
+
+    <!-- Strategic Context -->
+    <div class="case-section">
+        <div class="case-section-title">🎯 Strategic Context — Two Themes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:10px;padding:1rem">
+                <div style="font-weight:700;color:#1e40af;margin-bottom:0.4rem;font-size:0.95rem">🚀 THEME 1: GROW</div>
+                <div style="font-size:0.82rem;color:#1e3a5f;line-height:1.6">
+                    Launch NR-400 warehouse robot into new logistics market. First-mover advantage window closing — competitor RoboFlow announced similar product for Q4 2026.
+                </div>
+            </div>
+            <div style="background:#fce7f3;border:1px solid #f9a8d4;border-radius:10px;padding:1rem">
+                <div style="font-weight:700;color:#9d174d;margin-bottom:0.4rem;font-size:0.95rem">🛡️ THEME 2: PROTECT</div>
+                <div style="font-size:0.82rem;color:#831843;line-height:1.6">
+                    Safeguard existing NR-200 and NR-300 revenue base. Key customers signaling dissatisfaction with support response times. ISO certification at risk.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects In Progress -->
+    <div class="case-section">
+        <div class="case-section-title">🔒 Projects Already In Progress (Capacity Locked)</div>
+        <div class="case-initiative case-locked">
+            <div class="case-initiative-name">NR-300 Firmware v3.2 Update <span class="case-tag case-tag-locked">🔒 LOCKED</span></div>
+            <div class="case-initiative-detail">
+                <b>PM:</b> Raj Patel &nbsp;|&nbsp; <b>Timeline:</b> Nov 2025 → Apr 2026 &nbsp;|&nbsp; <b>Sponsor:</b> Thomas Bergeron<br>
+                Critical firmware update — two major customers (FoodCo, AutoParts Inc.) contractually waiting for this before placing <b>$3.2M in repeat orders</b>.<br>
+                <b>Locked resources:</b> Raj Patel 20-30h/month (Jan-Apr), Line Bhatt 5-10h/month (Jan-Apr)
+            </div>
+        </div>
+        <div class="case-initiative case-locked">
+            <div class="case-initiative-name">ISO 9001:2015 Recertification <span class="case-tag case-tag-locked">🔒 LOCKED</span></div>
+            <div class="case-initiative-detail">
+                <b>PM:</b> Amir Hassan &nbsp;|&nbsp; <b>Timeline:</b> Oct 2025 → Mar 2026 &nbsp;|&nbsp; <b>Sponsor:</b> Isabelle Chen<br>
+                Audit scheduled <b>March 17-21</b>. Losing certification disqualifies NovaTech from automotive contracts = <b>28% of revenue at risk</b>.<br>
+                <b>Locked resources:</b> Amir Hassan 25-35h/month (Jan-Mar), Yuki Tanaka 10-20h/month (Jan-Mar)
+            </div>
+        </div>
+        <div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:0.75rem;margin-top:0.5rem;font-size:0.82rem;color:#92400e">
+            ⚠️ <b>Red Alert:</b> When you see "Raj Patel: 60h/month available" in Resources, remember that 30h are already committed to Firmware. His <i>net</i> availability for new projects is only 30h/month through April.
+        </div>
+    </div>
+
+    <!-- 6 New Initiatives -->
+    <div class="case-section">
+        <div class="case-section-title">📋 Six New Initiatives Requiring Triage (January 2026)</div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">1. NR-400 Warehouse Robot Development <span class="case-tag case-tag-grow">GROW</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Thomas Bergeron &nbsp;|&nbsp; <b>Budget:</b> $2.1M &nbsp;|&nbsp; <b>Duration:</b> 18 months<br>
+                Full development of next-gen warehouse robot. MegaLogistics LOI for pilot ($1.8M). RoboFlow competitor targeting Q4 2026 launch. Requires Dominique (mechanical), Raj (software), Yuki (manufacturing), Steve (IT), Line (product).
+            </div>
+        </div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">2. NR-200 Safety Compliance Retrofit <span class="case-tag case-tag-protect">PROTECT</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Fatima Alvarez &nbsp;|&nbsp; <b>Budget:</b> $380K &nbsp;|&nbsp; <b>Duration:</b> 6 months<br>
+                New CSA Z434 safety standards effective January 2027. 47 units in field need retrofit. Non-compliance = potential forced recall + liability. Requires Dominique (mechanical), Yuki (manufacturing), Amir (quality).
+            </div>
+        </div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">3. MegaLogistics Pilot Contract <span class="case-tag case-tag-grow">GROW</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Marc-André Dupont &nbsp;|&nbsp; <b>Budget:</b> $450K &nbsp;|&nbsp; <b>Duration:</b> 8 months<br>
+                First customer deployment of NR-400. Letter of intent for $1.8M pilot. Requires 2 functioning NR-400 prototypes. Depends on NR-400 development progress. Requires Dominique, Yuki, Steve.
+            </div>
+        </div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">4. ERP System Migration <span class="case-tag case-tag-protect">PROTECT</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Jean-François Morin &nbsp;|&nbsp; <b>Budget:</b> $520K &nbsp;|&nbsp; <b>Duration:</b> 12 months<br>
+                Legacy system end-of-life December 2026. Two outages in 2025 cost $180K in lost productivity. Requires Steve Moreau heavily (40-60h/month) plus every department for data migration and testing.
+            </div>
+        </div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">5. Customer Service Portal <span class="case-tag case-tag-protect">PROTECT</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Marc-André Dupont &nbsp;|&nbsp; <b>Budget:</b> $280K &nbsp;|&nbsp; <b>Duration:</b> 9 months<br>
+                Customer satisfaction dropped from 4.2 to 3.6/5. Three key accounts threatened to evaluate competitors. Self-service portal for ticket tracking, parts ordering, maintenance scheduling. Requires Steve (IT), Line (product).
+            </div>
+        </div>
+        
+        <div class="case-initiative">
+            <div class="case-initiative-name">6. Production Line Automation Upgrade <span class="case-tag case-tag-grow">GROW</span></div>
+            <div class="case-initiative-detail">
+                <b>Sponsor:</b> Fatima Alvarez &nbsp;|&nbsp; <b>Budget:</b> $750K &nbsp;|&nbsp; <b>Duration:</b> 10 months<br>
+                Upgrade assembly line to increase throughput by 35%. Required to meet NR-400 production volumes. Current line cannot produce both NR-200/300 AND NR-400. Requires Dominique (mechanical), Yuki (manufacturing), Steve (IT).
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources -->
+    <div class="case-section">
+        <div class="case-section-title">👥 Available Resources (Hours/Month for Projects)</div>
+        <div class="case-resource-grid">
+            <div class="case-resource-card">
+                <div style="font-weight:700;font-size:0.88rem">Dominique Lafleur</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Senior Mechanical Engineer &nbsp;|&nbsp; <b>80h/month</b></div>
+                <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.2rem">Summer: 40h (Jun-Jul), 60h (Aug)</div>
+            </div>
+            <div class="case-resource-card" style="border-color:#fbbf24;background:#fffbeb">
+                <div style="font-weight:700;font-size:0.88rem">Raj Patel 🔒</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Software & Controls Lead &nbsp;|&nbsp; <b>60h/month</b></div>
+                <div style="font-size:0.75rem;color:#92400e;margin-top:0.2rem">⚠️ 30h locked to Firmware (Jan-Apr) → net 30h</div>
+            </div>
+            <div class="case-resource-card" style="border-color:#fbbf24;background:#fffbeb">
+                <div style="font-weight:700;font-size:0.88rem">Yuki Tanaka 🔒</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Manufacturing Engineer &nbsp;|&nbsp; <b>60h/month</b></div>
+                <div style="font-size:0.75rem;color:#92400e;margin-top:0.2rem">⚠️ 10-20h locked to ISO (Jan-Mar) → net 40-50h</div>
+            </div>
+            <div class="case-resource-card" style="border-color:#fbbf24;background:#fffbeb">
+                <div style="font-weight:700;font-size:0.88rem">Amir Hassan 🔒</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Quality Engineer &nbsp;|&nbsp; <b>40h/month</b></div>
+                <div style="font-size:0.75rem;color:#92400e;margin-top:0.2rem">⚠️ 25-35h locked to ISO (Jan-Mar) → net 5-15h</div>
+            </div>
+            <div class="case-resource-card">
+                <div style="font-weight:700;font-size:0.88rem">Steve Moreau</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">IT Systems Architect &nbsp;|&nbsp; <b>80h/month</b></div>
+                <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.2rem">Summer: 40-60h (Jun-Aug). Heaviest demand resource.</div>
+            </div>
+            <div class="case-resource-card" style="border-color:#fbbf24;background:#fffbeb">
+                <div style="font-weight:700;font-size:0.88rem">Line Bhatt 🔒</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Product Manager &nbsp;|&nbsp; <b>60h/month</b></div>
+                <div style="font-size:0.75rem;color:#92400e;margin-top:0.2rem">⚠️ 5-10h locked to Firmware (Jan-Apr) → net 50-55h</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Questions -->
+    <div class="case-section">
+        <div class="case-section-title">❓ Seven Key Questions to Answer</div>
+        <div class="case-question"><b>Q1 — Triage:</b> Which initiatives qualify as PMO projects vs. operations? Justify each.</div>
+        <div class="case-question"><b>Q2 — Bottleneck ID:</b> Top 3 bottleneck resources + hours of overallocation if all projects run simultaneously.</div>
+        <div class="case-question"><b>Q3 — Hiring Scenario:</b> If the CEO insists ALL projects complete in 2026, what hires are needed (role + quantity)?</div>
+        <div class="case-question"><b>Q4 — Phased Rollout:</b> If NO new hires until Q3, propose a month-by-month rollout starting January 2026.</div>
+        <div class="case-question"><b>Q5 — Strategic Trade-off:</b> Risk of deferring NR-400 (growth) vs. NR-200 + MegaLogistics (protect)?</div>
+        <div class="case-question"><b>Q6 — Tightest Month:</b> Which month(s) are tightest? What happens to operations if resources are overloaded?</div>
+        <div class="case-question"><b>Q7 — Creative Solution:</b> One creative solution to increase throughput without hiring. Explain trade-offs.</div>
+    </div>
+
+    <div style="text-align:center;margin-top:1rem">
+        <button class="btn" style="background:var(--primary);color:white;padding:0.75rem 2rem;font-size:1rem;border-radius:10px" onclick="goTab('triage')">
+            🚀 Start the PMO Process →
+        </button>
+    </div>
+</div>
+
 <!-- ─── WORKFLOW PAGE ─── -->
-<div class="page active" id="page-workflow">
+<div class="page" id="page-workflow">
     <div style="text-align:center;margin-bottom:1.5rem">
         <h2 style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700">PMO Process — Pre-Gate 0</h2>
         <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.3rem">From idea capture to executive approval</p>
@@ -909,6 +1101,8 @@ function goTab(tabId) {
     document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
     document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + tabId));
     if (typeof currentTab !== 'undefined') currentTab = tabId;
+    const cfb = document.getElementById('caseFloatBtn');
+    if (cfb) cfb.style.display = tabId === 'casebrief' ? 'none' : 'flex';
     renderAll();
 }
 
@@ -3223,12 +3417,71 @@ init();
 // Add floating MARCUS button
 document.body.insertAdjacentHTML('beforeend', `
 <div id="marcusFloating" style="position:fixed;bottom:24px;right:24px;z-index:9999">
-    <button onclick="openMarcus()" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6366f1);border:3px solid white;cursor:pointer;box-shadow:0 4px 20px rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;padding:0;overflow:hidden" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 25px rgba(139,92,246,0.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(139,92,246,0.4)'" title="MARCUS — Assistant IA">
+    <button onclick="openMarcus()" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6366f1);border:3px solid white;cursor:pointer;box-shadow:0 4px 20px rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;padding:0;overflow:hidden" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 25px rgba(139,92,246,0.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(139,92,246,0.4)'" title="MARCUS — AI Assistant">
         <img src="${MARCUS_AVATAR}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
     </button>
     <div style="position:absolute;bottom:-6px;right:-6px;background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;font-size:0.55rem;font-weight:700;padding:3px 8px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">MARCUS</div>
 </div>
 `);
-</script>
+
+// Add floating Case Brief button + slide-out panel
+document.body.insertAdjacentHTML('beforeend', `
+<button class="case-float-btn no-print" onclick="toggleCasePanel()" id="caseFloatBtn">📖 Case</button>
+<div class="case-slide-overlay no-print" id="caseOverlay" onclick="toggleCasePanel()"></div>
+<div class="case-slide-panel no-print" id="casePanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid var(--border)">
+        <div style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700">📖 Quick Reference</div>
+        <button onclick="toggleCasePanel()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-dim);padding:0.25rem">✕</button>
+    </div>
+
+    <div style="font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem">🔒 LOCKED CAPACITY</div>
+    <div style="font-size:0.78rem;line-height:1.6;margin-bottom:1rem;background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:0.65rem">
+        <b>Firmware v3.2:</b> Raj 30h + Line 10h/month (Jan-Apr)<br>
+        <b>ISO 9001:</b> Amir 25-35h + Yuki 10-20h/month (Jan-Mar)
+    </div>
+
+    <div style="font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem">📋 6 INITIATIVES TO TRIAGE</div>
+    <div style="font-size:0.75rem;line-height:1.8;margin-bottom:1rem">
+        <div><span class="case-tag case-tag-grow">GROW</span> <b>1.</b> NR-400 Development — $2.1M, 18mo, all resources</div>
+        <div><span class="case-tag case-tag-protect">PROTECT</span> <b>2.</b> NR-200 Safety Retrofit — $380K, 6mo, Dominique+Yuki+Amir</div>
+        <div><span class="case-tag case-tag-grow">GROW</span> <b>3.</b> MegaLogistics Pilot — $450K, 8mo, depends on NR-400</div>
+        <div><span class="case-tag case-tag-protect">PROTECT</span> <b>4.</b> ERP Migration — $520K, 12mo, Steve 40-60h/mo</div>
+        <div><span class="case-tag case-tag-protect">PROTECT</span> <b>5.</b> Customer Portal — $280K, 9mo, Steve+Line</div>
+        <div><span class="case-tag case-tag-grow">GROW</span> <b>6.</b> Production Line Upgrade — $750K, 10mo, Dominique+Yuki+Steve</div>
+    </div>
+
+    <div style="font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem">👥 NET RESOURCE AVAILABILITY</div>
+    <div style="font-size:0.75rem;line-height:1.7;margin-bottom:1rem">
+        <div><b>Dominique Lafleur</b> — Mechanical — 80h/mo (40h summer)</div>
+        <div><b>Raj Patel</b> — Software — 60h/mo <span style="color:#dc2626">→ net 30h Jan-Apr</span></div>
+        <div><b>Yuki Tanaka</b> — Manufacturing — 60h/mo <span style="color:#dc2626">→ net 40-50h Jan-Mar</span></div>
+        <div><b>Amir Hassan</b> — Quality — 40h/mo <span style="color:#dc2626">→ net 5-15h Jan-Mar</span></div>
+        <div><b>Steve Moreau</b> — IT Systems — 80h/mo (40h summer)</div>
+        <div><b>Line Bhatt</b> — Product Mgmt — 60h/mo <span style="color:#dc2626">→ net 50-55h Jan-Apr</span></div>
+    </div>
+
+    <div style="font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem">❓ 7 QUESTIONS TO ANSWER</div>
+    <div style="font-size:0.75rem;line-height:1.7">
+        <div><b>Q1</b> Triage classification</div>
+        <div><b>Q2</b> Top 3 bottleneck resources</div>
+        <div><b>Q3</b> Hiring scenario (all projects)</div>
+        <div><b>Q4</b> Phased rollout (no hires)</div>
+        <div><b>Q5</b> Grow vs. Protect trade-off</div>
+        <div><b>Q6</b> Tightest month(s)</div>
+        <div><b>Q7</b> Creative throughput solution</div>
+    </div>
+
+    <div style="text-align:center;margin-top:1.25rem;padding-top:0.75rem;border-top:1px solid var(--border)">
+        <button class="btn" style="font-size:0.82rem;padding:0.5rem 1.25rem" onclick="goTab('casebrief');toggleCasePanel()">📖 Open Full Case Brief</button>
+    </div>
+</div>
+`);
+
+function toggleCasePanel() {
+    document.getElementById('casePanel').classList.toggle('open');
+    document.getElementById('caseOverlay').classList.toggle('open');
+}
+// Hide float btn on Case Brief tab (default)
+document.getElementById('caseFloatBtn').style.display = 'none';</script>
 </body>
 </html>
