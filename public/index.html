@@ -334,6 +334,25 @@
         .case-slide-panel.open { right:0; }
         .case-slide-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:99997; display:none; }
         .case-slide-overlay.open { display:block; }
+
+        /* ─── AUTH TABS ─── */
+        .auth-tab { background:#f7fafc; color:#718096; }
+        .auth-tab.active { background:#3182ce; color:white; }
+
+        /* ─── ADMIN DASHBOARD ─── */
+        .admin-team-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .admin-team-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; }
+        .admin-team-name { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; }
+        .admin-user-row { display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:var(--bg); border-radius:8px; margin-bottom:0.4rem; font-size:0.82rem; }
+        .admin-input { padding:0.45rem 0.65rem; border:2px solid var(--border); border-radius:6px; font-size:0.82rem; }
+        .admin-btn { padding:0.4rem 0.8rem; border:none; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer; }
+        .admin-btn-primary { background:var(--primary); color:white; }
+        .admin-btn-danger { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+        .admin-btn-success { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+        .admin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+        .admin-stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; }
+        .admin-stat-value { font-size:1.8rem; font-weight:700; color:var(--primary); }
+        .admin-stat-label { font-size:0.78rem; color:var(--text-dim); margin-top:0.25rem; }
     </style>
 </head>
 <body>
@@ -360,28 +379,83 @@
             </div>
         </div>
         
-        <!-- Login Form -->
-        <div style="flex:1;min-width:280px;max-width:380px;background:white;border-radius:16px;padding:2.5rem;box-shadow:0 25px 50px rgba(0,0,0,0.3)">
-            <div style="text-align:center;margin-bottom:2rem">
+        <!-- Login/Register Form -->
+        <div style="flex:1;min-width:280px;max-width:420px;background:white;border-radius:16px;padding:2.5rem;box-shadow:0 25px 50px rgba(0,0,0,0.3)">
+            <div style="text-align:center;margin-bottom:1.5rem">
                 <div style="font-size:3rem;margin-bottom:0.5rem">🏗️</div>
                 <h1 style="font-family:'Fraunces',serif;font-size:1.5rem;color:#1a365d;margin:0">PMO Process</h1>
-                <p style="color:#718096;font-size:0.85rem;margin:0.5rem 0 0">NovaTech Robotics — PMO Portfolio</p>
+                <p style="color:#718096;font-size:0.85rem;margin:0.5rem 0 0">NovaTech Robotics — YCBS 288</p>
             </div>
-            <div id="loginError" style="display:none;background:#fed7d7;color:#c53030;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;text-align:center"></div>
-            <div style="margin-bottom:1rem">
-                <label style="display:block;font-size:0.8rem;font-weight:600;color:#4a5568;margin-bottom:0.4rem">Select Your Team</label>
-                <select id="loginTeam" style="width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem;box-sizing:border-box;background:white;cursor:pointer">
-                    <option value="">— Choose your team —</option>
-                </select>
+
+            <!-- Mode Tabs -->
+            <div style="display:flex;border-radius:8px;overflow:hidden;margin-bottom:1.25rem;border:2px solid #e2e8f0" id="authTabs">
+                <button onclick="setAuthMode('login')" class="auth-tab active" id="tabLogin" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Login</button>
+                <button onclick="setAuthMode('register')" class="auth-tab" id="tabRegister" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Register</button>
+                <button onclick="setAuthMode('admin')" class="auth-tab" id="tabAdmin" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Instructor</button>
             </div>
-            <div style="margin-bottom:1.5rem">
-                <label style="display:block;font-size:0.8rem;font-weight:600;color:#4a5568;margin-bottom:0.4rem">Password</label>
-                <input type="password" id="loginPass" style="width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem;box-sizing:border-box" placeholder="Enter password" onkeypress="if(event.key==='Enter')doLogin()">
+
+            <div id="authError" style="display:none;background:#fed7d7;color:#c53030;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.82rem;text-align:center"></div>
+            <div id="authSuccess" style="display:none;background:#c6f6d5;color:#276749;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.82rem;text-align:center"></div>
+
+            <!-- ─── LOGIN FORM ─── -->
+            <div id="formLogin">
+                <div style="margin-bottom:0.85rem">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Email</label>
+                    <input type="email" id="loginEmail" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="your.email@university.edu" onkeypress="if(event.key==='Enter')doStudentLogin()">
+                </div>
+                <div style="margin-bottom:1.25rem">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Team Password</label>
+                    <input type="password" id="loginPass" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="Enter your team password" onkeypress="if(event.key==='Enter')doStudentLogin()">
+                </div>
+                <button onclick="doStudentLogin()" style="width:100%;padding:0.75rem;background:linear-gradient(135deg,#3182ce,#2b6cb0);color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
+                    Log in
+                </button>
+                <p style="text-align:center;margin:1rem 0 0;font-size:0.78rem;color:#a0aec0">Don't have an account? Click <b>Register</b> above.</p>
             </div>
-            <button onclick="doLogin()" style="width:100%;padding:0.85rem;background:linear-gradient(135deg,#3182ce,#2b6cb0);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                Log in
-            </button>
-            <p style="text-align:center;margin:1.5rem 0 0;font-size:0.75rem;color:#a0aec0">© 2026 Sylvain PMO Consulting</p>
+
+            <!-- ─── REGISTER FORM ─── -->
+            <div id="formRegister" style="display:none">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.85rem">
+                    <div>
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">First Name</label>
+                        <input type="text" id="regFirst" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="First name">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Last Name</label>
+                        <input type="text" id="regLast" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="Last name">
+                    </div>
+                </div>
+                <div style="margin-bottom:0.85rem">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Email</label>
+                    <input type="email" id="regEmail" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="your.email@university.edu">
+                </div>
+                <div style="margin-bottom:1.25rem">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Select Your Team</label>
+                    <select id="regTeam" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box;background:white;cursor:pointer">
+                        <option value="">— Choose your team —</option>
+                    </select>
+                </div>
+                <button onclick="doRegister()" style="width:100%;padding:0.75rem;background:linear-gradient(135deg,#38a169,#2f855a);color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
+                    Create Account
+                </button>
+                <p style="text-align:center;margin:1rem 0 0;font-size:0.78rem;color:#a0aec0">Your instructor will give you the team password to log in.</p>
+            </div>
+
+            <!-- ─── ADMIN FORM ─── -->
+            <div id="formAdmin" style="display:none">
+                <div style="background:#ebf8ff;border:1px solid #90cdf4;border-radius:8px;padding:0.75rem;margin-bottom:1rem;font-size:0.78rem;color:#2c5282">
+                    🎓 Instructor access to manage teams, passwords, and students.
+                </div>
+                <div style="margin-bottom:1.25rem">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Instructor Password</label>
+                    <input type="password" id="adminPass" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="Enter admin password" onkeypress="if(event.key==='Enter')doAdminLogin()">
+                </div>
+                <button onclick="doAdminLogin()" style="width:100%;padding:0.75rem;background:linear-gradient(135deg,#805ad5,#6b46c1);color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
+                    Access Dashboard
+                </button>
+            </div>
+
+            <p style="text-align:center;margin:1.25rem 0 0;font-size:0.72rem;color:#a0aec0">© 2026 Sylvain PMO Consulting</p>
         </div>
     </div>
 </div>
@@ -397,6 +471,7 @@
     </div>
     <div class="app-header-right">
         <span style="background:linear-gradient(135deg,#3182ce,#2b6cb0);color:white;padding:0.35rem 0.85rem;border-radius:20px;font-size:0.82rem;font-weight:700;letter-spacing:0.3px" id="headerTeamName">—</span>
+        <span style="font-size:0.82rem;color:var(--text-dim);font-weight:500" id="headerUserName"></span>
         <span class="header-badge" id="headerStats">—</span>
         <button class="header-btn" onclick="exportData()">💾 Export</button>
         <label class="header-btn" style="cursor:pointer">📂 Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
@@ -416,6 +491,7 @@
     <button class="nav-tab" data-tab="recommend"><span class="nav-tab-icon">🚦</span>Recommendation</button>
     <button class="nav-tab" data-tab="analysis"><span class="nav-tab-icon">🔍</span>Analysis</button>
     <button class="nav-tab" data-tab="gate0"><span class="nav-tab-icon">📄</span>Gate 0</button>
+    <button class="nav-tab" data-tab="admin" id="navAdminTab" style="display:none;background:#f5f3ff"><span class="nav-tab-icon">🎓</span>Admin</button>
 </nav>
 
 <!-- ═══ CONTENT ═══ -->
@@ -732,6 +808,16 @@
     <div id="gate0Content"></div>
 </div>
 
+<!-- ─── ADMIN DASHBOARD PAGE ─── -->
+<div class="page" id="page-admin">
+    <div style="text-align:center;margin-bottom:1.5rem">
+        <h2 style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700">🎓 Instructor Dashboard</h2>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.3rem">Manage teams, passwords, and students</p>
+    </div>
+    <div class="admin-stats" id="adminStats"></div>
+    <div id="adminTeamsList" style="font-size:0.9rem;color:var(--text-dim);text-align:center;padding:2rem">Loading...</div>
+</div>
+
 </div><!-- /app-content -->
 
 <!-- ═══ CHARTER MODAL ═══ -->
@@ -970,7 +1056,7 @@ async function saveState() {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-User-Name': TEAMS[currentTeam] || 'Anonymous'
+                'X-User-Name': currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Anonymous'
             },
             body: JSON.stringify({
                 projects: STATE.projects,
@@ -2937,7 +3023,7 @@ async function runMarcusAnalysis(mode) {
     // Build prompts based on mode
     let systemPrompt, userPrompt;
     
-    const teamName = TEAMS[currentTeam] || 'Unknown Team';
+    const teamName = (currentUser && currentUser.teamName) || currentTeam || 'Unknown Team';
     
     const CASE_CONTEXT = `
 TEAM: ${teamName}
@@ -3439,33 +3525,303 @@ function importData(e) {
     r.onload = ev => {
         try { const d = JSON.parse(ev.target.result);
             if(d.projects) { STATE.projects=d.projects; STATE.maxCapacity=d.maxCapacity||70; STATE.weights=d.weights||{...DEFAULT_WEIGHTS}; STATE.criteria=d.criteria||JSON.parse(JSON.stringify(DEFAULT_CRITERIA)); STATE.people=d.people||JSON.parse(JSON.stringify(DEFAULT_PEOPLE)); STATE.assignments=d.assignments||JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS)); saveState(); renderAll(); notify('Data imported'); }
-            else alert('Format invalide');
+            else alert('Invalid format');
         } catch(err) { alert('Error: '+err.message); }
     };
     r.readAsText(f);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// LOGIN / AUTHENTICATION
+// LOGIN / AUTHENTICATION / REGISTRATION / ADMIN
 // ═══════════════════════════════════════════════════════════════
-const AUTH_CREDENTIALS = {
-    password: 'novatech2026'
-};
-
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  TEAM CONFIGURATION — Edit team names here before class     ║
-// ╚══════════════════════════════════════════════════════════════╝
-const TEAMS = {
-    'team-1': 'Alpha',
-    'team-2': 'Bravo',
-    'team-3': 'Charlie',
-    'team-4': 'Delta',
-    'team-5': 'Echo'
-};
-// ════════════════════════════════════════════════════════════════
-
 let currentTeam = sessionStorage.getItem('pmo_team') || null;
+let currentUser = JSON.parse(sessionStorage.getItem('pmo_user') || 'null');
+let isAdmin = sessionStorage.getItem('pmo_admin') === 'true';
+let adminToken = sessionStorage.getItem('pmo_admin_token') || null;
 
+function setAuthMode(mode) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+    document.getElementById('formLogin').style.display = mode === 'login' ? 'block' : 'none';
+    document.getElementById('formRegister').style.display = mode === 'register' ? 'block' : 'none';
+    document.getElementById('formAdmin').style.display = mode === 'admin' ? 'block' : 'none';
+    document.getElementById('authError').style.display = 'none';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+
+function showAuthError(msg) {
+    const el = document.getElementById('authError');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+function showAuthSuccess(msg) {
+    const el = document.getElementById('authSuccess');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authError').style.display = 'none';
+}
+
+// ─── STUDENT LOGIN ───
+async function doStudentLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if (!email || !pass) return showAuthError('Email and password are required');
+    
+    try {
+        const resp = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'login', email, password: pass })
+        });
+        const data = await resp.json();
+        if (!resp.ok) return showAuthError(data.error);
+        
+        // Success — store session
+        currentTeam = data.user.teamId;
+        currentUser = data.user;
+        sessionStorage.setItem('pmo_logged_in', 'true');
+        sessionStorage.setItem('pmo_team', data.user.teamId);
+        sessionStorage.setItem('pmo_user', JSON.stringify(data.user));
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('headerTeamName').textContent = data.user.teamName;
+        document.getElementById('headerUserName').textContent = data.user.firstName;
+        document.getElementById('navAdminTab').style.display = 'none';
+        init();
+    } catch(e) {
+        showAuthError('Connection error. Try again.');
+    }
+}
+
+// ─── STUDENT REGISTRATION ───
+async function doRegister() {
+    const firstName = document.getElementById('regFirst').value.trim();
+    const lastName = document.getElementById('regLast').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const teamId = document.getElementById('regTeam').value;
+    
+    if (!firstName || !lastName || !email || !teamId) return showAuthError('All fields are required');
+    if (!email.includes('@')) return showAuthError('Please enter a valid email');
+    
+    try {
+        const resp = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'register', firstName, lastName, email, teamId })
+        });
+        const data = await resp.json();
+        if (!resp.ok) return showAuthError(data.error);
+        
+        showAuthSuccess('Account created! Switch to Login to sign in with your team password.');
+        // Clear register form
+        document.getElementById('regFirst').value = '';
+        document.getElementById('regLast').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regTeam').value = '';
+    } catch(e) {
+        showAuthError('Connection error. Try again.');
+    }
+}
+
+// ─── ADMIN LOGIN ───
+async function doAdminLogin() {
+    const pass = document.getElementById('adminPass').value;
+    if (!pass) return showAuthError('Password required');
+    
+    try {
+        const resp = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'admin-login', password: pass })
+        });
+        const data = await resp.json();
+        if (!resp.ok) return showAuthError(data.error);
+        
+        isAdmin = true;
+        adminToken = pass;
+        sessionStorage.setItem('pmo_logged_in', 'true');
+        sessionStorage.setItem('pmo_admin', 'true');
+        sessionStorage.setItem('pmo_admin_token', pass);
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('headerTeamName').textContent = '🎓 Instructor';
+        document.getElementById('headerUserName').textContent = 'Admin';
+        document.getElementById('navAdminTab').style.display = '';
+        goTab('admin');
+        loadAdminDashboard();
+    } catch(e) {
+        showAuthError('Connection error. Try again.');
+    }
+}
+
+// ─── LOAD TEAMS FOR REGISTER DROPDOWN ───
+async function loadTeamsForRegister() {
+    try {
+        const resp = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'list-teams' })
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            const select = document.getElementById('regTeam');
+            if (select) {
+                select.innerHTML = '<option value="">— Choose your team —</option>';
+                data.teams.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.tenant_id;
+                    opt.textContent = t.team_display_name || t.tenant_id;
+                    select.appendChild(opt);
+                });
+                if (data.teams.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = 'No teams activated yet — ask your instructor';
+                    opt.disabled = true;
+                    select.appendChild(opt);
+                }
+            }
+        }
+    } catch(e) {
+        console.log('Could not load teams:', e.message);
+    }
+}
+
+// ─── ADMIN DASHBOARD ───
+async function loadAdminDashboard() {
+    if (!adminToken) return;
+    
+    try {
+        const resp = await fetch('/api/admin', {
+            headers: { 'X-Admin-Token': adminToken }
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        
+        const totalUsers = data.users.length;
+        const activeTeams = data.teams.filter(t => t.team_password).length;
+        
+        // Stats
+        document.getElementById('adminStats').innerHTML = `
+            <div class="admin-stat-card">
+                <div class="admin-stat-value">${data.teams.length}</div>
+                <div class="admin-stat-label">Total Teams</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="admin-stat-value">${activeTeams}</div>
+                <div class="admin-stat-label">Activated (with password)</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="admin-stat-value">${totalUsers}</div>
+                <div class="admin-stat-label">Registered Students</div>
+            </div>
+        `;
+        
+        // Team cards
+        let html = '';
+        data.teams.forEach(team => {
+            const teamUsers = data.users.filter(u => u.team_id === team.tenant_id);
+            const hasPassword = !!team.team_password;
+            
+            html += `<div class="admin-team-card">
+                <div class="admin-team-header">
+                    <div>
+                        <span class="admin-team-name">${team.team_display_name || team.tenant_id}</span>
+                        <span style="font-size:0.75rem;color:var(--text-dim);margin-left:0.5rem">${team.tenant_id}</span>
+                        <span style="font-size:0.7rem;padding:2px 8px;border-radius:10px;margin-left:0.5rem;${hasPassword ? 'background:#c6f6d5;color:#276749' : 'background:#fed7d7;color:#c53030'}">${hasPassword ? '✓ Active' : '✗ No password'}</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-dim)">${teamUsers.length} member${teamUsers.length !== 1 ? 's' : ''} · ${team.project_count} projects</div>
+                </div>
+                
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap">
+                    <input type="text" class="admin-input" placeholder="Team display name" value="${team.team_display_name || ''}" id="name-${team.tenant_id}" style="flex:1;min-width:120px">
+                    <button class="admin-btn admin-btn-primary" onclick="adminSetName('${team.tenant_id}')">Rename</button>
+                    <input type="text" class="admin-input" placeholder="Set password" value="${team.team_password || ''}" id="pwd-${team.tenant_id}" style="flex:1;min-width:100px">
+                    <button class="admin-btn admin-btn-primary" onclick="adminSetPassword('${team.tenant_id}')">Set Password</button>
+                </div>
+                
+                <div style="margin-bottom:0.5rem">
+                    ${teamUsers.length === 0 ? '<div style="font-size:0.82rem;color:var(--text-dim);padding:0.5rem;text-align:center">No students registered yet</div>' : 
+                    teamUsers.map(u => `
+                        <div class="admin-user-row">
+                            <div><b>${u.first_name} ${u.last_name}</b> <span style="color:var(--text-dim)">${u.email}</span></div>
+                            <div style="display:flex;gap:0.4rem;align-items:center">
+                                <span style="font-size:0.7rem;color:var(--text-dim)">${new Date(u.created_at).toLocaleDateString()}</span>
+                                <button class="admin-btn admin-btn-danger" onclick="adminRemoveUser(${u.id},'${u.first_name} ${u.last_name}')">✗</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="display:flex;gap:0.5rem;border-top:1px solid var(--border);padding-top:0.5rem">
+                    <button class="admin-btn admin-btn-success" onclick="adminReloadDemo('${team.tenant_id}')" style="font-size:0.72rem">🔄 Reload Demo Data</button>
+                    <button class="admin-btn admin-btn-danger" onclick="adminResetTeam('${team.tenant_id}')" style="font-size:0.72rem">🗑️ Reset Work</button>
+                </div>
+            </div>`;
+        });
+        
+        document.getElementById('adminTeamsList').innerHTML = html;
+        
+    } catch(e) {
+        document.getElementById('adminTeamsList').innerHTML = '<div style="color:#dc2626">Error loading dashboard: ' + e.message + '</div>';
+    }
+}
+
+async function adminAction(action, body) {
+    try {
+        const resp = await fetch('/api/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify({ action, ...body })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { alert(data.error); return false; }
+        return true;
+    } catch(e) { alert('Error: ' + e.message); return false; }
+}
+
+async function adminSetPassword(teamId) {
+    const password = document.getElementById('pwd-' + teamId).value.trim();
+    if (!password) return alert('Enter a password');
+    if (await adminAction('set-password', { teamId, password })) {
+        notify('Password set for ' + teamId);
+        loadAdminDashboard();
+    }
+}
+
+async function adminSetName(teamId) {
+    const name = document.getElementById('name-' + teamId).value.trim();
+    if (!name) return alert('Enter a name');
+    if (await adminAction('set-name', { teamId, name })) {
+        notify('Name updated');
+        loadAdminDashboard();
+    }
+}
+
+async function adminRemoveUser(userId, name) {
+    if (!confirm(`Remove ${name} from their team?`)) return;
+    if (await adminAction('remove-user', { userId })) {
+        notify('Student removed');
+        loadAdminDashboard();
+    }
+}
+
+async function adminResetTeam(teamId) {
+    if (!confirm(`Reset ALL work for ${teamId}? This cannot be undone.`)) return;
+    if (await adminAction('reset-team', { teamId })) {
+        notify('Team data reset');
+        loadAdminDashboard();
+    }
+}
+
+async function adminReloadDemo(teamId) {
+    if (!confirm(`Reload demo data for ${teamId}? This replaces their current work.`)) return;
+    if (await adminAction('reload-demo', { teamId })) {
+        notify('Demo data reloaded');
+        loadAdminDashboard();
+    }
+}
+
+// ─── CHECK LOGIN ON PAGE LOAD ───
 function checkLogin() {
     const isLoggedIn = sessionStorage.getItem('pmo_logged_in') === 'true';
     const loginScreen = document.getElementById('loginScreen');
@@ -3474,76 +3830,45 @@ function checkLogin() {
     const loginAvatar = document.getElementById('loginMarcusAvatar');
     if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
     
-    // Populate team dropdown from config
-    const teamSelect = document.getElementById('loginTeam');
-    if (teamSelect && teamSelect.options.length <= 1) {
-        Object.entries(TEAMS).forEach(([id, name]) => {
-            const opt = document.createElement('option');
-            opt.value = id;
-            opt.textContent = name;
-            teamSelect.appendChild(opt);
-        });
-    }
+    // Load teams for register dropdown
+    loadTeamsForRegister();
     
-    if (isLoggedIn && currentTeam) {
+    if (isLoggedIn && isAdmin) {
         loginScreen.style.display = 'none';
-        // Restore team name in header
-        document.getElementById('headerTeamName').textContent = TEAMS[currentTeam] || currentTeam;
+        document.getElementById('headerTeamName').textContent = '🎓 Instructor';
+        document.getElementById('headerUserName').textContent = 'Admin';
+        document.getElementById('navAdminTab').style.display = '';
+        goTab('admin');
+        loadAdminDashboard();
+    } else if (isLoggedIn && currentTeam && currentUser) {
+        loginScreen.style.display = 'none';
+        document.getElementById('headerTeamName').textContent = currentUser.teamName || currentTeam;
+        document.getElementById('headerUserName').textContent = currentUser.firstName || '';
+        document.getElementById('navAdminTab').style.display = 'none';
     } else {
         loginScreen.style.display = 'flex';
     }
 }
 
-function doLogin() {
-    const team = document.getElementById('loginTeam').value;
-    const pass = document.getElementById('loginPass').value;
-    const errorDiv = document.getElementById('loginError');
-    
-    if (!team) {
-        errorDiv.textContent = 'Please select a team';
-        errorDiv.style.display = 'block';
-        return;
-    }
-    
-    if (pass === AUTH_CREDENTIALS.password) {
-        currentTeam = team;
-        sessionStorage.setItem('pmo_logged_in', 'true');
-        sessionStorage.setItem('pmo_team', team);
-        document.getElementById('loginScreen').style.display = 'none';
-        errorDiv.style.display = 'none';
-        // Update header with team name
-        document.getElementById('headerTeamName').textContent = TEAMS[team];
-        // Reload state for this team
-        init();
-    } else {
-        errorDiv.textContent = 'Incorrect password';
-        errorDiv.style.display = 'block';
-        document.getElementById('loginPass').value = '';
-    }
-}
-
 function doLogout() {
-    try {
-        sessionStorage.removeItem('pmo_logged_in');
-        sessionStorage.removeItem('pmo_team');
-        currentTeam = null;
-        const loginScreen = document.getElementById('loginScreen');
-        if (loginScreen) {
-            loginScreen.style.display = 'flex';
-            const loginAvatar = document.getElementById('loginMarcusAvatar');
-            if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
-        }
-        const loginTeam = document.getElementById('loginTeam');
-        const loginPass = document.getElementById('loginPass');
-        const loginError = document.getElementById('loginError');
-        if (loginTeam) loginTeam.value = '';
-        if (loginPass) loginPass.value = '';
-        if (loginError) loginError.style.display = 'none';
-    } catch(e) {
-        console.error('Logout error:', e);
-        sessionStorage.clear();
-        location.reload();
+    sessionStorage.clear();
+    currentTeam = null;
+    currentUser = null;
+    isAdmin = false;
+    adminToken = null;
+    const loginScreen = document.getElementById('loginScreen');
+    if (loginScreen) {
+        loginScreen.style.display = 'flex';
+        const loginAvatar = document.getElementById('loginMarcusAvatar');
+        if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
     }
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('authError').style.display = 'none';
+    document.getElementById('authSuccess').style.display = 'none';
+    document.getElementById('navAdminTab').style.display = 'none';
+    setAuthMode('login');
 }
 
 // ═══════════════════════════════════════════════════════════════
