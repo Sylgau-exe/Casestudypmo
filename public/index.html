@@ -3611,7 +3611,7 @@ async function doRegister() {
         const data = await resp.json();
         if (!resp.ok) return showAuthError(data.error);
         
-        showAuthSuccess('Account created! Switch to Login to sign in with your team password.');
+        showAuthSuccess(`Welcome ${firstName}! You're registered on ${data.teamName}. Your instructor will give you the team password to log in.`);
         // Clear register form
         document.getElementById('regFirst').value = '';
         document.getElementById('regLast').value = '';
@@ -3672,13 +3672,6 @@ async function loadTeamsForRegister() {
                     opt.textContent = t.team_display_name || t.tenant_id;
                     select.appendChild(opt);
                 });
-                if (data.teams.length === 0) {
-                    const opt = document.createElement('option');
-                    opt.value = '';
-                    opt.textContent = 'No teams activated yet — ask your instructor';
-                    opt.disabled = true;
-                    select.appendChild(opt);
-                }
             }
         }
     } catch(e) {

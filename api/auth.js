@@ -23,7 +23,6 @@ export default async function handler(req, res) {
                 SELECT tenant_id, team_display_name, 
                        (team_password IS NOT NULL) as is_active
                 FROM pmo_state 
-                WHERE team_password IS NOT NULL
                 ORDER BY tenant_id
             `;
             return res.status(200).json({ teams });
@@ -37,16 +36,13 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'All fields are required' });
             }
 
-            // Check team exists and has a password set
+            // Check team exists
             const team = await sql`
-                SELECT tenant_id, team_display_name, team_password 
+                SELECT tenant_id, team_display_name 
                 FROM pmo_state WHERE tenant_id = ${teamId}
             `;
             if (team.length === 0) {
                 return res.status(400).json({ error: 'Team not found' });
-            }
-            if (!team[0].team_password) {
-                return res.status(400).json({ error: 'This team is not yet activated. Ask your instructor to set a password.' });
             }
 
             // Check email not already registered
@@ -98,6 +94,9 @@ export default async function handler(req, res) {
             }
 
             // Check team password
+            if (!user[0].team_password) {
+                return res.status(400).json({ error: 'Your team password has not been set yet. Ask your instructor.' });
+            }
             if (user[0].team_password !== password) {
                 return res.status(400).json({ error: 'Incorrect password' });
             }
