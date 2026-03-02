@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCBS 288 — Strategic Project Leadership</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #ED1B2F;
+            --red-dark: #c41426;
+            --red-light: #fef2f2;
+            --red-border: #fecaca;
+            --bg: #ffffff;
+            --bg-subtle: #f9fafb;
+            --bg-card: #ffffff;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --text-dim: #9ca3af;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --green: #059669;
+            --green-bg: #ecfdf5;
+            --green-border: #a7f3d0;
+            --blue: #2563eb;
+            --blue-bg: #eff6ff;
+            --blue-border: #bfdbfe;
+            --purple: #7c3aed;
+            --purple-bg: #f5f3ff;
+            --purple-border: #ddd6fe;
+            --orange: #d97706;
+            --orange-bg: #fffbeb;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-subtle); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+        /* ─── LOGIN SCREEN ─── */
+        #loginScreen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 2rem;
+        }
+        .login-container {
+            width: 100%; max-width: 420px; background: white;
+            border-radius: 16px; padding: 2.5rem; box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-logo {
+            width: 64px; height: 64px; margin: 0 auto 1rem;
+            background: var(--red); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; color: white;
+        }
+        .login-title { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+        .login-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .login-course { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.5rem; }
+
+        .auth-tabs {
+            display: flex; border-radius: 8px; overflow: hidden;
+            margin-bottom: 1.5rem; border: 2px solid var(--border);
+        }
+        .auth-tab {
+            flex: 1; padding: 0.6rem; font-size: 0.82rem; font-weight: 600;
+            border: none; cursor: pointer; transition: all 0.2s;
+            background: var(--bg-subtle); color: var(--text-secondary);
+        }
+        .auth-tab.active { background: var(--red); color: white; }
+        .auth-tab:hover:not(.active) { background: var(--border-light); }
+
+        .form-group { margin-bottom: 0.85rem; }
+        .form-label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 0.3rem; }
+        .form-input {
+            width: 100%; padding: 0.65rem 0.85rem; border: 2px solid var(--border);
+            border-radius: 8px; font-size: 0.9rem; font-family: inherit;
+            transition: border-color 0.2s; background: white;
+        }
+        .form-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(237,27,47,0.1); }
+        select.form-input { cursor: pointer; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.85rem; }
+
+        .btn {
+            width: 100%; padding: 0.75rem; border: none; border-radius: 8px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; font-family: inherit;
+        }
+        .btn-red { background: var(--red); color: white; }
+        .btn-red:hover { background: var(--red-dark); }
+        .btn-green { background: var(--green); color: white; }
+        .btn-green:hover { opacity: 0.9; }
+        .btn-purple { background: var(--purple); color: white; }
+        .btn-purple:hover { opacity: 0.9; }
+
+        .alert { padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.82rem; text-align: center; display: none; }
+        .alert-error { background: var(--red-light); color: #991b1b; border: 1px solid var(--red-border); }
+        .alert-success { background: var(--green-bg); color: #065f46; border: 1px solid var(--green-border); }
+
+        .login-footer { text-align: center; margin-top: 1.5rem; font-size: 0.72rem; color: var(--text-dim); }
+
+        /* ─── MAIN APP ─── */
+        #appScreen { display: none; min-height: 100vh; }
+
+        .app-header {
+            background: white; border-bottom: 1px solid var(--border);
+            padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .header-logo {
+            width: 38px; height: 38px; background: var(--red); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: white;
+        }
+        .header-title { font-size: 1.1rem; font-weight: 700; }
+        .header-sub { font-size: 0.72rem; color: var(--text-dim); }
+        .header-right { display: flex; align-items: center; gap: 0.75rem; }
+        .header-user {
+            background: var(--bg-subtle); padding: 0.35rem 0.75rem; border-radius: 8px;
+            font-size: 0.82rem; color: var(--text-secondary); border: 1px solid var(--border);
+        }
+        .header-team {
+            background: var(--red); color: white; padding: 0.35rem 0.85rem;
+            border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+        }
+        .btn-sm {
+            padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid var(--border);
+            background: white; color: var(--text-secondary); cursor: pointer;
+            font-family: inherit; font-size: 0.8rem; transition: all 0.2s;
+        }
+        .btn-sm:hover { border-color: var(--red); color: var(--red); }
+
+        /* ─── DASHBOARD ─── */
+        .dashboard { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+        .welcome-banner {
+            background: white; border: 1px solid var(--border); border-radius: 16px;
+            padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);
+        }
+        .welcome-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .welcome-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-title span { font-size: 1.2rem; }
+
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+
+        .tool-card {
+            background: white; border: 1px solid var(--border); border-radius: 14px;
+            padding: 1.75rem; transition: all 0.25s; cursor: default;
+            box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+        }
+        .tool-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: #d1d5db; }
+        .tool-card-accent {
+            position: absolute; top: 0; left: 0; right: 0; height: 4px;
+        }
+        .tool-card-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 1rem;
+        }
+        .tool-card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .tool-card-session { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .tool-card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.25rem; }
+        .tool-card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+        .tool-tag {
+            padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 500;
+            background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border);
+        }
+        .tool-card-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.6rem 1.25rem; border-radius: 8px; border: none;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; font-family: inherit; text-decoration: none;
+        }
+        .tool-card-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* ─── COURSE INFO ─── */
+        .course-info {
+            background: white; border: 1px solid var(--border); border-radius: 14px;
+            padding: 1.75rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;
+        }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .info-item { display: flex; align-items: flex-start; gap: 0.6rem; }
+        .info-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .info-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .info-value { font-size: 0.9rem; font-weight: 500; }
+
+        /* ─── ADMIN PANEL ─── */
+        #adminPanel { display: none; }
+        .admin-header {
+            background: white; border: 1px solid var(--border); border-radius: 14px;
+            padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);
+        }
+        .admin-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .admin-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
+
+        .admin-stats {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem; margin: 1.5rem 0;
+        }
+        .stat-card {
+            background: white; border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.25rem; text-align: center; box-shadow: var(--shadow-sm);
+        }
+        .stat-number { font-size: 2rem; font-weight: 700; }
+        .stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+        .toggle-section {
+            background: white; border: 1px solid var(--border); border-radius: 14px;
+            padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .toggle-info h3 { font-size: 1rem; font-weight: 600; }
+        .toggle-info p { font-size: 0.82rem; color: var(--text-secondary); }
+        .toggle-switch {
+            width: 56px; height: 30px; border-radius: 15px;
+            background: #d1d5db; cursor: pointer; position: relative;
+            transition: background 0.3s; border: none; flex-shrink: 0;
+        }
+        .toggle-switch.active { background: var(--green); }
+        .toggle-switch::after {
+            content: ''; position: absolute; width: 24px; height: 24px;
+            background: white; border-radius: 50%; top: 3px; left: 3px;
+            transition: transform 0.3s; box-shadow: var(--shadow-sm);
+        }
+        .toggle-switch.active::after { transform: translateX(26px); }
+
+        .student-table {
+            width: 100%; border-collapse: collapse; background: white;
+            border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+        }
+        .student-table th {
+            background: var(--bg-subtle); padding: 0.75rem 1rem;
+            text-align: left; font-size: 0.78rem; font-weight: 600;
+            color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+        .student-table td {
+            padding: 0.75rem 1rem; font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .student-table tr:last-child td { border-bottom: none; }
+        .student-table tr:hover td { background: var(--bg-subtle); }
+
+        .badge {
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px;
+            font-size: 0.72rem; font-weight: 600;
+        }
+        .badge-active { background: var(--green-bg); color: var(--green); }
+        .badge-inactive { background: var(--red-light); color: var(--red); }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border);
+            background: white; color: var(--text-secondary); cursor: pointer;
+            font-family: inherit; font-size: 0.82rem; margin-bottom: 1.5rem;
+            transition: all 0.2s;
+        }
+        .btn-back:hover { border-color: var(--text-dim); color: var(--text); }
+
+        /* ─── PLATFORM INACTIVE ─── */
+        #inactiveScreen {
+            display: none; min-height: 100vh; align-items: center; justify-content: center;
+            background: var(--bg-subtle); padding: 2rem;
+        }
+        .inactive-box {
+            text-align: center; max-width: 400px; background: white;
+            border-radius: 16px; padding: 3rem; box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .inactive-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .inactive-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .inactive-text { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 640px) {
+            .dashboard { padding: 1rem; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .app-header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+            .header-right { flex-wrap: wrap; }
+            .form-row { grid-template-columns: 1fr; }
+            .admin-stats { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ PLATFORM INACTIVE SCREEN ═══ -->
+<div id="inactiveScreen">
+    <div class="inactive-box">
+        <div class="inactive-icon">📚</div>
+        <div class="inactive-title">Course Platform Inactive</div>
+        <div class="inactive-text">This platform is not currently active. Please contact your instructor for more information.</div>
+        <div style="margin-top:1.5rem">
+            <button onclick="setAuthMode('admin');document.getElementById('inactiveScreen').style.display='none';document.getElementById('loginScreen').style.display='flex'" class="btn btn-purple" style="width:auto;padding:0.5rem 1.25rem;font-size:0.82rem">Instructor Login</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="loginScreen">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">📋</div>
+            <div class="login-title">Strategic Project Leadership</div>
+            <div class="login-subtitle">Course Tools & Simulations</div>
+            <div class="login-course">YCBS 288 — McGill School of Continuing Studies</div>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div class="auth-tabs">
+            <button onclick="setAuthMode('login')" class="auth-tab active" id="tabLogin">Login</button>
+            <button onclick="setAuthMode('register')" class="auth-tab" id="tabRegister">Register</button>
+            <button onclick="setAuthMode('admin')" class="auth-tab" id="tabAdmin">Instructor</button>
+        </div>
+
+        <div class="alert alert-error" id="authError"></div>
+        <div class="alert alert-success" id="authSuccess"></div>
+
+        <!-- LOGIN -->
+        <div id="formLogin">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="loginEmail" class="form-input" placeholder="your.email@mail.mcgill.ca" onkeypress="if(event.key==='Enter')doLogin()">
+            </div>
+            <div class="form-group" style="margin-bottom:1.25rem">
+                <label class="form-label">Team Password</label>
+                <input type="password" id="loginPass" class="form-input" placeholder="Enter your team password" onkeypress="if(event.key==='Enter')doLogin()">
+            </div>
+            <button onclick="doLogin()" class="btn btn-red">Log in</button>
+            <p style="text-align:center;margin-top:1rem;font-size:0.78rem;color:var(--text-dim)">Don't have an account? Click <b>Register</b> above.</p>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="formRegister" style="display:none">
+            <div class="form-row">
+                <div>
+                    <label class="form-label">First Name</label>
+                    <input type="text" id="regFirst" class="form-input" placeholder="First name">
+                </div>
+                <div>
+                    <label class="form-label">Last Name</label>
+                    <input type="text" id="regLast" class="form-input" placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="your.email@mail.mcgill.ca">
+            </div>
+            <div class="form-group" style="margin-bottom:1.25rem">
+                <label class="form-label">Select Your Team</label>
+                <select id="regTeam" class="form-input">
+                    <option value="">— Choose your team —</option>
+                </select>
+            </div>
+            <button onclick="doRegister()" class="btn btn-green">Create Account</button>
+            <p style="text-align:center;margin-top:1rem;font-size:0.78rem;color:var(--text-dim)">Your instructor will provide the team password in class.</p>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="formAdmin" style="display:none">
+            <div style="background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:8px;padding:0.75rem;margin-bottom:1rem;font-size:0.78rem;color:#5b21b6">
+                🎓 Instructor access to manage the course platform.
+            </div>
+            <div class="form-group" style="margin-bottom:1.25rem">
+                <label class="form-label">Instructor Password</label>
+                <input type="password" id="adminPass" class="form-input" placeholder="Enter admin password" onkeypress="if(event.key==='Enter')doAdminLogin()">
+            </div>
+            <button onclick="doAdminLogin()" class="btn btn-purple">Access Dashboard</button>
+        </div>
+
+        <div class="login-footer">
+            © 2026 Sylvain Gauthier, PMP, PMI-ACP, MBA — McGill University
+        </div>
+    </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="appScreen">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="header-logo">📋</div>
+            <div>
+                <div class="header-title">YCBS 288</div>
+                <div class="header-sub">Strategic Project Leadership</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="header-team" id="headerTeam">—</span>
+            <span class="header-user" id="headerUser">—</span>
+            <button class="btn-sm" id="btnAdmin" onclick="showAdmin()" style="display:none">🎓 Admin</button>
+            <button class="btn-sm" onclick="doLogout()" style="color:var(--red);border-color:var(--red-border)">Logout</button>
+        </div>
+    </header>
+
+    <!-- Student Dashboard -->
+    <div id="studentDashboard" class="dashboard">
+        <!-- Welcome -->
+        <div class="welcome-banner">
+            <div class="welcome-title" id="welcomeMsg">Welcome!</div>
+            <div class="welcome-text">
+                This platform gives you access to the interactive tools and simulations for the course.
+                Each tool supports a specific module — explore them at your own pace and use them during class exercises.
+            </div>
+        </div>
+
+        <!-- Tools -->
+        <div class="section-title"><span>🛠️</span> Course Tools & Simulations</div>
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Course Info -->
+        <div class="course-info">
+            <div class="section-title" style="margin-bottom:0"><span>📚</span> Course Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">👤</div>
+                    <div>
+                        <div class="info-label">Instructor</div>
+                        <div class="info-value">Sylvain Gauthier, PMP, PMI-ACP, MBA</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">Schedule</div>
+                        <div class="info-value">March 24 — May 21, 2026</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">🏫</div>
+                    <div>
+                        <div class="info-label">Institution</div>
+                        <div class="info-value">McGill School of Continuing Studies</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div>
+                        <div class="info-label">Contact</div>
+                        <div class="info-value">sylvain.gauthier@mcgill.ca</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="dashboard">
+        <button class="btn-back" onclick="hideAdmin()">← Back to Dashboard</button>
+
+        <div class="admin-header">
+            <div class="admin-title">🎓 Instructor Dashboard</div>
+            <div class="admin-subtitle">Manage the course platform, students, and tools</div>
+        </div>
+
+        <!-- Platform Toggle -->
+        <div class="toggle-section">
+            <div class="toggle-info">
+                <h3>Platform Active</h3>
+                <p>When disabled, students see an "inactive" screen. You can still access admin.</p>
+            </div>
+            <button class="toggle-switch active" id="togglePlatform" onclick="togglePlatform()"></button>
+        </div>
+
+        <!-- Stats -->
+        <div class="admin-stats" id="adminStats">
+            <div class="stat-card">
+                <div class="stat-number" id="statStudents">0</div>
+                <div class="stat-label">Registered Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statTeams">0</div>
+                <div class="stat-label">Active Teams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statTools">0</div>
+                <div class="stat-label">Available Tools</div>
+            </div>
+        </div>
+
+        <!-- PMO Admin Link -->
+        <div style="background:white;border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-sm)">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:0.5rem">🏗️ PMO Tool — Team Management</h3>
+            <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">Manage team passwords, reset demo data, and monitor progress in the PMO simulation.</p>
+            <a href="/pmo" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;background:var(--blue);color:white;border-radius:8px;text-decoration:none;font-size:0.85rem;font-weight:600">Open PMO Admin →</a>
+        </div>
+
+        <!-- Student Table -->
+        <div style="background:white;border:1px solid var(--border);border-radius:14px;padding:1.5rem;box-shadow:var(--shadow-sm)">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">👥 Registered Students</h3>
+            <div style="overflow-x:auto">
+                <table class="student-table" id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Team</th>
+                            <th>Registered</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:2rem">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// TOOL DEFINITIONS
+// ═══════════════════════════════════════
+const TOOLS = [
+    {
+        id: 'pmo',
+        title: 'PMO Portfolio Simulation',
+        session: 'Sessions 4 & 5',
+        description: 'Take on the role of PMO Director at NovaTech Robotics. Triage initiatives, allocate resources across competing projects, and present your Gate 0 recommendations to the executive committee.',
+        icon: '🏗️',
+        accentColor: '#2563eb',
+        bgColor: '#eff6ff',
+        btnColor: '#2563eb',
+        tags: ['Portfolio Management', 'Capacity Planning', 'Resource Allocation', 'Gate 0'],
+        url: '/pmo',
+        btnLabel: 'Launch Simulation'
+    },
+    {
+        id: 'negotiate',
+        title: 'Negotiation Simulation',
+        session: 'Session 8',
+        description: 'Practice real-world negotiation scenarios with an AI counterpart. Get coached by Louis, your AI negotiation advisor, with scoring and debrief after each session.',
+        icon: '🤝',
+        accentColor: '#d97706',
+        bgColor: '#fffbeb',
+        btnColor: '#d97706',
+        tags: ['Negotiation', 'Conflict Resolution', 'Soft Skills', 'AI Coaching'],
+        url: '/negotiate',
+        btnLabel: 'Launch Simulation'
+    }
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentUser = null;
+let isAdmin = false;
+let platformActive = true;
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function setAuthMode(mode) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+    document.getElementById('formLogin').style.display = mode === 'login' ? 'block' : 'none';
+    document.getElementById('formRegister').style.display = mode === 'register' ? 'block' : 'none';
+    document.getElementById('formAdmin').style.display = mode === 'admin' ? 'block' : 'none';
+    hideAlerts();
+    if (mode === 'register') loadTeams();
+}
+
+function showError(msg) {
+    const el = document.getElementById('authError');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+function showSuccess(msg) {
+    const el = document.getElementById('authSuccess');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authError').style.display = 'none';
+}
+function hideAlerts() {
+    document.getElementById('authError').style.display = 'none';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+
+async function loadTeams() {
+    try {
+        const r = await fetch('/api/auth', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'list-teams' })
+        });
+        const data = await r.json();
+        const sel = document.getElementById('regTeam');
+        sel.innerHTML = '<option value="">— Choose your team —</option>';
+        (data.teams || []).forEach(t => {
+            if (t.tenant_id === 'default') return;
+            const opt = document.createElement('option');
+            opt.value = t.tenant_id;
+            opt.textContent = t.team_display_name || t.tenant_id;
+            sel.appendChild(opt);
+        });
+    } catch (e) { console.error('Failed to load teams', e); }
+}
+
+async function doLogin() {
+    hideAlerts();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPass').value;
+    if (!email || !password) return showError('Please enter your email and team password.');
+
+    try {
+        const r = await fetch('/api/auth', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'login', email, password })
+        });
+        const data = await r.json();
+        if (!r.ok) return showError(data.error);
+        currentUser = data.user;
+        isAdmin = false;
+        enterApp();
+    } catch (e) { showError('Connection error. Please try again.'); }
+}
+
+async function doRegister() {
+    hideAlerts();
+    const firstName = document.getElementById('regFirst').value.trim();
+    const lastName = document.getElementById('regLast').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const teamId = document.getElementById('regTeam').value;
+    if (!firstName || !lastName || !email || !teamId) return showError('All fields are required.');
+
+    try {
+        const r = await fetch('/api/auth', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'register', firstName, lastName, email, teamId })
+        });
+        const data = await r.json();
+        if (!r.ok) return showError(data.error);
+        showSuccess('Account created! You can now log in with your team password.');
+        setTimeout(() => setAuthMode('login'), 1500);
+    } catch (e) { showError('Connection error. Please try again.'); }
+}
+
+async function doAdminLogin() {
+    hideAlerts();
+    const password = document.getElementById('adminPass').value;
+    if (!password) return showError('Please enter the instructor password.');
+
+    try {
+        const r = await fetch('/api/auth', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'admin-login', password })
+        });
+        const data = await r.json();
+        if (!r.ok) return showError(data.error);
+        isAdmin = true;
+        currentUser = { firstName: 'Instructor', lastName: '', teamName: 'Admin' };
+        enterApp();
+        showAdmin();
+    } catch (e) { showError('Connection error. Please try again.'); }
+}
+
+function doLogout() {
+    currentUser = null;
+    isAdmin = false;
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('studentDashboard').style.display = 'block';
+}
+
+// ═══════════════════════════════════════
+// APP
+// ═══════════════════════════════════════
+function enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+    document.getElementById('welcomeMsg').textContent = `Welcome, ${currentUser.firstName}!`;
+    document.getElementById('headerUser').textContent = `${currentUser.firstName} ${currentUser.lastName || ''}`.trim();
+    document.getElementById('headerTeam').textContent = currentUser.teamName || 'Admin';
+    document.getElementById('btnAdmin').style.display = isAdmin ? 'block' : 'none';
+    renderTools();
+}
+
+function renderTools() {
+    const grid = document.getElementById('toolsGrid');
+    grid.innerHTML = '';
+    TOOLS.forEach(tool => {
+        grid.innerHTML += `
+            <div class="tool-card">
+                <div class="tool-card-accent" style="background:${tool.accentColor}"></div>
+                <div class="tool-card-icon" style="background:${tool.bgColor}">${tool.icon}</div>
+                <div class="tool-card-session" style="color:${tool.accentColor}">${tool.session}</div>
+                <div class="tool-card-title">${tool.title}</div>
+                <div class="tool-card-desc">${tool.description}</div>
+                <div class="tool-card-tags">
+                    ${tool.tags.map(t => `<span class="tool-tag">${t}</span>`).join('')}
+                </div>
+                <a href="${tool.url}" target="_blank" class="tool-card-btn" style="background:${tool.btnColor};color:white">
+                    ${tool.btnLabel} <span style="font-size:1rem">→</span>
+                </a>
+            </div>
+        `;
+    });
+}
+
+// ═══════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════
+function showAdmin() {
+    document.getElementById('studentDashboard').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadAdminData();
+}
+function hideAdmin() {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('studentDashboard').style.display = 'block';
+}
+
+async function loadAdminData() {
+    try {
+        const r = await fetch('/api/admin', {
+            headers: { 'X-Admin-Token': document.getElementById('adminPass')?.value || localStorage.getItem('adminToken') || '' }
+        });
+        if (!r.ok) return;
+        const data = await r.json();
+
+        // Store token for subsequent requests
+        const pw = document.getElementById('adminPass')?.value;
+        if (pw) localStorage.setItem('adminToken', pw);
+
+        const teams = data.teams || [];
+        const users = data.users || [];
+        const activeTeams = teams.filter(t => t.team_password && t.tenant_id !== 'default');
+
+        document.getElementById('statStudents').textContent = users.length;
+        document.getElementById('statTeams').textContent = activeTeams.length;
+        document.getElementById('statTools').textContent = TOOLS.length;
+
+        // Student table
+        const tbody = document.getElementById('studentTableBody');
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:2rem">No students registered yet</td></tr>';
+        } else {
+            tbody.innerHTML = users.map(u => {
+                const team = teams.find(t => t.tenant_id === u.team_id);
+                const date = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return `<tr>
+                    <td style="font-weight:500">${u.first_name} ${u.last_name}</td>
+                    <td style="color:var(--text-secondary)">${u.email}</td>
+                    <td><span class="badge badge-active">${team?.team_display_name || u.team_id}</span></td>
+                    <td style="color:var(--text-dim);font-size:0.8rem">${date}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Platform toggle state
+        checkPlatformStatus();
+
+    } catch (e) { console.error('Failed to load admin data', e); }
+}
+
+async function togglePlatform() {
+    const btn = document.getElementById('togglePlatform');
+    const isActive = btn.classList.contains('active');
+    const newState = !isActive;
+
+    try {
+        const token = localStorage.getItem('adminToken') || '';
+        const r = await fetch('/api/hub', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token },
+            body: JSON.stringify({ action: 'set-active', active: newState })
+        });
+        if (r.ok) {
+            btn.classList.toggle('active', newState);
+            platformActive = newState;
+        }
+    } catch (e) { console.error('Toggle failed', e); }
+}
+
+async function checkPlatformStatus() {
+    try {
+        const r = await fetch('/api/hub');
+        const data = await r.json();
+        platformActive = data.active !== false;
+        const btn = document.getElementById('togglePlatform');
+        btn.classList.toggle('active', platformActive);
+    } catch (e) { platformActive = true; }
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+async function init() {
+    try {
+        const r = await fetch('/api/hub');
+        const data = await r.json();
+        if (data.active === false) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('inactiveScreen').style.display = 'flex';
+        }
+    } catch (e) {
+        // Hub API not set up yet — default to active
+    }
+}
+init();
+</script>
+
+</body>
+</html>

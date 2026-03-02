@@ -1,9 +1,15 @@
 {
-  "name": "novatech-pmo",
-  "version": "7.0.0",
-  "private": true,
+  "name": "ycbs288-tools",
+  "version": "2.0.0",
+  "description": "YCBS 288 Strategic Project Leadership — Course Tools Hub",
   "type": "module",
+  "private": true,
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.0"
+    "@neondatabase/serverless": "^0.9.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "@andresaya/edge-tts": "^1.8.0"
   }
 }

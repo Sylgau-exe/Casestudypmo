@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta name="description" content="Your NegotiateSim dashboard. Choose scenarios, track progress, and improve your negotiation skills with AI coaching.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negotiation Simulation — YCBS 288</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0a14;--bg-secondary:#0f0f1e;--bg-card:#171728;--bg-card-hover:#1e1e32;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#94a3b8;--accent-primary:#6366f1;--accent-secondary:#8b5cf6;--accent-tertiary:#06b6d4;--accent-success:#10b981;--accent-warning:#f59e0b;--accent-error:#ef4444;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06b6d4 100%);--border-subtle:rgba(255,255,255,0.08);--border-accent:rgba(99,102,241,0.3);--glow-primary:rgba(99,102,241,0.4);--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--louis-gold:#f59e0b;--louis-bg:rgba(245,158,11,0.08);--louis-border:rgba(245,158,11,0.25);--font-display:'Space Grotesk',sans-serif;--font-body:'DM Sans',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary)}.gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-bottom:1px solid var(--border-subtle);background:var(--bg-secondary)}
+.nav-logo{font-family:var(--font-display);font-size:26px;font-weight:700}
+.nav-right{display:flex;gap:16px;align-items:center;font-size:17px;color:#e2e8f0}
+.nav-right a{color:#cbd5e1;text-decoration:none;cursor:pointer}.nav-right a:hover{color:var(--accent-error)}
+.container{max-width:1000px;margin:0 auto;padding:32px 24px}
+.welcome{display:flex;gap:16px;align-items:center;background:var(--bg-card);border:1px solid var(--louis-border);border-radius:var(--radius-md);padding:24px;margin-bottom:28px}
+.welcome-avatar{width:64px;height:64px;border-radius:50%;background:var(--bg-card-hover);border:2px solid var(--louis-gold);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden}
+.welcome h3{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--louis-gold)}.welcome p{font-size:17px;color:#e2e8f0;line-height:1.5}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;text-align:center}
+.stat-value{font-family:var(--font-display);font-size:34px;font-weight:700}.stat-label{font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:0.8px;margin-top:6px}
+h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:20px}
+.scenario-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:32px}
+.sc-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:22px;cursor:pointer;transition:all 0.25s;position:relative}
+.sc-card:hover{border-color:var(--border-accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
+.sc-card.locked{opacity:0.65}.sc-card.locked:hover{transform:none;box-shadow:none;border-color:var(--border-subtle)}
+.sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sc-top span:first-child{font-size:32px}.sc-diff{font-size:13px;font-weight:600;padding:5px 12px;border-radius:var(--radius-sm)}
+.sc-badge{position:absolute;top:12px;right:12px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.sc-badge.free{background:rgba(16,185,129,0.15);color:var(--accent-success);border:1px solid rgba(16,185,129,0.3)}
+.sc-badge.used{background:rgba(148,163,184,0.15);color:var(--text-muted);border:1px solid rgba(148,163,184,0.3)}
+.sc-badge.lock{background:rgba(99,102,241,0.1);color:var(--accent-primary);border:1px solid var(--border-accent)}
+.sc-title{font-family:var(--font-display);font-size:20px;font-weight:600;margin-bottom:4px}.sc-sub{font-size:15px;color:#e2e8f0;margin-bottom:12px}
+.sc-meta{display:flex;gap:12px;font-size:14px;color:#cbd5e1;margin-bottom:10px}
+.sc-skills{display:flex;gap:5px;flex-wrap:wrap}.sc-skill{font-size:13px;padding:4px 10px;background:var(--bg-card-hover);border-radius:var(--radius-sm);color:#e2e8f0}
+.sc-start{text-align:right;margin-top:12px;font-size:15px;font-weight:600}
+.recent-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:12px;color:#e2e8f0}
+.recent-table{width:100%;border-collapse:collapse}.recent-table th{text-align:left;font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:0.8px;padding:10px 12px;border-bottom:1px solid var(--border-subtle)}
+.recent-table td{padding:12px 12px;font-size:16px;border-bottom:1px solid var(--border-subtle);color:#e2e8f0}
+.recent-table tr.clickable{cursor:pointer;transition:background 0.2s}.recent-table tr.clickable:hover{background:var(--bg-card-hover)}
+.grade-badge{font-family:var(--font-display);font-weight:700;font-size:18px;padding:2px 10px;border-radius:var(--radius-sm)}
+.empty-state{text-align:center;padding:40px;color:#cbd5e1;font-size:16px}
+/* Upgrade Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-secondary);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:36px;max-width:520px;width:90%;position:relative;animation:modalIn 0.3s}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:14px;right:18px;font-size:24px;color:var(--text-muted);cursor:pointer;background:none;border:none}
+.modal h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:8px;text-align:center}
+.modal p.sub{font-size:16px;color:#cbd5e1;text-align:center;margin-bottom:24px;line-height:1.5}
+.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.plan-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.plan-card:hover{border-color:var(--accent-primary);transform:translateY(-2px)}
+.plan-card.highlight{border-color:var(--accent-primary);background:rgba(99,102,241,0.06)}
+.plan-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:#cbd5e1;margin-bottom:6px}
+.plan-price{font-family:var(--font-display);font-size:36px;font-weight:700;margin-bottom:6px}
+.plan-desc{font-size:14px;color:#94a3b8;margin-bottom:14px}
+.plan-btn{width:100%;padding:12px;font-weight:700;font-size:15px;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body)}
+.plan-btn.primary{background:var(--accent-gradient);color:#fff}
+.plan-btn.outline{background:transparent;color:var(--accent-primary);border:1px solid var(--border-accent)}
+.best-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent-gradient);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
+@media(max-width:768px){nav{padding:14px 20px}.stats-row{grid-template-columns:repeat(2,1fr)}.scenario-grid{grid-template-columns:1fr}.plan-cards{grid-template-columns:1fr}}
+</style></head><body>
+<nav><div class="nav-logo">Negotiate<span class="gradient-text">Sim</span></div><div class="nav-right"><span id="langToggle"></span><a id="adminLink" href="/admin.html" style="display:none;color:var(--accent-warning);font-weight:600;text-decoration:none">⚙️ Admin</a><span id="navUser">🎩</span><a onclick="logout()" id="btnSignout"></a></div></nav>
+<div class="container">
+  <div class="welcome"><div class="welcome-avatar"><img src="/louis.png" alt="Louis" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div><div><h3>Louis</h3><p id="welcomeMsg"></p></div></div>
+  <div class="stats-row"><div class="stat-card"><div class="stat-value gradient-text" id="s-sessions">0</div><div class="stat-label" id="lbl-sessions"></div></div><div class="stat-card"><div class="stat-value" id="s-avg" style="color:var(--accent-warning)">—</div><div class="stat-label" id="lbl-avg"></div></div><div class="stat-card"><div class="stat-value" id="s-best" style="color:var(--accent-success)">—</div><div class="stat-label" id="lbl-best"></div></div><div class="stat-card"><div class="stat-value" id="s-left" style="color:var(--accent-tertiary)">—</div><div class="stat-label" id="lbl-left"></div></div></div>
+  <h2 id="chooseTitle"></h2>
+  <div class="scenario-grid" id="scenarioGrid"></div>
+  <div class="recent-title" id="recentTitle"></div>
+  <div id="recentSessions"></div>
+</div>
+
+<!-- Upgrade Modal -->
+<!-- Upgrade modal removed for course use -->
+</div>
+
+<script src="/i18n.js"></script>
+<script>
+const API='',token=localStorage.getItem('auth_token'),userName=localStorage.getItem('user_name')||'Negotiator';
+if(!token)window.location.href='/negotiate';
+
+// State
+let userPlan='free',freeUsed=0,isAdmin=false;
+
+// Translate static labels
+document.getElementById('langToggle').innerHTML=langToggleHTML();
+document.getElementById('navUser').textContent='🎩 '+userName;
+document.getElementById('btnSignout').textContent=t('nav_signout');
+document.getElementById('welcomeMsg').textContent=userName+t('dash_welcome_suffix');
+document.getElementById('lbl-sessions').textContent=t('dash_sessions');
+document.getElementById('lbl-avg').textContent=t('dash_avg_score');
+document.getElementById('lbl-best').textContent=t('dash_best_grade');
+document.getElementById('lbl-left').textContent=t('dash_sessions_left');
+document.getElementById('chooseTitle').innerHTML=t('dash_choose')+' <span class="gradient-text">'+t('dash_scenario')+'</span>';
+document.getElementById('recentTitle').textContent=t('dash_recent');
+document.getElementById('recentSessions').innerHTML='<div class="empty-state">'+t('dash_no_sessions')+'</div>';
+
+// Modal translations
+// Modal removed for course use
+
+const scenarios=[
+  {id:'salary',icon:'💼',dc:'#10b981',dur:'10–15 min'},
+  {id:'vendor',icon:'📋',dc:'#6366f1',dur:'15–20 min'},
+  {id:'partnership',icon:'🤝',dc:'#ef4444',dur:'20–25 min'},
+  {id:'realestate',icon:'🏢',dc:'#10b981',dur:'10–15 min'},
+  {id:'crosscultural',icon:'🌏',dc:'#ef4444',dur:'20–25 min'},
+  {id:'teamconflict',icon:'👥',dc:'#6366f1',dur:'10–15 min'}
+];
+
+function renderScenarios(){
+  document.getElementById('scenarioGrid').innerHTML=scenarios.map(function(s){
+    var ti=tsc(s.id,'title'),su=tsc(s.id,'sub'),ca=tsc(s.id,'cat'),di=tsc(s.id,'diff'),sk=tsc(s.id,'skills');
+    return '<div class="sc-card" onclick="startScenario(\''+s.id+'\')"><div class="sc-top"><span>'+s.icon+'</span><span class="sc-diff" style="background:'+s.dc+'18;color:'+s.dc+'">'+di+'</span></div><div class="sc-title">'+ti+'</div><div class="sc-sub">'+su+'</div><div class="sc-meta"><span>⏱ '+s.dur+'</span><span>📂 '+ca+'</span></div><div class="sc-skills">'+(sk||[]).map(function(k){return '<span class="sc-skill">'+k+'</span>'}).join('')+'</div><div class="sc-start"><span class="gradient-text">'+t('dash_start')+'</span></div></div>';
+  }).join('');
+}
+
+async function api(path,opts){opts=opts||{};var r=await fetch(API+path,Object.assign({},opts,{headers:Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+token},opts.headers||{}),body:opts.body?JSON.stringify(opts.body):undefined}));var d=await r.json();if(!r.ok){var err=new Error(d.error);err.code=d.code;throw err}return d}
+
+async function loadUser(){
+  try{
+    var d=await api('/api/neg/auth/me');
+    if(d.user){
+      userPlan=d.user.plan||'free';
+      freeUsed=d.user.free_sessions_used||0;
+      isAdmin=d.user.isAdmin||false;
+      if(isAdmin) document.getElementById('adminLink').style.display='inline';
+      // Update sessions left display
+      document.getElementById('s-left').textContent='∞';
+    }
+  }catch(e){console.error('User load error:',e)}
+  renderScenarios();
+}
+
+async function loadStats(){
+  try{
+    var d=await api('/api/neg/game/history');
+    if(d.progress){
+      document.getElementById('s-sessions').textContent=d.progress.total_sessions||0;
+      document.getElementById('s-avg').textContent=d.progress.avg_score?Math.round(d.progress.avg_score):'—';
+      document.getElementById('s-best').textContent=d.progress.best_grade||'—';
+    }
+    if(d.sessions&&d.sessions.length){
+      var sn={'salary':'💼','vendor':'📋','partnership':'🤝','realestate':'🏢','crosscultural':'🌏','teamconflict':'👥'};
+      document.getElementById('recentSessions').innerHTML='<table class="recent-table"><thead><tr><th>'+t('th_scenario')+'</th><th>'+t('th_result')+'</th><th>'+t('th_score')+'</th><th>'+t('th_grade')+'</th><th>'+t('th_date')+'</th></tr></thead><tbody>'+d.sessions.slice(0,8).map(function(s){
+        var gc=s.grade==='A'||s.grade==='S'?'#10b981':s.grade==='B'?'#6366f1':s.grade==='C'?'#f59e0b':s.grade?'#ef4444':'#94a3b8';
+        var icon=sn[s.scenario_id]||'📄';
+        var scTitle=tsc(s.scenario_id,'title')||s.scenario_id;
+        var status=s.deal_reached?t('dash_deal'):t('dash_walkaway');
+        return '<tr class="clickable" onclick="window.location.href=\'/negotiate/results?session='+s.id+'\'"><td>'+icon+' '+scTitle+'</td><td>'+status+'</td><td>'+(s.score||'—')+'</td><td><span class="grade-badge" style="color:'+gc+'">'+(s.grade||'—')+'</span></td><td>'+new Date(s.created_at).toLocaleDateString()+'</td></tr>';
+      }).join('')+'</tbody></table>';
+    }
+  }catch(e){console.error('Stats error:',e)}
+}
+
+function showModal(){document.getElementById('upgradeModal').classList.add('show')}
+function closeModal(){document.getElementById('upgradeModal').classList.remove('show')}
+document.getElementById('upgradeModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function choosePlan(plan){ /* Disabled for course use */ }
+
+function startScenario(id){window.location.href='/negotiate/play?scenario='+id}
+function logout(){localStorage.removeItem('auth_token');localStorage.removeItem('user_name');window.location.href='/'}
+
+loadUser();
+loadStats();
+
+// Handle Stripe redirect
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  if(params.get('payment')==='success'){
+    var banner=document.createElement('div');
+    banner.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:16px;text-align:center;font-weight:700;font-size:16px;z-index:9999;animation:slideDown 0.3s';
+    banner.innerHTML='🎉 '+(getLang()==='fr'?'Paiement réussi ! Bienvenue dans NegotiateSim Premium !':'Payment successful! Welcome to NegotiateSim Premium!')+'<span onclick="this.parentElement.remove()" style="float:right;cursor:pointer;margin-left:20px">✕</span>';
+    document.body.prepend(banner);
+    window.history.replaceState({},'','/negotiate/dashboard');
+    setTimeout(function(){loadUser();loadStats()},1000);
+  }
+  if(params.get('payment')==='cancelled'){
+    window.history.replaceState({},'','/negotiate/dashboard');
+  }
+})();
+</script></body></html>

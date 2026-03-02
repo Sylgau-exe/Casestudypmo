@@ -1,7 +1,11 @@
 {
   "rewrites": [
-    { "source": "/api/state", "destination": "/api/state" },
-    { "source": "/api/marcus", "destination": "/api/marcus" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/pmo", "destination": "/index.html" },
+    { "source": "/negotiate", "destination": "/negotiate-login.html" },
+    { "source": "/negotiate/dashboard", "destination": "/negotiate-dashboard.html" },
+    { "source": "/negotiate/play", "destination": "/negotiate-play.html" },
+    { "source": "/negotiate/results", "destination": "/negotiate-results.html" },
+    { "source": "/", "destination": "/hub.html" }
   ]
 }

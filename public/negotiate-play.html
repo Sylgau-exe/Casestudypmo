@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta name="description" content="Live AI negotiation simulation. Practice real-time deal-making with adaptive opponents and coaching from Louis.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negotiation Sim — YCBS 288 — Negotiation Room</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0a14;--bg-secondary:#0f0f1e;--bg-card:#171728;--bg-card-hover:#1e1e32;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#94a3b8;--accent-primary:#6366f1;--accent-secondary:#8b5cf6;--accent-tertiary:#06b6d4;--accent-success:#10b981;--accent-warning:#f59e0b;--accent-error:#ef4444;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06b6d4 100%);--border-subtle:rgba(255,255,255,0.08);--border-accent:rgba(99,102,241,0.3);--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--louis-gold:#f59e0b;--louis-bg:rgba(245,158,11,0.08);--louis-border:rgba(245,158,11,0.25);--font-display:'Space Grotesk',sans-serif;--font-body:'DM Sans',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden}.gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app{display:flex;height:100vh}
+.sidebar{width:340px;background:var(--bg-secondary);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.sb-header{padding:18px 20px;border-bottom:1px solid var(--border-subtle)}
+.sb-logo{font-family:var(--font-display);font-size:20px;font-weight:700;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sb-scenario{font-size:15px;color:#e2e8f0}.sb-scenario strong{color:var(--text-primary);display:block;font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:3px}
+.sb-section{padding:14px 20px;border-bottom:1px solid var(--border-subtle)}
+.sb-section h3{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#cbd5e1;margin-bottom:8px}
+.sb-counterpart{display:flex;align-items:center;gap:10px}
+.sb-avatar{width:44px;height:44px;border-radius:50%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border-subtle)}
+.sb-cp-name{font-weight:600;font-size:16px}.sb-cp-title{font-size:13px;color:#cbd5e1}
+.sb-obj{list-style:none}.sb-obj li{font-size:15px;color:#e2e8f0;padding:4px 0 4px 18px;position:relative;line-height:1.5}.sb-obj li::before{content:'→';position:absolute;left:0;color:var(--accent-primary)}
+.sb-identity{background:rgba(99,102,241,0.06);border:1px solid var(--border-accent);border-radius:var(--radius-sm);padding:12px;text-align:center;margin-bottom:6px}
+.sb-identity .name{font-family:var(--font-display);font-weight:600;font-size:17px}.sb-identity .role{font-size:14px;color:#cbd5e1}
+.exchange-bar{height:6px;background:var(--bg-card);border-radius:3px;overflow:hidden;margin-top:8px}.exchange-fill{height:100%;background:var(--accent-gradient);border-radius:3px;transition:width 0.5s}
+.exchange-text{display:flex;justify-content:space-between;font-size:13px;color:#cbd5e1;margin-top:4px}
+.chat-header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border-subtle);background:var(--bg-secondary);flex-shrink:0}
+.chat-header h2{font-family:var(--font-display);font-size:18px;font-weight:600}
+.chat-actions{display:flex;gap:8px}
+.btn-walkaway,.btn-deal{padding:8px 18px;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer;font-family:var(--font-body);border:1px solid}
+.btn-walkaway{background:rgba(239,68,68,0.08);color:var(--accent-error);border-color:rgba(239,68,68,0.25)}.btn-walkaway:hover{background:rgba(239,68,68,0.15)}
+.btn-deal{background:rgba(16,185,129,0.08);color:var(--accent-success);border-color:rgba(16,185,129,0.25)}.btn-deal:hover{background:rgba(16,185,129,0.15)}
+.messages{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+.msg{max-width:78%}.msg-user{align-self:flex-end}.msg-counterpart{align-self:flex-start}.msg-louis{align-self:center;max-width:88%}.msg-system{align-self:center}
+.msg-label{font-size:13px;font-weight:600;margin-bottom:4px}.msg-label.user{text-align:right;color:var(--accent-primary)}.msg-label.counterpart{color:#e2e8f0}.msg-label.louis{text-align:center;color:var(--louis-gold)}
+.msg-bubble{padding:12px 16px;font-size:16px;line-height:1.6;border-radius:14px;white-space:pre-wrap}
+.msg-user .msg-bubble{background:rgba(99,102,241,0.08);border:1px solid var(--border-accent);border-radius:14px 14px 4px 14px}
+.msg-counterpart .msg-bubble{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px 14px 14px 4px}
+.msg-louis .msg-bubble{background:var(--louis-bg);border:1px solid var(--louis-border);border-radius:var(--radius-md);text-align:center;font-size:15px;color:#e2e8f0}
+.msg-system .msg-bubble{font-size:14px;color:#cbd5e1;padding:8px 16px;border:1px dashed var(--border-subtle);border-radius:8px}
+.msg-louis-q{font-size:14px;color:#cbd5e1;text-align:center;font-style:italic;margin-bottom:4px}
+.briefing-card{background:var(--bg-card);border:1px solid var(--louis-border);border-radius:var(--radius-md);padding:28px;margin:20px auto;max-width:640px}
+.briefing-card h3{font-family:var(--font-display);font-size:24px;font-weight:600;color:var(--louis-gold);margin-bottom:6px}
+.briefing-card .subtitle{font-size:15px;color:#cbd5e1;margin-bottom:16px}
+.briefing-louis{font-size:17px;color:#e2e8f0;line-height:1.7;white-space:pre-line;padding:18px;background:var(--louis-bg);border-radius:var(--radius-sm);border-left:4px solid var(--louis-gold);margin-bottom:20px}
+.btn-begin{width:100%;padding:16px;background:var(--accent-gradient);color:#fff;font-weight:700;font-size:17px;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body)}
+.btn-begin:disabled{opacity:0.5;cursor:not-allowed}
+.session-ended{text-align:center;padding:36px;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:var(--radius-md);margin:20px auto;max-width:440px}
+.session-ended h3{font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:10px}.session-ended p{font-size:16px;color:#e2e8f0;margin-bottom:18px}
+.btn-results{padding:14px 32px;background:var(--accent-gradient);color:#fff;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:17px}
+.input-area{border-top:1px solid var(--border-subtle);background:var(--bg-secondary);flex-shrink:0}
+.louis-panel{padding:10px 20px;background:var(--louis-bg);border-bottom:1px solid var(--louis-border);display:flex;gap:8px;align-items:center}
+.louis-panel input{flex:1;padding:10px 14px;background:var(--bg-primary);border:1px solid var(--louis-border);border-radius:8px;color:var(--text-primary);font-size:15px;font-family:var(--font-body);outline:none}
+.louis-panel input:focus{border-color:var(--louis-gold)}
+.btn-ask-louis{padding:9px 16px;font-size:14px;font-weight:600;background:rgba(245,158,11,0.1);color:var(--louis-gold);border:1px solid var(--louis-border);border-radius:8px;cursor:pointer;font-family:var(--font-body)}
+.louis-close{cursor:pointer;color:var(--text-muted);font-size:18px;padding:0 4px}
+.louis-drawer{background:var(--bg-secondary);border-top:2px solid var(--louis-gold);border-bottom:1px solid var(--louis-border);display:flex;flex-direction:column;max-height:45vh;min-height:180px;flex-shrink:0;animation:slideUp 0.25s ease-out}
+@keyframes slideUp{from{max-height:0;opacity:0}to{max-height:45vh;opacity:1}}
+.louis-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--louis-border);background:var(--louis-bg);flex-shrink:0}
+.louis-drawer-header-left{display:flex;align-items:center;gap:10px}
+.louis-drawer-header h3{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--louis-gold)}
+.louis-drawer-header .louis-status{font-size:12px;color:var(--accent-success)}
+.louis-drawer-close{background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1}
+.louis-drawer-close:hover{background:rgba(255,255,255,0.06);color:var(--text-primary)}
+.louis-chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:80px}
+.louis-chat-empty{text-align:center;color:var(--text-muted);font-size:14px;padding:24px 12px;line-height:1.6}
+.louis-chat-empty span{font-size:28px;display:block;margin-bottom:8px}
+.lcm{padding:10px 14px;border-radius:12px;font-size:15px;line-height:1.55;max-width:88%;white-space:pre-wrap}
+.lcm-user{align-self:flex-end;background:rgba(99,102,241,0.1);border:1px solid var(--border-accent);border-radius:12px 12px 4px 12px;color:var(--text-secondary)}
+.lcm-louis{align-self:flex-start;background:var(--louis-bg);border:1px solid var(--louis-border);border-radius:12px 12px 12px 4px;color:var(--text-secondary)}
+.lcm-louis .lcm-name{font-size:12px;font-weight:600;color:var(--louis-gold);margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.louis-drawer-input{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--louis-border);background:var(--bg-secondary);flex-shrink:0;align-items:center}
+.louis-drawer-input input{flex:1;padding:10px 14px;background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:10px;color:var(--text-primary);font-size:15px;font-family:var(--font-body);outline:none}
+.louis-drawer-input input:focus{border-color:var(--louis-gold)}
+.louis-drawer-input input::placeholder{color:var(--text-muted)}
+.btn-louis-send{padding:9px 18px;font-size:14px;font-weight:600;background:rgba(245,158,11,0.12);color:var(--louis-gold);border:1px solid var(--louis-border);border-radius:10px;cursor:pointer;font-family:var(--font-body);transition:all 0.15s}
+.btn-louis-send:hover{background:rgba(245,158,11,0.22)}
+.btn-louis-send:disabled{opacity:0.4;cursor:not-allowed}
+.louis-typing{display:flex;align-items:center;gap:6px;padding:8px 14px;color:var(--text-muted);font-size:13px;align-self:flex-start}
+.louis-typing .typing{display:inline-flex}
+.input-row{display:flex;gap:8px;padding:12px 20px;align-items:flex-end}
+.btn-louis-hat{width:46px;height:46px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:all 0.2s}
+.btn-louis-hat:hover,.btn-louis-hat.active{background:var(--louis-bg);border-color:var(--louis-gold)}
+#msg-input{flex:1;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-primary);font-size:16px;resize:none;min-height:46px;max-height:120px;outline:none;font-family:var(--font-body)}
+#msg-input:focus{border-color:var(--accent-primary)}
+.btn-send{width:46px;height:46px;border:none;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-send.active{background:var(--accent-gradient)}.btn-send.inactive{background:var(--bg-card-hover);cursor:not-allowed}
+.btn-send svg{fill:#fff;width:20px;height:20px}
+.input-hint{display:flex;justify-content:space-between;font-size:13px;color:#cbd5e1;padding:0 20px 10px}
+.louis-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--louis-gold);flex-shrink:0}
+.louis-img-sm{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--louis-gold)}
+.louis-img-lg{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid var(--louis-gold)}
+.typing span{width:5px;height:5px;background:var(--text-muted);border-radius:50%;display:inline-block;margin:0 2px;animation:bounce 1.4s infinite}
+.typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:12px}
+.spinner{width:32px;height:32px;border:2px solid var(--border-subtle);border-top-color:var(--accent-primary);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){.sidebar{display:none}.msg{max-width:92%}}
+.btn-speak{background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:20px;opacity:0.6;transition:all 0.2s;vertical-align:middle}
+.btn-speak:hover{opacity:1;background:rgba(245,158,11,0.12)}
+.btn-speak.speaking{opacity:1;animation:pulse-speak 1s infinite}
+.btn-listen{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.1));border:2px solid var(--louis-gold);border-radius:10px;cursor:pointer;font-size:15px;font-weight:700;color:var(--louis-gold);font-family:var(--font-body);transition:all 0.2s;white-space:nowrap}
+.btn-listen:hover{background:linear-gradient(135deg,rgba(245,158,11,0.35),rgba(245,158,11,0.2));transform:scale(1.04);box-shadow:0 0 16px rgba(245,158,11,0.2)}
+.btn-listen.speaking{border-color:#10b981;color:#10b981;background:rgba(16,185,129,0.12);animation:none}
+.btn-listen.loading{opacity:0.9;cursor:wait;border-color:var(--accent-primary);color:var(--accent-primary);background:rgba(99,102,241,0.1)}
+.btn-listen .listen-icon{font-size:20px}
+.btn-listen .listen-spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(99,102,241,0.3);border-top-color:var(--accent-primary);border-radius:50%;animation:spin 0.7s linear infinite}
+.btn-listen .speak-pulse{display:inline-block;width:18px;height:18px;background:#10b981;border-radius:50%;animation:pulse-glow 1s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+@keyframes pulse-speak{0%,100%{opacity:1}50%{opacity:0.4}}
+.louis-voice-toggle{display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(245,158,11,0.12);border:1px solid var(--louis-border);border-radius:8px;cursor:pointer;font-size:15px;color:var(--louis-gold);font-family:var(--font-body);font-weight:600;transition:all 0.15s;white-space:nowrap}
+.louis-voice-toggle:hover{background:rgba(245,158,11,0.22);transform:scale(1.03)}
+.louis-voice-toggle.muted{opacity:0.5;background:rgba(255,255,255,0.05);border-color:var(--border-subtle);color:var(--text-muted)}
+</style></head><body>
+<div id="app"></div>
+<script src="/i18n.js"></script>
+<script>
+const API='',token=localStorage.getItem('auth_token'),userName=localStorage.getItem('user_name')||'Negotiator';
+const params=new URLSearchParams(window.location.search),scenarioId=params.get('scenario');
+if(!token)window.location.href='/negotiate';
+const lang=getLang();
+
+let state={phase:'loading',session:null,scenario:null,briefing:null,messages:[],exchangeCount:0,maxExchanges:15,sending:false,status:'active',louisOpen:false,louisChat:[],louisSending:false,louisSpoken:{}};
+
+// === Louis Voice (ElevenLabs TTS) ===
+let louisVoiceMuted=localStorage.getItem('louis_muted')==='true';
+let louisSpeaking=false;
+let louisAudio=null;
+let louisAudioCache={};
+let louisAbort=null;
+let louisGenId=0;
+
+function cleanTextForSpeech(text){
+  return text
+    .replace(/[\u{1F600}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}💡🎯🎩🎭📋🏁💬⏰⚠️🤝🚶🎓]/gu,'')
+    .replace(/\*\*/g,'').replace(/\*/g,'').replace(/#/g,'').replace(/`/g,'')
+    .replace(/\n+/g,'. ').replace(/\s+/g,' ').trim();
+}
+
+async function louisSpeak(text,autoPlay,btnId){
+  if(autoPlay&&louisVoiceMuted)return;
+  var clean=cleanTextForSpeech(text);
+  if(!clean)return;
+  // Stop everything — audio, browser TTS, and abort any in-flight fetch
+  louisStop();
+
+  var myId=++louisGenId;
+
+  // Check cache first
+  var cacheKey=clean.slice(0,100)+lang;
+  if(louisAudioCache[cacheKey]){
+    if(myId===louisGenId) playAudioBlob(louisAudioCache[cacheKey]);
+    return;
+  }
+
+  louisSpeaking=true;
+  updateSpeakButtons();
+
+  // Show loading spinner on the button that triggered this
+  if(btnId){
+    var btn=document.getElementById(btnId);
+    if(btn){btn.classList.add('loading');btn.innerHTML='<span class="listen-spinner"></span> '+(lang==='fr'?'Louis prépare...':'Louis is thinking...')}
+  }
+
+  try{
+    louisAbort=new AbortController();
+    var resp=await fetch(API+'/api/neg/game/tts',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({text:clean,lang:lang}),
+      signal:louisAbort.signal
+    });
+    if(myId!==louisGenId)return;
+    if(!resp.ok) throw new Error('TTS failed');
+    var blob=await resp.blob();
+    if(myId!==louisGenId)return;
+    louisAudioCache[cacheKey]=blob;
+    playAudioBlob(blob);
+  }catch(e){
+    if(e.name==='AbortError')return;
+    console.warn('ElevenLabs TTS failed, falling back to browser TTS:',e);
+    if(myId!==louisGenId)return;
+    louisSpeaking=false;
+    updateSpeakButtons();
+    resetListenButtons();
+    browserTTSFallback(clean);
+  }
+}
+
+function playAudioBlob(blob){
+  // Stop any existing audio first
+  if(louisAudio){louisAudio.pause();louisAudio=null}
+  var url=URL.createObjectURL(blob);
+  louisAudio=new Audio(url);
+  louisAudio.volume=1.0;
+  louisSpeaking=true;
+  updateSpeakButtons();
+  // Update any loading btn-listen to "Playing — Stop"
+  document.querySelectorAll('.btn-listen.loading').forEach(function(btn){
+    btn.classList.remove('loading');btn.classList.add('speaking');
+    btn.innerHTML='<span class="speak-pulse"></span> '+(lang==='fr'?'▶ En cours... Cliquer pour arrêter':'▶ Playing... Click to stop');
+  });
+  louisAudio.onended=function(){louisSpeaking=false;updateSpeakButtons();resetListenButtons();URL.revokeObjectURL(url)};
+  louisAudio.onerror=function(){louisSpeaking=false;updateSpeakButtons();resetListenButtons();URL.revokeObjectURL(url)};
+  louisAudio.play().catch(function(e){
+    console.warn('Audio play blocked:',e);
+    louisSpeaking=false;updateSpeakButtons();resetListenButtons();
+  });
+}
+
+function resetListenButtons(){
+  document.querySelectorAll('.btn-listen').forEach(function(btn){
+    btn.classList.remove('speaking','loading');
+    btn.innerHTML='<span class="listen-icon">🔊</span> '+t('neg_listen_louis');
+  });
+}
+
+function browserTTSFallback(text){
+  if(!window.speechSynthesis)return;
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==='fr'?'fr-CA':'en-US';u.rate=1.0;u.pitch=0.95;
+  var voices=window.speechSynthesis.getVoices();
+  var tl=lang==='fr'?'fr':'en';
+  var v=voices.filter(function(x){return x.lang.startsWith(tl)});
+  if(v.length)u.voice=v[0];
+  louisSpeaking=true;updateSpeakButtons();
+  u.onend=function(){louisSpeaking=false;updateSpeakButtons()};
+  u.onerror=function(){louisSpeaking=false;updateSpeakButtons()};
+  window.speechSynthesis.speak(u);
+}
+
+function louisStop(){
+  // Abort any in-flight fetch
+  if(louisAbort){try{louisAbort.abort()}catch(e){}louisAbort=null}
+  // Stop audio player
+  if(louisAudio){louisAudio.pause();louisAudio.currentTime=0;louisAudio=null}
+  // Stop browser TTS
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  louisSpeaking=false;
+  updateSpeakButtons();
+  resetListenButtons();
+}
+
+function toggleLouisMute(){
+  louisVoiceMuted=!louisVoiceMuted;
+  localStorage.setItem('louis_muted',louisVoiceMuted);
+  if(louisVoiceMuted)louisStop();
+  // Update the toggle button directly — no full re-render
+  var btn=document.querySelector('.louis-voice-toggle');
+  if(btn){
+    btn.classList.toggle('muted',louisVoiceMuted);
+    btn.innerHTML=(louisVoiceMuted?'🔇 Voice OFF':'🔊 Voice ON');
+  }
+}
+
+function speakOrStop(text){
+  if(louisSpeaking){louisStop()}else{louisSpeak(text,false)}
+}
+
+function listenBriefing(){
+  if(document.querySelector('.btn-listen.loading'))return; // already loading
+  if(louisSpeaking){louisStop();return}
+  louisSpeak(state.briefing.louis,false,'btn-listen-briefing');
+}
+
+function listenMsg(i){
+  if(document.querySelector('.btn-listen.loading'))return; // already loading
+  if(louisSpeaking){louisStop();return}
+  louisSpeak(state.messages[i].content,false,'btn-listen-msg'+i);
+}
+
+function updateSpeakButtons(){
+  document.querySelectorAll('.btn-speak').forEach(function(btn){
+    btn.classList.toggle('speaking',louisSpeaking);
+  });
+}
+
+async function api(path,opts={}){const r=await fetch(API+path,{...opts,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,...(opts.headers||{})},body:opts.body?JSON.stringify(opts.body):undefined});const d=await r.json();if(!r.ok){const err=new Error(d.error);err.data=d;throw err}return d}
+
+async function init(){
+  render();
+  try{
+    if(!scenarioId){window.location.href='/negotiate/dashboard';return}
+    const d=await api('/api/neg/game/start',{method:'POST',body:{scenarioId,lang}});
+    state.session={id:d.sessionId};state.scenario=d.scenario;state.briefing=d.briefing;state.maxExchanges=15;state.phase='briefing';render()
+  }catch(err){
+    if(err.message.includes('active session')){
+      document.getElementById('app').innerHTML='<div class="loading-screen"><h2>'+t('neg_active_session')+'</h2><p style="color:#e2e8f0;font-size:17px;margin-bottom:20px">'+t('neg_active_msg')+'</p><div style="display:flex;gap:12px;justify-content:center"><button onclick="abandonAndRestart()" style="padding:12px 24px;background:var(--accent-gradient);color:#fff;font-weight:700;font-size:16px;border:none;border-radius:8px;cursor:pointer;font-family:var(--font-body)">'+t('neg_start_fresh')+'</button><a href="/negotiate/dashboard" style="padding:12px 24px;background:var(--bg-card);color:#e2e8f0;font-weight:600;font-size:16px;border:1px solid var(--border-subtle);border-radius:8px;text-decoration:none;display:inline-block">'+t('neg_back_dashboard')+'</a></div></div>';
+      return;
+    }
+    if(err.message.includes('LIMIT_REACHED')||err.message.includes('SCENARIO_LOCKED')){document.getElementById('app').innerHTML='<div class="loading-screen"><h2>'+t('neg_free_used')+'</h2><p style="color:#e2e8f0;font-size:17px"><a href="/negotiate/dashboard" style="color:var(--accent-primary)">'+t('neg_upgrade')+'</a></p></div>';return}
+    document.getElementById('app').innerHTML='<div class="loading-screen"><h2>Error</h2><p style="color:#e2e8f0;font-size:17px">'+err.message+'</p><a href="/negotiate/dashboard" style="color:var(--accent-primary);font-size:16px">'+t('neg_back_dashboard')+'</a></div>'
+  }
+}
+
+async function abandonAndRestart(){
+  document.getElementById('app').innerHTML='<div class="loading-screen"><div class="spinner"></div><h2>'+t('neg_starting')+'</h2></div>';
+  try{await fetch(API+'/api/neg/game/negotiate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({action:'abandon'})})}catch(e){}
+  window.location.reload();
+}
+
+async function beginNegotiation(){
+  state.phase='negotiating';state.sending=true;render();
+  try{const d=await api('/api/neg/game/negotiate',{method:'POST',body:{sessionId:state.session.id,action:'begin',lang}});state.messages.push({role:'counterpart',content:d.counterpartMessage,name:d.counterpartName||state.scenario.counterpartName});state.exchangeCount=d.exchangeCount;state.sending=false;render();scrollToBottom()}catch(e){state.sending=false;render()}
+}
+
+async function sendMessage(){
+  const ta=document.getElementById('msg-input');const msg=ta.value.trim();if(!msg||state.sending)return;
+  state.messages.push({role:'user',content:msg});ta.value='';ta.style.height='42px';state.sending=true;render();scrollToBottom();
+  try{
+    const d=await api('/api/neg/game/negotiate',{method:'POST',body:{sessionId:state.session.id,message:msg,lang}});
+    state.messages.push({role:'counterpart',content:d.counterpartMessage,name:d.counterpartName});
+    if(d.louisHint){state.messages.push({role:'louis',content:d.louisHint})}
+    state.exchangeCount=d.exchangeCount;state.status=d.status;
+    if(d.status==='walkaway'||d.status==='completed'){state.phase='ended';state.endReason=d.status==='walkaway'?t('neg_walked_away'):t('neg_deal_reached')}
+    if(d.nearEnd)state.messages.push({role:'system',content:t('neg_near_end')});
+    state.sending=false;render();scrollToBottom()
+  }catch(e){state.sending=false;state.messages.push({role:'system',content:t('neg_error')});render()}
+}
+
+async function askLouis(){
+  var inp=document.getElementById('louis-input');var q=inp.value.trim();if(!q||state.louisSending)return;
+  // Add user message to Louis chat
+  state.louisChat.push({role:'user',content:q});
+  inp.value='';state.louisSending=true;render();scrollLouisToBottom();
+  try{
+    // Build louisHistory for the backend (previous exchanges only, not current question)
+    var historyForBackend=state.louisChat.slice(0,-1);
+    var d=await api('/api/neg/game/ask-louis',{method:'POST',body:{sessionId:state.session.id,question:q,playerName:userName,lang:lang,louisHistory:historyForBackend}});
+    // Add Louis response to chat
+    state.louisChat.push({role:'louis',content:d.advice});
+    // Also add to main messages so it's visible in transcript
+    state.messages.push({role:'louis',content:d.advice,question:q});
+    state.louisSending=false;render();scrollLouisToBottom();
+  }catch(e){
+    state.louisChat.push({role:'louis',content:lang==='fr'?'Désolé, je suis momentanément indisponible. Réessayez.':'Sorry, I\'m momentarily unavailable. Try again.'});
+    state.louisSending=false;render();scrollLouisToBottom();
+  }
+}
+function scrollLouisToBottom(){setTimeout(function(){var el=document.querySelector('.louis-chat-messages');if(el)el.scrollTop=el.scrollHeight},50)}
+
+async function walkAway(){
+  if(!confirm(t('neg_confirm_walk')))return;state.sending=true;render();
+  try{const d=await api('/api/neg/game/negotiate',{method:'POST',body:{sessionId:state.session.id,action:'walkaway',lang}});state.messages.push({role:'counterpart',content:d.counterpartMessage});state.phase='ended';state.endReason=t('neg_walked_away');state.sending=false;render();scrollToBottom()}catch(e){state.sending=false;render()}
+}
+
+async function acceptDeal(){
+  state.sending=true;render();
+  try{const d=await api('/api/neg/game/negotiate',{method:'POST',body:{sessionId:state.session.id,action:'accept',lang}});state.messages.push({role:'counterpart',content:d.counterpartMessage});state.phase='ended';state.endReason=t('neg_deal_reached');state.sending=false;render();scrollToBottom()}catch(e){state.sending=false;render()}
+}
+
+function viewResults(){window.location.href='/negotiate/results?session='+state.session.id}
+function toggleLouis(){state.louisOpen=!state.louisOpen;render();if(state.louisOpen)setTimeout(function(){var i=document.getElementById('louis-input');if(i)i.focus();scrollLouisToBottom()},80)}
+function scrollToBottom(){setTimeout(function(){var el=document.querySelector('.messages');if(el)el.scrollTop=el.scrollHeight},100)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
+
+function render(){
+  var app=document.getElementById('app');
+  if(state.phase==='loading'){app.innerHTML='<div class="loading-screen"><img src="/louis.png" class="louis-img-lg" style="margin-bottom:16px"><div class="spinner"></div><h2>'+t('neg_loading')+'</h2><p style="color:var(--text-muted)">'+t('neg_louis_reviewing')+'</p></div>';return}
+  var sc=state.scenario,br=state.briefing,pct=Math.min(100,(state.exchangeCount/state.maxExchanges)*100);
+  var headerTitle=state.phase==='briefing'?t('neg_briefing_title'):state.phase==='ended'?t('neg_complete'):t('neg_room');
+  var headerRight='';
+  if(state.phase==='negotiating')headerRight='<div class="chat-actions"><button class="louis-voice-toggle '+(louisVoiceMuted?'muted':'')+'" onclick="event.stopPropagation();toggleLouisMute()" title="'+t('neg_louis_voice_toggle')+'">'+(louisVoiceMuted?'🔇 Voice OFF':'🔊 Voice ON')+'</button><button class="btn-walkaway" onclick="walkAway()" '+(state.sending?'disabled':'')+'>'+t('neg_walk_away')+'</button><button class="btn-deal" onclick="acceptDeal()" '+(state.sending?'disabled':'')+'>'+t('neg_accept_deal')+'</button></div>';
+  else if(state.phase==='ended')headerRight='<a href="/negotiate/dashboard" style="color:var(--accent-primary);font-size:15px;font-weight:600;text-decoration:none">'+t('neg_back_dashboard')+'</a>';
+
+  app.innerHTML='<div class="app"><div class="sidebar">'+
+    '<div class="sb-header"><div class="sb-logo">Negotiate<span class="gradient-text">Sim</span> '+langToggleHTML()+'</div>'+
+    '<div class="sb-identity"><div class="name gradient-text">'+userName+'</div><div class="role">'+(tsc(scenarioId,'sub')||sc.subtitle||'')+'</div></div>'+
+    '<div class="sb-scenario"><strong>'+(sc.icon||'')+' '+(tsc(scenarioId,'title')||sc.title)+'</strong></div></div>'+
+    '<div class="sb-section"><h3>'+t('neg_counterpart')+'</h3><div class="sb-counterpart"><div class="sb-avatar">🎭</div><div><div class="sb-cp-name">'+sc.counterpartName+'</div><div class="sb-cp-title">'+(tsc(scenarioId,'counterpartTitle')||sc.counterpartTitle||'')+'</div></div></div></div>'+
+    '<div class="sb-section"><h3>'+t('neg_objectives')+'</h3><ul class="sb-obj">'+(tsc(scenarioId,'objectives')||br?.roleBrief?.objectives||[]).map(function(o){return '<li>'+o+'</li>'}).join('')+'</ul></div>'+
+    '<div class="sb-section"><h3>'+t('neg_batna')+'</h3><p style="font-size:15px;color:#e2e8f0;line-height:1.5">'+(tsc(scenarioId,'batna')||br?.roleBrief?.batna||'')+'</p></div>'+
+    '<div class="sb-section"><h3>'+t('neg_progress')+'</h3><div class="exchange-bar"><div class="exchange-fill" style="width:'+pct+'%"></div></div><div class="exchange-text"><span>'+t('neg_exchange')+' '+state.exchangeCount+'</span><span>~'+state.maxExchanges+'</span></div></div>'+
+    '</div><div class="main">'+
+    '<div class="chat-header"><h2>'+headerTitle+'</h2>'+headerRight+'</div>'+
+    '<div class="messages">'+(state.phase==='briefing'?renderBriefing():'')+state.messages.map(function(m,i){return renderMessage(m,i)}).join('')+(state.sending&&state.phase==='negotiating'?'<div class="msg msg-counterpart"><div class="msg-label counterpart">🎭 '+sc.counterpartName+'</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div></div>':'')+(state.phase==='ended'?renderEnded():'')+'</div>'+
+    (state.phase==='negotiating'?
+      (state.louisOpen?renderLouisDrawer():'')+
+      '<div class="input-area">'+
+      '<div class="input-row"><button class="btn-louis-hat '+(state.louisOpen?'active':'')+'" onclick="toggleLouis()" title="Louis"><img src="/louis.png" style="width:32px;height:32px;border-radius:50%;object-fit:cover"></button><textarea id="msg-input" placeholder="'+t('neg_negotiate_as')+' '+userName+'..." rows="1" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendMessage()}" oninput="this.style.height=\'42px\';this.style.height=Math.min(100,this.scrollHeight)+\'px\'" '+(state.sending?'disabled':'')+'></textarea><button class="btn-send '+(state.sending?'inactive':'active')+'" onclick="sendMessage()" '+(state.sending?'disabled':'')+'><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>'+
+      '<div class="input-hint"><span>'+t('neg_ask_louis_hint')+'</span><span>'+t('neg_enter_send')+'</span></div></div>':'')+
+    '</div></div>';
+}
+
+function renderBriefing(){
+  var briefText=state.briefing?.louis||'...';
+  // Auto-speak briefing ONCE only
+  if(!state.louisSpoken.briefing){
+    state.louisSpoken.briefing=true;
+  }
+  return '<div class="briefing-card"><div style="display:flex;align-items:center;gap:14px;margin-bottom:12px"><img src="/louis.png" class="louis-img-lg"><div><h3>'+t('neg_louis_briefing')+'</h3><div class="subtitle">'+t('neg_ai_coach')+'</div></div><button class="btn-listen" id="btn-listen-briefing" onclick="listenBriefing()"><span class="listen-icon">🔊</span> '+t('neg_listen_louis')+'</button></div><div class="briefing-louis">'+briefText+'</div><button class="btn-begin" onclick="louisStop();beginNegotiation()" '+(state.sending?'disabled':'')+'>'+(state.sending?t('neg_starting'):t('neg_enter_room')+' '+state.scenario.counterpartName+' →')+'</button></div>';
+}
+
+function renderMessage(m,i){
+  if(m.role==='user')return '<div class="msg msg-user"><div class="msg-label user">'+userName+'</div><div class="msg-bubble">'+esc(m.content)+'</div></div>';
+  if(m.role==='counterpart')return '<div class="msg msg-counterpart"><div class="msg-label counterpart">🎭 '+(m.name||state.scenario?.counterpartName||'')+'</div><div class="msg-bubble">'+esc(m.content)+'</div></div>';
+  if(m.role==='louis')return '<div class="msg msg-louis">'+(m.question?'<div class="msg-louis-q">"'+esc(m.question)+'"</div>':'')+'<div class="msg-label louis"><img src="/louis.png" class="louis-img-sm" style="display:inline-block;vertical-align:middle;margin-right:6px"> Louis'+(m.question?' — '+t('neg_advice'):' — '+t('neg_coach'))+'</div><div class="msg-bubble">'+esc(m.content)+'</div><button class="btn-listen" id="btn-listen-msg'+i+'" onclick="listenMsg('+i+')" style="margin-top:8px;padding:7px 14px;font-size:13px"><span class="listen-icon">🔊</span> '+t('neg_listen_louis')+'</button></div>';
+  return '<div class="msg msg-system"><div class="msg-bubble">'+esc(m.content)+'</div></div>';
+}
+
+function renderEnded(){
+  return '<div class="session-ended"><h3>'+state.endReason+'</h3><p>'+t('neg_analyzing')+'</p><button class="btn-results" onclick="viewResults()">'+t('neg_view_scorecard')+'</button><div style="margin-top:16px"><a href="/negotiate/dashboard" style="color:var(--text-secondary);font-size:15px;text-decoration:none">'+t('neg_back_dashboard')+'</a></div></div>';
+}
+
+function renderLouisDrawer(){
+  var msgs='';
+  if(state.louisChat.length===0){
+    msgs='<div class="louis-chat-empty"><span>🎓</span>'+t('neg_louis_chat_empty')+'</div>';
+  } else {
+    msgs=state.louisChat.map(function(m){
+      if(m.role==='user') return '<div class="lcm lcm-user">'+esc(m.content)+'</div>';
+      return '<div class="lcm lcm-louis"><div class="lcm-name"><img src="/louis.png" style="width:16px;height:16px;border-radius:50%"> Louis</div>'+esc(m.content)+'</div>';
+    }).join('');
+  }
+  if(state.louisSending){
+    msgs+='<div class="louis-typing"><img src="/louis.png" style="width:18px;height:18px;border-radius:50%;border:1px solid var(--louis-gold)"> <div class="typing"><span></span><span></span><span></span></div></div>';
+  }
+  return '<div class="louis-drawer">'+
+    '<div class="louis-drawer-header"><div class="louis-drawer-header-left"><img src="/louis.png" class="louis-img-sm"><div><h3>Louis</h3><div class="louis-status">● '+t('neg_louis_online')+'</div></div></div><button class="louis-drawer-close" onclick="toggleLouis()">✕</button></div>'+
+    '<div class="louis-chat-messages">'+msgs+'</div>'+
+    '<div class="louis-drawer-input"><input id="louis-input" placeholder="'+t('neg_louis_chat_placeholder')+'" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey)askLouis()" '+(state.louisSending?'disabled':'')+' autocomplete="off"><button class="btn-louis-send" onclick="askLouis()" '+(state.louisSending?'disabled':'')+'>'+t('neg_send_louis')+'</button></div>'+
+    '</div>';
+}
+
+init();
+</script></body></html>

@@ -1,0 +1,157 @@
+// lib/lang.js - NegotiateSim Bilingual UI Strings
+// Used by frontend pages via inline script
+
+export const STRINGS = {
+  // Navigation
+  nav_signout: { en: 'Sign Out', fr: 'Déconnexion' },
+  nav_admin: { en: '⚙️ Admin', fr: '⚙️ Admin' },
+
+  // Dashboard
+  dash_welcome: { en: ', welcome back. Ready to sharpen your negotiation skills?', fr: ', bon retour. Prêt à affiner tes compétences en négociation?' },
+  dash_sessions: { en: 'Sessions', fr: 'Sessions' },
+  dash_avg_score: { en: 'Avg Score', fr: 'Score moy.' },
+  dash_best_grade: { en: 'Best Grade', fr: 'Meilleure note' },
+  dash_sessions_left: { en: 'Sessions Left', fr: 'Sessions restantes' },
+  dash_choose: { en: 'Choose Your', fr: 'Choisissez votre' },
+  dash_scenario: { en: 'Scenario', fr: 'Scénario' },
+  dash_recent: { en: 'Recent Sessions', fr: 'Sessions récentes' },
+  dash_no_sessions: { en: 'No sessions yet. Pick a scenario above to start!', fr: 'Aucune session. Choisissez un scénario ci-dessus pour commencer!' },
+  dash_start: { en: 'Start →', fr: 'Commencer →' },
+  dash_deal: { en: 'Deal', fr: 'Entente' },
+  dash_walkaway: { en: 'Walkaway', fr: 'Retrait' },
+  dash_scenario_col: { en: 'Scenario', fr: 'Scénario' },
+  dash_result_col: { en: 'Result', fr: 'Résultat' },
+  dash_score_col: { en: 'Score', fr: 'Score' },
+  dash_grade_col: { en: 'Grade', fr: 'Note' },
+  dash_date_col: { en: 'Date', fr: 'Date' },
+
+  // Negotiate page
+  neg_briefing: { en: '📋 Mission Briefing', fr: '📋 Briefing de mission' },
+  neg_complete: { en: '🏁 Complete', fr: '🏁 Terminé' },
+  neg_room: { en: '💬 Negotiation Room', fr: '💬 Salle de négociation' },
+  neg_walk_away: { en: '🚶 Walk Away', fr: '🚶 Se retirer' },
+  neg_accept_deal: { en: '🤝 Accept Deal', fr: '🤝 Accepter l\'entente' },
+  neg_loading: { en: 'Preparing negotiation...', fr: 'Préparation de la négociation...' },
+  neg_louis_reviewing: { en: 'Louis is reviewing the briefing', fr: 'Louis prépare le briefing' },
+  neg_counterpart: { en: 'Counterpart', fr: 'Contrepartie' },
+  neg_objectives: { en: 'Your Objectives', fr: 'Vos objectifs' },
+  neg_batna: { en: 'Your BATNA', fr: 'Votre MESORE' },
+  neg_progress: { en: 'Progress', fr: 'Progression' },
+  neg_exchange: { en: 'Exchange', fr: 'Échange' },
+  neg_louis_briefing: { en: "Louis's Strategic Briefing", fr: 'Briefing stratégique de Louis' },
+  neg_ai_coach: { en: 'Your AI Negotiation Coach', fr: 'Votre coach IA en négociation' },
+  neg_enter_room: { en: 'Enter the Room — Meet', fr: 'Entrer dans la salle — Rencontrer' },
+  neg_starting: { en: 'Starting...', fr: 'Démarrage...' },
+  neg_negotiate_as: { en: 'Negotiate as', fr: 'Négociez en tant que' },
+  neg_ask_louis: { en: 'Click Louis to ask for advice', fr: 'Cliquez sur Louis pour demander conseil' },
+  neg_enter_send: { en: 'Enter to send · Shift+Enter for new line', fr: 'Entrée pour envoyer · Maj+Entrée nouvelle ligne' },
+  neg_louis_placeholder: { en: "Ask Louis — 'What do you think of this offer?' 'Should I push harder?'", fr: "Demandez à Louis — 'Que penses-tu de cette offre?' 'Devrais-je insister?'" },
+  neg_ask: { en: 'Ask', fr: 'Demander' },
+  neg_advice: { en: 'Advice', fr: 'Conseil' },
+  neg_coach: { en: 'Coach', fr: 'Coach' },
+  neg_walked_away: { en: 'You walked away.', fr: 'Vous vous êtes retiré.' },
+  neg_deal_reached: { en: '🤝 Deal reached!', fr: '🤝 Entente conclue!' },
+  neg_analyzing: { en: 'Louis is analyzing your performance...', fr: 'Louis analyse votre performance...' },
+  neg_view_scorecard: { en: 'View Scorecard & Debrief →', fr: 'Voir le bulletin et le débrief →' },
+  neg_back_dashboard: { en: '← Back to Dashboard', fr: '← Retour au tableau de bord' },
+  neg_near_end: { en: '⏰ Negotiation approaching conclusion. Consider your final offer.', fr: '⏰ La négociation approche de sa conclusion. Considérez votre offre finale.' },
+  neg_error: { en: '⚠️ Error. Try again.', fr: '⚠️ Erreur. Réessayez.' },
+  neg_confirm_walk: { en: 'Walk away from this negotiation?', fr: 'Se retirer de cette négociation?' },
+  neg_active_session: { en: 'Active Session Found', fr: 'Session active trouvée' },
+  neg_active_msg: { en: 'You have an unfinished negotiation in progress.', fr: 'Vous avez une négociation en cours non terminée.' },
+  neg_start_fresh: { en: 'Start Fresh', fr: 'Recommencer' },
+  neg_free_used: { en: 'Free Sessions Used', fr: 'Sessions gratuites épuisées' },
+  neg_upgrade: { en: 'Upgrade to continue', fr: 'Passez au niveau supérieur' },
+
+  // Results page
+  res_loading: { en: 'Loading scorecard...', fr: 'Chargement du bulletin...' },
+  res_scorecard: { en: 'Scorecard', fr: 'Bulletin' },
+  res_not_found: { en: 'Session not found', fr: 'Session introuvable' },
+  res_dashboard: { en: '← Dashboard', fr: '← Tableau de bord' },
+  res_deal_value: { en: 'Deal Value', fr: 'Valeur' },
+  res_value_creation: { en: 'Value Creation', fr: 'Création de valeur' },
+  res_relationship: { en: 'Relationship', fr: 'Relation' },
+  res_process_skill: { en: 'Process Skill', fr: 'Processus' },
+  res_efficiency: { en: 'Efficiency', fr: 'Efficacité' },
+  res_strategy: { en: 'Strategy', fr: 'Stratégie' },
+  res_louis_debrief: { en: "Louis's Coaching Debrief", fr: 'Débrief de Louis' },
+  res_analysis_done: { en: 'Analysis complete.', fr: 'Analyse terminée.' },
+  res_strengths: { en: '✅ Strengths', fr: '✅ Forces' },
+  res_improvements: { en: '📈 Areas for Improvement', fr: '📈 Points à améliorer' },
+  res_next_session: { en: 'Next Session:', fr: 'Prochaine session :' },
+  res_replay: { en: '🔄 Replay', fr: '🔄 Rejouer' },
+  res_all_scenarios: { en: '📋 All Scenarios', fr: '📋 Tous les scénarios' },
+
+  // Login / Index
+  login_title: { en: 'Master the Art of Negotiation', fr: "Maîtrisez l'art de la négociation" },
+  login_subtitle: { en: 'AI-powered negotiation simulations with real-time coaching', fr: 'Simulations de négociation propulsées par l\'IA avec coaching en temps réel' },
+  login_email: { en: 'Email', fr: 'Courriel' },
+  login_password: { en: 'Password', fr: 'Mot de passe' },
+  login_signin: { en: 'Sign In', fr: 'Se connecter' },
+  login_signup: { en: 'Create Account', fr: 'Créer un compte' },
+  login_name: { en: 'Full Name', fr: 'Nom complet' },
+  login_google: { en: 'Continue with Google', fr: 'Continuer avec Google' },
+
+  // Scenarios
+  sc_salary_title: { en: 'The Salary Negotiation', fr: 'La négociation salariale' },
+  sc_salary_sub: { en: 'Negotiate your compensation package for a new role', fr: 'Négociez votre offre de rémunération pour un nouveau poste' },
+  sc_vendor_title: { en: 'The Vendor Contract', fr: 'Le contrat fournisseur' },
+  sc_vendor_sub: { en: 'Renegotiate a critical software vendor agreement', fr: 'Renégociez un contrat fournisseur logiciel critique' },
+  sc_partnership_title: { en: 'The Partnership Deal', fr: 'L\'entente de partenariat' },
+  sc_partnership_sub: { en: 'Structure a strategic partnership with revenue sharing', fr: 'Structurez un partenariat stratégique avec partage des revenus' },
+  sc_realestate_title: { en: 'The Real Estate Deal', fr: 'La transaction immobilière' },
+  sc_realestate_sub: { en: 'Negotiate the purchase of a commercial property', fr: 'Négociez l\'achat d\'une propriété commerciale' },
+  sc_crosscultural_title: { en: 'Cross-Cultural Joint Venture', fr: 'Coentreprise interculturelle' },
+  sc_crosscultural_sub: { en: 'Navigate a JV with a Japanese conglomerate', fr: 'Naviguez une coentreprise avec un conglomérat japonais' },
+  sc_teamconflict_title: { en: 'Team Conflict Resolution', fr: 'Résolution de conflit d\'équipe' },
+  sc_teamconflict_sub: { en: 'Mediate a resource dispute between departments', fr: 'Médiez un conflit de ressources entre départements' },
+
+  // Categories
+  cat_career: { en: 'Career', fr: 'Carrière' },
+  cat_procurement: { en: 'Procurement', fr: 'Approvisionnement' },
+  cat_business_dev: { en: 'Business Dev', fr: 'Dév. affaires' },
+  cat_real_estate: { en: 'Real Estate', fr: 'Immobilier' },
+  cat_international: { en: 'International', fr: 'International' },
+  cat_leadership: { en: 'Leadership', fr: 'Leadership' },
+
+  // Difficulty
+  diff_beginner: { en: 'Beginner', fr: 'Débutant' },
+  diff_intermediate: { en: 'Intermediate', fr: 'Intermédiaire' },
+  diff_advanced: { en: 'Advanced', fr: 'Avancé' },
+
+  // Skills
+  skill_anchoring: { en: 'Anchoring', fr: 'Ancrage' },
+  skill_batna: { en: 'BATNA usage', fr: 'Utilisation MESORE' },
+  skill_package: { en: 'Package deals', fr: 'Offres groupées' },
+  skill_first_offer: { en: 'First-offer advantage', fr: 'Avantage 1re offre' },
+  skill_tradeoffs: { en: 'Multi-issue tradeoffs', fr: 'Compromis multi-enjeux' },
+  skill_concession: { en: 'Concession strategy', fr: 'Stratégie de concession' },
+  skill_contract: { en: 'Contract terms', fr: 'Termes contractuels' },
+  skill_relationship: { en: 'Relationship management', fr: 'Gestion relationnelle' },
+  skill_earnouts: { en: 'Earn-outs', fr: 'Compléments de prix' },
+  skill_control: { en: 'Control vs. value', fr: 'Contrôle vs. valeur' },
+  skill_creative: { en: 'Creative deal structures', fr: 'Structures créatives' },
+  skill_multi_party: { en: 'Multi-party interests', fr: 'Intérêts multipartites' },
+  skill_research: { en: 'Research leverage', fr: 'Levier de recherche' },
+  skill_urgency: { en: 'Urgency creation', fr: 'Création d\'urgence' },
+  skill_inspection: { en: 'Inspection contingencies', fr: 'Clauses d\'inspection' },
+  skill_creative_terms: { en: 'Creative terms', fr: 'Termes créatifs' },
+  skill_face_saving: { en: 'Face-saving', fr: 'Préserver la face' },
+  skill_cultural: { en: 'Cultural intelligence', fr: 'Intelligence culturelle' },
+  skill_indirect: { en: 'Indirect communication', fr: 'Communication indirecte' },
+  skill_relationship_first: { en: 'Relationship-first negotiation', fr: 'Négociation relationnelle' },
+  skill_active_listening: { en: 'Active listening', fr: 'Écoute active' },
+  skill_reframing: { en: 'Reframing', fr: 'Recadrage' },
+  skill_interest_based: { en: 'Interest-based resolution', fr: 'Résolution par intérêts' },
+  skill_emotional_intel: { en: 'Emotional intelligence', fr: 'Intelligence émotionnelle' },
+  skill_mediation: { en: 'Mediation', fr: 'Médiation' },
+  skill_win_win: { en: 'Win-win framing', fr: 'Cadrage gagnant-gagnant' },
+};
+
+// Frontend helper — include in HTML pages as inline script
+export const LANG_SCRIPT = `
+<script>
+function getLang(){return localStorage.getItem('negotiate_lang')||'en'}
+function setLang(l){localStorage.setItem('negotiate_lang',l);window.location.reload()}
+function t(key){const s=STRINGS[key];return s?s[getLang()]||s.en||key:key}
+</script>`;

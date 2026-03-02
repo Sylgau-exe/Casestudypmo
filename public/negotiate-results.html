@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta name="description" content="Your negotiation scorecard and detailed debrief from AI Coach Louis. Track your performance across 6 dimensions.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negotiation Sim — YCBS 288 — Scorecard & Debrief</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0a14;--bg-secondary:#0f0f1e;--bg-card:#171728;--bg-card-hover:#1e1e32;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#94a3b8;--accent-primary:#6366f1;--accent-secondary:#8b5cf6;--accent-tertiary:#06b6d4;--accent-success:#10b981;--accent-warning:#f59e0b;--accent-error:#ef4444;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06b6d4 100%);--border-subtle:rgba(255,255,255,0.08);--border-accent:rgba(99,102,241,0.3);--glow-primary:rgba(99,102,241,0.4);--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--louis-gold:#f59e0b;--louis-bg:rgba(245,158,11,0.08);--louis-border:rgba(245,158,11,0.25);--font-display:'Space Grotesk',sans-serif;--font-body:'DM Sans',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary)}.gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 48px;border-bottom:1px solid var(--border-subtle);background:var(--bg-secondary)}
+.nav-logo{font-family:var(--font-display);font-size:18px;font-weight:700}.nav-right{display:flex;gap:14px;align-items:center;font-size:12px;color:var(--text-muted)}
+.container{max-width:740px;margin:0 auto;padding:32px 24px}
+.grade-hero{text-align:center;padding:40px 24px;background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border-subtle);margin-bottom:20px;position:relative;overflow:hidden}
+.grade-hero .glow{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 60%)}
+.grade-letter{font-family:var(--font-display);font-size:72px;font-weight:700;line-height:1;position:relative}
+.grade-score{font-size:32px;font-weight:700;margin-top:4px;position:relative}
+.grade-info{font-size:14px;color:var(--text-muted);margin-top:8px;position:relative}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.score-dim{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;text-align:center}
+.score-dim .label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+.score-dim .value{font-family:var(--font-display);font-size:30px;font-weight:700}
+.score-dim .bar{height:3px;background:var(--bg-card-hover);border-radius:2px;margin-top:6px;overflow:hidden}
+.score-dim .bar-fill{height:100%;border-radius:2px}
+.debrief{background:var(--bg-card);border:1px solid var(--louis-border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px}
+.debrief-title{display:flex;align-items:center;gap:8px;margin-bottom:14px}.debrief-title span:first-child{font-size:20px}
+.debrief-title h3{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--louis-gold)}
+.debrief-summary{font-size:14px;line-height:1.6;padding:14px;background:var(--louis-bg);border-radius:var(--radius-md);border-left:3px solid var(--louis-gold);margin-bottom:16px;white-space:pre-wrap}
+.section-label{font-size:12px;font-weight:600;margin-bottom:8px}
+.section-item{font-size:12px;color:var(--text-secondary);padding:7px 10px;background:var(--bg-card-hover);border-radius:7px;margin-bottom:4px;line-height:1.45}
+.next-advice{font-size:13px;color:var(--louis-gold);font-weight:500;padding:12px;background:var(--louis-bg);border-radius:var(--radius-sm);margin-top:12px}
+.actions{display:flex;gap:12px;justify-content:center;margin-bottom:32px}
+.btn-primary{padding:12px 28px;background:var(--accent-gradient);color:#fff;font-weight:700;font-size:14px;border:none;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font-body)}
+.btn-outline{padding:12px 28px;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);border-radius:var(--radius-md);cursor:pointer;font-size:14px;font-family:var(--font-body)}
+.footer{text-align:center;font-size:11px;color:var(--text-muted);padding-bottom:24px}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;gap:12px}
+.spinner{width:32px;height:32px;border:2px solid var(--border-subtle);border-top-color:var(--accent-primary);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){nav{padding:14px 20px}.score-grid{grid-template-columns:repeat(2,1fr)}}
+.btn-speak{background:none;border:none;cursor:pointer;padding:3px 6px;border-radius:6px;font-size:16px;opacity:0.5;transition:all 0.2s;vertical-align:middle}
+.btn-speak:hover{opacity:1;background:rgba(245,158,11,0.12)}
+.btn-speak.speaking{opacity:1;animation:pulse-speak 1s infinite}
+@keyframes pulse-speak{0%,100%{opacity:1}50%{opacity:0.4}}
+</style></head><body>
+<nav><div class="nav-logo">Negotiate<span class="gradient-text">Sim</span></div><div class="nav-right"><span id="langToggle"></span><span>🎩 <span id="navUser"></span></span></div></nav>
+<div class="container" id="app"><div class="loading-screen"><div class="spinner"></div><h2 id="loadingText"></h2></div></div>
+<script src="/i18n.js"></script>
+<script>
+const API='',token=localStorage.getItem('auth_token'),userName=localStorage.getItem('user_name')||'Negotiator';
+if(!token)window.location.href='/negotiate';
+document.getElementById('langToggle').innerHTML=langToggleHTML();
+document.getElementById('navUser').textContent=userName;
+document.getElementById('loadingText').textContent=t('res_loading');
+const sessionId=new URLSearchParams(window.location.search).get('session');
+if(!sessionId)window.location.href='/negotiate/dashboard';
+
+async function api(path,opts={}){const r=await fetch(API+path,{...opts,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,...(opts.headers||{})},body:opts.body?JSON.stringify(opts.body):undefined});const d=await r.json();if(!r.ok)throw new Error(d.error);return d}
+
+function dimColor(s){return s>=80?'var(--accent-success)':s>=60?'var(--accent-warning)':'var(--accent-error)'}
+function gradeColor(g){return g==='S'||g==='A'?'var(--accent-success)':g==='B'?'var(--accent-primary)':g==='C'?'var(--accent-warning)':'var(--accent-error)'}
+
+// === Louis Voice (ElevenLabs TTS) ===
+var louisVoiceMuted=localStorage.getItem('louis_muted')==='true';
+var louisSpeaking=false;
+var louisAudio=null;
+var louisAudioCache={};
+var louisAbort=null;
+var louisGenId=0;
+var rLang=getLang();
+
+function cleanTextForSpeech(text){
+  return text.replace(/[\u{1F600}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}💡🎯🎩🎭📋🏁💬⏰⚠️🤝🚶🎓]/gu,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#/g,'').replace(/`/g,'').replace(/\n+/g,'. ').replace(/\s+/g,' ').trim();
+}
+
+async function louisSpeak(text,autoPlay){
+  if(autoPlay&&louisVoiceMuted)return;
+  var clean=cleanTextForSpeech(text);if(!clean)return;
+  louisStop();
+  var myId=++louisGenId;
+  var cacheKey=clean.slice(0,100)+rLang;
+  if(louisAudioCache[cacheKey]){if(myId===louisGenId)playAudioBlob(louisAudioCache[cacheKey]);return}
+  louisSpeaking=true;
+  try{
+    louisAbort=new AbortController();
+    var resp=await fetch(API+'/api/neg/game/tts',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({text:clean,lang:rLang}),signal:louisAbort.signal});
+    if(myId!==louisGenId)return;
+    if(!resp.ok)throw new Error('TTS failed');
+    var blob=await resp.blob();
+    if(myId!==louisGenId)return;
+    louisAudioCache[cacheKey]=blob;
+    playAudioBlob(blob);
+  }catch(e){
+    if(e.name==='AbortError')return;
+    console.warn('ElevenLabs failed, falling back:',e);
+    if(myId!==louisGenId)return;
+    louisSpeaking=false;
+    if(window.speechSynthesis){var u=new SpeechSynthesisUtterance(clean);u.lang=rLang==='fr'?'fr-CA':'en-US';u.rate=1.0;u.pitch=0.95;louisSpeaking=true;u.onend=function(){louisSpeaking=false};u.onerror=function(){louisSpeaking=false};window.speechSynthesis.speak(u)}
+  }
+}
+function playAudioBlob(blob){
+  if(louisAudio){louisAudio.pause();louisAudio=null}
+  var url=URL.createObjectURL(blob);
+  louisAudio=new Audio(url);louisAudio.volume=1.0;louisSpeaking=true;
+  louisAudio.onended=function(){louisSpeaking=false;URL.revokeObjectURL(url)};
+  louisAudio.onerror=function(){louisSpeaking=false;URL.revokeObjectURL(url)};
+  louisAudio.play().catch(function(){louisSpeaking=false});
+}
+function louisStop(){if(louisAbort){try{louisAbort.abort()}catch(e){}louisAbort=null}if(louisAudio){louisAudio.pause();louisAudio.currentTime=0;louisAudio=null}if(window.speechSynthesis)window.speechSynthesis.cancel();louisSpeaking=false}
+function speakOrStop(text){if(louisSpeaking){louisStop()}else{louisSpeak(text,false)}}
+
+async function loadResults(){
+  try{
+    let scoreResult=null;
+    try{scoreResult=await api('/api/neg/game/score',{method:'POST',body:{sessionId,lang:getLang()}})}catch(e){}
+    const d=await api('/api/neg/game/history');
+    const session=d.sessions?.find(s=>s.id==sessionId);
+    if(!session){throw new Error(t('res_not_found'))}
+    const scorecard=scoreResult?.scorecard||session.scorecard||{};
+    const debrief=scoreResult?.debrief||session.debrief||{};
+    renderResults(session,scorecard,debrief);
+  }catch(err){
+    document.getElementById('app').innerHTML='<div class="loading-screen"><h2>'+t('res_scorecard')+'</h2><p style="color:var(--text-muted)">'+err.message+'</p><a href="/negotiate/dashboard" style="color:var(--accent-primary)">'+t('res_dashboard')+'</a></div>';
+  }
+}
+
+function renderResults(session,sc,db){
+  const dims=[
+    {name:t('res_deal_value'),score:sc.dealValue||sc.deal_value||0},
+    {name:t('res_value_creation'),score:sc.valueCreation||sc.value_creation||0},
+    {name:t('res_relationship'),score:sc.relationship||0},
+    {name:t('res_process_skill'),score:sc.processSkill||sc.process_skill||0},
+    {name:t('res_efficiency'),score:sc.efficiency||0},
+    {name:t('res_strategy'),score:sc.strategicAwareness||sc.strategic_awareness||0}
+  ];
+  const grade=sc.grade||'C',overall=sc.overallScore||sc.overall_score||0;
+  const nextAdvice=db.nextSessionAdvice||db.next_advice;
+  const scTitle=tsc(session.scenario_id,'title')||session.scenario_id;
+  // Build full debrief text for Louis to speak
+  var debriefParts=[db.summary||''];
+  if(db.strengths&&db.strengths.length)debriefParts.push((getLang()==='fr'?'Points forts: ':'Strengths: ')+db.strengths.join('. '));
+  if(db.improvements&&db.improvements.length)debriefParts.push((getLang()==='fr'?'Points à améliorer: ':'Areas to improve: ')+db.improvements.join('. '));
+  if(nextAdvice)debriefParts.push((getLang()==='fr'?'Pour la prochaine session: ':'For next time: ')+nextAdvice);
+  window.debriefFullText=debriefParts.join('. ');
+  document.getElementById('app').innerHTML=
+    '<div class="grade-hero" style="animation:fadeUp 0.5s"><div class="glow"></div>'+
+      '<div class="grade-letter" style="color:'+gradeColor(grade)+'">'+grade+'</div>'+
+      '<div class="grade-score">'+overall+'/100</div>'+
+      '<div class="grade-info">'+scTitle+' · '+userName+'</div>'+
+    '</div>'+
+    '<div class="score-grid" style="animation:fadeUp 0.5s 0.1s both">'+dims.map(function(d){return '<div class="score-dim"><div class="label">'+d.name+'</div><div class="value" style="color:'+dimColor(d.score)+'">'+d.score+'</div><div class="bar"><div class="bar-fill" style="width:'+d.score+'%;background:'+dimColor(d.score)+'"></div></div></div>'}).join('')+'</div>'+
+    '<div class="debrief" style="animation:fadeUp 0.5s 0.2s both">'+
+      '<div class="debrief-title"><span>🎩</span><h3>'+t('res_louis_debrief')+'</h3><button class="btn-speak" onclick="speakOrStop(debriefFullText)" title="'+t('neg_listen_louis')+'">🔊</button></div>'+
+      '<div class="debrief-summary">'+(db.summary||t('res_analysis_done'))+'</div>'+
+      (db.strengths&&db.strengths.length?'<div style="margin-bottom:14px"><div class="section-label" style="color:var(--accent-success)">'+t('res_strengths')+'</div>'+db.strengths.map(function(s){return '<div class="section-item">'+s+'</div>'}).join('')+'</div>':'')+
+      (db.improvements&&db.improvements.length?'<div style="margin-bottom:14px"><div class="section-label" style="color:var(--accent-warning)">'+t('res_improvements')+'</div>'+db.improvements.map(function(s){return '<div class="section-item">'+s+'</div>'}).join('')+'</div>':'')+
+      (nextAdvice?'<div class="next-advice">🎯 <strong>'+t('res_next_session')+'</strong> '+nextAdvice+'</div>':'')+
+    '</div>'+
+    '<div class="actions" style="animation:fadeUp 0.5s 0.3s both">'+
+      '<button class="btn-primary" onclick="window.location.href=\'/negotiate/play?scenario='+session.scenario_id+'\'">'+t('res_replay')+'</button>'+
+      '<button class="btn-outline" onclick="window.location.href=\'/negotiate/dashboard\'">'+t('res_all_scenarios')+'</button>'+
+    '</div>'+
+    '<div class="footer"><span class="gradient-text" style="font-weight:600">NegotiateSim</span> — A Panda Projet Platform · Sylvain Gauthier, PMP, ACP</div>';
+  // Voice is opt-in — user can click 🔊 to hear the debrief
+}
+
+loadResults();
+</script></body></html>
