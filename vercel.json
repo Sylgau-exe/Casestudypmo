@@ -5,7 +5,6 @@
     { "source": "/negotiate", "destination": "/negotiate-login.html" },
     { "source": "/negotiate/dashboard", "destination": "/negotiate-dashboard.html" },
     { "source": "/negotiate/play", "destination": "/negotiate-play.html" },
-    { "source": "/negotiate/results", "destination": "/negotiate-results.html" },
-    { "source": "/", "destination": "/hub.html" }
+    { "source": "/negotiate/results", "destination": "/negotiate-results.html" }
   ]
 }
