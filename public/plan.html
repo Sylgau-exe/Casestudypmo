@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCBS 288 — Project Charter & Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #ED1B2F;
+            --red-dark: #c41426;
+            --red-light: #fef2f2;
+            --red-border: #fecaca;
+            --bg: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f3f4f6;
+            --accent: #c6a052;
+            --accent-light: #d4af61;
+            --accent-glow: rgba(198,160,82,0.25);
+            --success: #16a34a;
+            --success-bg: rgba(22,163,74,0.08);
+            --warning: #ca8a04;
+            --warning-bg: rgba(202,138,4,0.08);
+            --error: #dc2626;
+            --info: #2563eb;
+            --purple: #7c3aed;
+            --purple-bg: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            /* Plan knowledge-area colors */
+            --c-scope: #2563eb;
+            --c-quality: #059669;
+            --c-risk: #d97706;
+            --c-comm: #7c3aed;
+            --c-proc: #dc2626;
+            --c-charter: #7c3aed;
+            --c-qa: #059669;
+            --c-qc: #0891b2;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg-subtle); color:var(--text); line-height:1.6; min-height:100vh; }
+
+        /* ─── LOGIN ─── */
+        #loginScreen {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            background:linear-gradient(135deg,#f9fafb 0%,#f3f4f6 100%); padding:2rem;
+        }
+        .login-box {
+            width:100%; max-width:440px; background:white;
+            border-radius:16px; padding:2.5rem; box-shadow:var(--shadow-lg); border:1px solid var(--border);
+        }
+        .login-header { text-align:center; margin-bottom:2rem; }
+        .login-logo {
+            width:64px; height:64px; margin:0 auto 1rem;
+            background:var(--red); border-radius:14px;
+            display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:white;
+        }
+        .login-title { font-family:'Fraunces',serif; font-size:1.4rem; font-weight:700; }
+        .login-subtitle { font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem; }
+        .login-course { font-size:0.78rem; color:var(--text-dim); margin-top:0.5rem; }
+        .login-marcus-box {
+            display:flex; align-items:flex-start; gap:0.75rem;
+            background:#f9fafb; border:1px solid var(--border); border-radius:12px; padding:1rem; margin-bottom:1.5rem;
+        }
+        .login-marcus-avatar {
+            width:48px; height:48px; border-radius:50%; border:2px solid var(--red);
+            background:#e2e8f0; flex-shrink:0; object-fit:cover;
+        }
+        .form-group { margin-bottom:0.85rem; }
+        .form-label { display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:0.3rem; }
+        .form-input {
+            width:100%; padding:0.65rem 0.85rem; border:2px solid var(--border);
+            border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s; background:white;
+        }
+        .form-input:focus { outline:none; border-color:var(--red); }
+        .btn-login {
+            width:100%; padding:0.75rem; background:var(--red); color:white; border:none;
+            border-radius:8px; font-family:inherit; font-size:0.95rem; font-weight:600; cursor:pointer;
+            transition:background 0.2s;
+        }
+        .btn-login:hover { background:var(--red-dark); }
+        .login-error { color:var(--error); font-size:0.8rem; text-align:center; margin-top:0.5rem; display:none; }
+
+        /* ─── APP LAYOUT ─── */
+        #appScreen { display:none; height:100vh; }
+        .app-layout { display:flex; height:100%; }
+
+        /* ─── SIDEBAR ─── */
+        .sidebar {
+            width:272px; min-width:272px; background:white; border-right:1px solid var(--border);
+            display:flex; flex-direction:column; overflow-y:auto;
+        }
+        .sidebar-header { padding:16px; border-bottom:1px solid var(--border); }
+        .mode-toggle {
+            display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+            padding:8px 12px; border-radius:8px; border:2px solid var(--border); transition:all 0.2s;
+        }
+        .mode-toggle:hover { border-color:var(--text-dim); }
+        .mode-toggle-left { display:flex; align-items:center; gap:8px; }
+        .mode-toggle-icon { font-size:16px; }
+        .mode-toggle-label { font-family:'Fraunces',serif; font-size:14px; font-weight:700; }
+        .mode-toggle-sub { font-size:10px; color:var(--text-dim); }
+        .mode-dropdown {
+            position:absolute; top:100%; left:12px; right:12px; margin-top:4px; z-index:100;
+            background:white; border-radius:8px; border:1px solid var(--border);
+            box-shadow:var(--shadow-lg); overflow:hidden; display:none;
+        }
+        .mode-dropdown.show { display:block; }
+        .mode-dropdown-item {
+            display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer;
+            border-left:3px solid transparent; transition:all 0.15s;
+        }
+        .mode-dropdown-item:hover { background:var(--bg-subtle); }
+        .mode-dropdown-item.active { background:#f5f3ff; border-left-color:var(--purple); }
+        .mode-dropdown-footer { border-top:1px solid var(--border); padding:6px 12px; font-size:10px; color:var(--text-dim); }
+
+        .sidebar-nav { flex:1; overflow-y:auto; padding:8px 0; position:relative; }
+        .nav-group-label {
+            font-size:10px; font-weight:700; color:var(--text-dim); text-transform:uppercase;
+            letter-spacing:0.1em; padding:14px 16px 4px;
+        }
+        .nav-item {
+            display:flex; align-items:center; gap:8px; padding:7px 12px; margin:0 12px 4px;
+            border-radius:7px; cursor:pointer; font-size:13px; font-weight:400;
+            color:var(--text-muted); border:1px solid transparent; transition:all 0.15s;
+        }
+        .nav-item:hover { background:var(--bg-subtle); }
+        .nav-item.active { background:var(--bg-card-hover); font-weight:700; color:var(--text); border-color:var(--border); }
+        .nav-item-icon { font-size:14px; flex-shrink:0; }
+        .nav-item-tag { margin-left:auto; font-size:8px; font-weight:700; color:var(--text-dim); }
+
+        /* Integration compact nodes */
+        .int-node {
+            display:flex; align-items:center; gap:6px; padding:5px 8px; margin-bottom:4px;
+            border-radius:6px; cursor:pointer; border:1px solid var(--border-light);
+            transition:all 0.15s; font-size:11px; color:var(--text-muted);
+        }
+        .int-node:hover { background:var(--bg-subtle); }
+        .int-node.active { font-weight:700; }
+        .int-node .arrow-tag { margin-left:auto; font-size:8px; opacity:0.6; }
+
+        .sidebar-footer {
+            padding:12px 16px; border-top:1px solid var(--border);
+            font-size:10px; color:var(--text-dim); text-align:center; line-height:1.5;
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        .main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+        .main-header {
+            padding:14px 24px; border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center; background:white;
+        }
+        .main-header-title { font-family:'Fraunces',serif; font-size:18px; font-weight:700; }
+        .main-header-mode { font-size:11px; font-weight:600; margin-top:2px; }
+        .main-header-right { display:flex; gap:10px; align-items:center; font-size:12px; color:var(--text-muted); }
+
+        .main-content { flex:1; overflow:auto; padding:24px; }
+
+        /* ─── CARDS ─── */
+        .card {
+            background:white; border:1px solid var(--border); border-radius:12px;
+            padding:20px; margin-bottom:16px; box-shadow:var(--shadow-sm);
+        }
+        .card-title {
+            font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:12px;
+            text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; gap:8px;
+        }
+
+        /* ─── STAT CARDS ─── */
+        .stat-grid { display:grid; gap:12px; margin-bottom:16px; }
+        .stat-grid-4 { grid-template-columns:repeat(4,1fr); }
+        .stat-grid-3 { grid-template-columns:repeat(3,1fr); }
+        .stat-card {
+            background:white; border:1px solid var(--border); border-radius:10px;
+            padding:16px; text-align:center; border-top:3px solid var(--info);
+        }
+        .stat-val { font-family:'Fraunces',serif; font-size:28px; font-weight:800; }
+        .stat-label { font-size:11px; color:var(--text-dim); margin-top:4px; }
+
+        /* ─── TABLES ─── */
+        .tbl { width:100%; border-collapse:collapse; font-size:13px; }
+        .tbl th {
+            text-align:left; padding:8px 12px; color:var(--text-dim); font-weight:600;
+            font-size:11px; text-transform:uppercase; letter-spacing:0.04em;
+            border-bottom:2px solid var(--border);
+        }
+        .tbl td { padding:10px 12px; border-bottom:1px solid var(--border-light); }
+        .tbl tr:hover td { background:var(--bg-subtle); }
+
+        /* ─── BADGES ─── */
+        .badge {
+            display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;
+        }
+        .badge-scope { background:rgba(37,99,235,0.08); color:var(--c-scope); border:1px solid rgba(37,99,235,0.2); }
+        .badge-quality { background:rgba(5,150,105,0.08); color:var(--c-quality); border:1px solid rgba(5,150,105,0.2); }
+        .badge-risk { background:rgba(215,119,6,0.08); color:var(--c-risk); border:1px solid rgba(215,119,6,0.2); }
+        .badge-comm { background:rgba(124,58,237,0.08); color:var(--c-comm); border:1px solid rgba(124,58,237,0.2); }
+        .badge-proc { background:rgba(220,38,38,0.08); color:var(--c-proc); border:1px solid rgba(220,38,38,0.2); }
+        .badge-high { background:rgba(220,38,38,0.08); color:#dc2626; border:1px solid rgba(220,38,38,0.2); }
+        .badge-medium { background:rgba(202,138,4,0.08); color:#ca8a04; border:1px solid rgba(202,138,4,0.2); }
+        .badge-low { background:rgba(22,163,74,0.08); color:#16a34a; border:1px solid rgba(22,163,74,0.2); }
+        .badge-blue { background:rgba(37,99,235,0.08); color:#2563eb; border:1px solid rgba(37,99,235,0.2); }
+        .badge-int {
+            display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px;
+            font-size:10px; font-weight:700; background:rgba(37,99,235,0.08);
+            color:var(--info); border:1px solid rgba(37,99,235,0.2);
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+            padding:6px 14px; border-radius:8px; border:none; font-family:inherit;
+            font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s;
+        }
+        .btn-primary { background:var(--red); color:white; }
+        .btn-primary:hover { background:var(--red-dark); }
+        .btn-blue { background:var(--info); color:white; }
+        .btn-green { background:var(--success); color:white; }
+        .btn-sm {
+            padding:3px 8px; border-radius:6px; border:1px solid var(--border);
+            background:transparent; color:var(--text-muted); font-size:11px; cursor:pointer;
+        }
+        .btn-sm:hover { border-color:var(--text-dim); }
+        .btn-rate { color:var(--warning); border-color:rgba(202,138,4,0.3); }
+
+        /* ─── FORMS ─── */
+        .input-sm {
+            padding:6px 10px; border-radius:6px; border:1px solid var(--border);
+            background:white; color:var(--text); font-family:inherit; font-size:12px; width:100%;
+        }
+        .input-sm:focus { outline:none; border-color:var(--red); }
+        .select-sm {
+            padding:6px 10px; border-radius:6px; border:1px solid var(--border);
+            background:white; color:var(--text); font-family:inherit; font-size:12px;
+        }
+
+        /* ─── GANTT ─── */
+        .gantt-row { display:flex; align-items:center; border-bottom:1px solid var(--border-light); min-height:36px; }
+        .gantt-row:hover { background:var(--bg-subtle); }
+        .gantt-label { width:220px; min-width:220px; padding:6px 12px; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .gantt-res { width:60px; min-width:60px; text-align:center; font-size:11px; color:var(--text-dim); }
+        .gantt-track { flex:1; position:relative; height:28px; }
+        .gantt-bar {
+            position:absolute; top:4px; height:20px; border-radius:4px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:10px; font-weight:600; color:white; overflow:hidden; white-space:nowrap;
+        }
+
+        /* ─── HISTOGRAM ─── */
+        .histo-bar { border-radius:3px; transition:height 0.2s ease; }
+
+        /* ─── MARCUS CHAT PANEL ─── */
+        .marcus-fab {
+            position:fixed; bottom:24px; right:24px; z-index:900;
+            width:56px; height:56px; border-radius:50%; background:var(--red);
+            border:none; cursor:pointer; box-shadow:0 4px 16px rgba(237,27,47,0.35);
+            display:flex; align-items:center; justify-content:center; font-size:24px;
+            transition:transform 0.2s; color:white;
+        }
+        .marcus-fab:hover { transform:scale(1.1); }
+        .marcus-panel {
+            position:fixed; bottom:0; right:0; top:0; z-index:950; width:420px;
+            background:white; box-shadow:-4px 0 24px rgba(0,0,0,0.12);
+            display:flex; flex-direction:column; transform:translateX(100%);
+            transition:transform 0.3s ease;
+        }
+        .marcus-panel.open { transform:translateX(0); }
+        .marcus-panel-header {
+            padding:16px 20px; background:var(--red); color:white;
+            display:flex; align-items:center; gap:12px;
+        }
+        .marcus-panel-avatar {
+            width:40px; height:40px; border-radius:50%; border:2px solid rgba(255,255,255,0.5);
+            object-fit:cover; background:#c41426;
+        }
+        .marcus-panel-close {
+            margin-left:auto; background:rgba(255,255,255,0.2); border:none;
+            color:white; width:32px; height:32px; border-radius:8px; cursor:pointer;
+            font-size:16px; display:flex; align-items:center; justify-content:center;
+        }
+        .marcus-messages {
+            flex:1; overflow-y:auto; padding:16px 20px;
+            display:flex; flex-direction:column; gap:12px;
+        }
+        .marcus-msg {
+            padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.6;
+            max-width:90%; animation:msgIn 0.3s ease;
+        }
+        @keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .marcus-msg.ai {
+            background:var(--bg-subtle); border:1px solid var(--border); align-self:flex-start;
+        }
+        .marcus-msg.user {
+            background:var(--red); color:white; align-self:flex-end; border-radius:12px 12px 4px 12px;
+        }
+        .marcus-msg.loading {
+            background:var(--bg-subtle); border:1px solid var(--border); align-self:flex-start;
+            color:var(--text-dim);
+        }
+        .marcus-msg h4 { font-size:13px; font-weight:700; margin:0 0 6px; }
+        .marcus-msg ul { margin:6px 0; padding-left:18px; }
+        .marcus-msg li { margin-bottom:4px; }
+        .marcus-msg code { background:rgba(0,0,0,0.06); padding:1px 4px; border-radius:3px; font-size:12px; }
+        .marcus-suggestions {
+            display:flex; flex-wrap:wrap; gap:6px; padding:8px 20px 4px;
+        }
+        .marcus-suggest-btn {
+            padding:6px 12px; border-radius:16px; border:1px solid var(--border);
+            background:white; font-size:11px; color:var(--text-muted); cursor:pointer;
+            font-family:inherit; transition:all 0.15s;
+        }
+        .marcus-suggest-btn:hover { border-color:var(--red); color:var(--red); }
+        .marcus-input-bar {
+            padding:12px 20px; border-top:1px solid var(--border);
+            display:flex; gap:8px; background:white;
+        }
+        .marcus-input {
+            flex:1; padding:10px 14px; border:2px solid var(--border); border-radius:10px;
+            font-family:inherit; font-size:13px; resize:none; max-height:100px;
+        }
+        .marcus-input:focus { outline:none; border-color:var(--red); }
+        .marcus-send {
+            padding:10px 16px; background:var(--red); color:white; border:none;
+            border-radius:10px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600;
+        }
+        .marcus-send:disabled { opacity:0.5; cursor:not-allowed; }
+
+        /* ─── SAVE INDICATOR ─── */
+        .save-indicator {
+            position:fixed; top:16px; right:16px; z-index:800;
+            padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600;
+            background:white; border:1px solid var(--border); box-shadow:var(--shadow-md);
+            display:flex; align-items:center; gap:6px; opacity:0; transition:opacity 0.3s;
+        }
+        .save-indicator.show { opacity:1; }
+        .save-indicator.saving { color:var(--warning); }
+        .save-indicator.saved { color:var(--success); }
+        .save-indicator.error { color:var(--error); }
+
+        /* ─── MODAL OVERLAY ─── */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px);
+            display:flex; align-items:center; justify-content:center; z-index:1000;
+        }
+        .modal-box {
+            background:white; border-radius:12px; border:1px solid var(--border);
+            width:90%; max-width:900px; max-height:85vh; display:flex; flex-direction:column;
+            box-shadow:var(--shadow-lg);
+        }
+
+        /* ─── CHARTER SPECIFIC ─── */
+        .charter-banner {
+            padding:20px; border-radius:10px; margin-bottom:16px;
+            background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);
+            border:1px solid #ddd6fe;
+        }
+        .charter-title { font-family:'Fraunces',serif; font-size:20px; font-weight:800; margin-bottom:4px; }
+        .charter-approval-box {
+            padding:12px 24px; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer;
+        }
+
+        /* ─── INTEGRATION BANNER ─── */
+        .int-banner {
+            padding:16px; border-radius:10px; margin-bottom:16px;
+            background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);
+            border:1px solid #bfdbfe;
+        }
+
+        /* Page sections */
+        .page-section { display:none; }
+        .page-section.active { display:block; }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width:900px) {
+            .sidebar { width:220px; min-width:220px; }
+            .marcus-panel { width:100%; }
+            .stat-grid-4 { grid-template-columns:repeat(2,1fr); }
+        }
+        @media (max-width:700px) {
+            .sidebar { display:none; }
+        }
+
+        /* ─── LOADING PULSE ─── */
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+        .loading-dots::after { content:'...'; animation:dots 1.5s infinite; }
+        @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ LOGIN ═══════════════════════════════════════ -->
+<div id="loginScreen">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-logo">📐</div>
+            <div class="login-title">Project Charter & Plan</div>
+            <div class="login-subtitle">Integrated Project Planning Tool</div>
+            <div class="login-course">YCBS 288 · McGill School of Continuing Studies</div>
+        </div>
+        <div class="login-marcus-box">
+            <img class="login-marcus-avatar" id="loginAvatar" alt="MARCUS">
+            <div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem">Hi, I'm MARCUS</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5">
+                    Your AI project management coach. I'll help you build a complete Charter (WHY) and integrated Plan (HOW) — reviewing integration across all 10 knowledge areas.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Team Name</label>
+            <input type="text" class="form-input" id="loginTeam" placeholder="e.g. Team Alpha">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="loginPass" placeholder="Team password">
+        </div>
+        <button class="btn-login" onclick="doLogin()">Enter Plan Tool</button>
+        <div class="login-error" id="loginError">Invalid password. Please try again.</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════ APP ═══════════════════════════════════════ -->
+<div id="appScreen">
+<div class="app-layout">
+
+<!-- ─── SIDEBAR ─── -->
+<div class="sidebar" id="sidebar"></div>
+
+<!-- ─── MAIN ─── -->
+<div class="main-area">
+    <div class="main-header">
+        <div>
+            <div class="main-header-title" id="mainTitle">◉ Overview</div>
+            <div class="main-header-mode" id="mainMode" style="color:var(--c-scope)">📐 Plan — HOW we deliver</div>
+        </div>
+        <div class="main-header-right">
+            <span id="headerStats"></span>
+            <button class="btn-sm btn-rate" id="btnRateCard" onclick="openRateCard()" style="display:none">📋 Rate Card</button>
+            <button class="btn-sm" onclick="saveState()" title="Save to server">💾 Save</button>
+        </div>
+    </div>
+    <div class="main-content" id="mainContent"></div>
+</div>
+
+</div><!-- /app-layout -->
+
+<!-- ─── MARCUS FAB ─── -->
+<button class="marcus-fab" onclick="toggleMarcus()" title="Ask MARCUS">🤖</button>
+
+<!-- ─── MARCUS PANEL ─── -->
+<div class="marcus-panel" id="marcusPanel">
+    <div class="marcus-panel-header">
+        <img class="marcus-panel-avatar" id="marcusPanelAvatar" alt="MARCUS">
+        <div>
+            <div style="font-weight:700;font-size:14px">MARCUS</div>
+            <div style="font-size:11px;opacity:0.8">AI Project Coach</div>
+        </div>
+        <button class="marcus-panel-close" onclick="toggleMarcus()">✕</button>
+    </div>
+    <div class="marcus-messages" id="marcusMessages">
+        <div class="marcus-msg ai">
+            <h4>Welcome! 👋</h4>
+            I'm MARCUS, your AI project management coach for YCBS 288. I can help you with:
+            <ul>
+                <li>Reviewing your Charter for completeness</li>
+                <li>Validating integration across knowledge areas</li>
+                <li>Identifying gaps in your plan</li>
+                <li>Budget and schedule analysis</li>
+            </ul>
+            Ask me anything about your project!
+        </div>
+    </div>
+    <div class="marcus-suggestions" id="marcusSuggestions">
+        <button class="marcus-suggest-btn" onclick="marcusQuick('Review my charter completeness')">📜 Charter review</button>
+        <button class="marcus-suggest-btn" onclick="marcusQuick('Analyze plan integration')">🔗 Integration check</button>
+        <button class="marcus-suggest-btn" onclick="marcusQuick('Check budget and schedule')">💰 Budget analysis</button>
+        <button class="marcus-suggest-btn" onclick="marcusQuick('Identify risks I may have missed')">⚠️ Risk scan</button>
+    </div>
+    <div class="marcus-input-bar">
+        <textarea class="marcus-input" id="marcusInput" placeholder="Ask MARCUS..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToMarcus()}"></textarea>
+        <button class="marcus-send" id="marcusSendBtn" onclick="sendToMarcus()">Send</button>
+    </div>
+</div>
+
+<!-- ─── SAVE INDICATOR ─── -->
+<div class="save-indicator" id="saveIndicator"></div>
+
+</div><!-- /appScreen -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// MARCUS AVATAR (base64)
+// ═══════════════════════════════════════════════════════════════════════════
+const MARCUS_AVATAR = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAAAAAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCABkAGQDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQDCAEC/8QANBAAAgEEAQMCBAUDAwUAAAAAAQIDAAQFESEGEjFBURMiMnEHFGGBkRUjsaHB4UJSU/Dx/8QAGQEBAQADAQAAAAAAAAAAAAAAAAMBBAUB/8QAJxEAAgICAQQBAwUAAAAAAAAAAAECAxESIQQTMUFRFCJhIzIzgaH/2gAMAwEAAhEDEQA/APlSlKUArussVd3kayQR7Qv8PuLAAH969+n8WMlcP8RykMQ7mbtJB9l34BOuN1PZG+5JjjPcXbsjQaCn1p+QcceEslDq8lw7do2ypxGfXn/q9qk7SyxGQW2ghsIlji0kkqO6yyH1LdxI39tfao4TtBIHu5JkuvqCuQyt7cj09K8bnMM93+at0+DI69rgeD/971PLKJIl7nob4ktybSYwqvd2JMdkkeACB82x9taNUdlKsVYaIOiKtcHUN6WHfIzD6QN+eQR/B3z7VY8mljk7OKHJW8i98DmG7WFRIJe3arsfUhbW98gE6opemHH2jL6V+sCpII0RwRX5VCYpSlAKUpQClKUBZ8A6R4S7MXxQ7OqzEeg50VPp673TFQy5GdhCoWAFYlcDgbPk15dJXPct5jZGJhuQG7PQsv8AwTVwwUrYno5ZLOGKS5ubyUJ8T6VRdAsffkcUnlw4Mqsb8khivw4sbgq11NOWPkhuTWg9Pfh705YohNhk7g93fP8AO2/34rPcX1Xl0uYlkazZCwBAQjY3zr3+26unUeWu7rDWjYTI/AdnKv8ABILsNePOxr3rkzVieJPg7cHU03CPJYc/0virvGzWj2EKQyDR7IwpB9wQODXz/kMfNhMy9jNO0qxuUPJ4UNwf3Ht71o+Hsr97P+pXN1kZYUl+EbyO47ljk9Aw5A+x81E9bYj+odWWcuPkSS5uo+2SIEgq6j6961261s+mqrQu3LDfBr9T+rDKXK/syDISJLf3MkSskbyMyqx2QCToH9a566slYXONvJLW+iMU6fUpIPnwQRwR+orlrop55Ry2mnhilKUPBSlKAUpSgLB0fbQyXjzzCRzFoIqMF5O+SfYAGtMx2HN5h7KcOHieeQtGgCKQH5CgeNj/AFNZP09klx173TKXt5B2yAeQPcfatUw+YsjgmtsfdCX4DBkJ4J2ORr9hWEk3Fo2aXBOL9+z+upMRImVvb9HAx83aIbUR9piI4VV9gP086FXzDYzu6fsnaAM1qw2VXkgj5l3+v+RWYZrqDsmRIHkkvIwHDeQnsOa6+ns91JJatEqMUdvCyAE/rr/itCxTnBN+TpU9qucorn/TRembHGdO4zMWdheLNHlCFeN3LlFDd3Yieh3ya8J7BZctj2WNEZXlLxMNjt7ANHX8mo2TLZa1ls7q/wAdbWdtLIIGdW+fkHkg86481T+seurqwmSXEOokBePvYb+oDZ1+wqahZY8GfcqqjtjHK9Fc/Gb8onV35eyCD4ECpIE8KxJbX7AiqJXpcTy3M8k87tJLIxZ3Y7LE+Sa866dcNIqPwcW6zuzc/kUpSsyYpSlAKUpQCpHDXotpZEdu2OUaJ9iPBqOr1toJbmVYreN5ZD4VBsmi4BcsNkRaXZF1p0fQ79b17H9assPUd5FkFWzv2S0UqSIwFJHqAapVpiZ7G2la/cAhAVtw2z5558A6Brrx+GmyFyEsZZBAx2GYcgVG2EF9zNmiy2S0hyW7rzqoX0MNvbbVFPeS3HPPP2rLcpefmZFVSTGngn1PvWhZPooXDNYW9wy3SKrM8pJBY7OjrwNdv2qi5zp3J4R9ZC1dE3pZV+ZG+zDj9q8o0UcRMb5Tc3uRNKUq5AUpSgFKUoBSlKAVrvTmE/pvT0Qij1czQ/HnfXLEjYTfsBr9yayvGW/5vI2tt/5pUj/k6r6NxbGWZ/hhxACflXv0B+n6cf8AbUL7e3HKL9P031Etc4wUuTC29whZfmR0Vx9iAR/mvK1ilxdxJDazPGitx2nx61ds5hPy0X52yXtQruSJfAHuPb7VTlhu769lNtBLLt/IXj+ajTYpp7eD2yidM9V5/BaumrWN8bHPy09yDJI7ts7Pnn2rslit7+O6sbhBLCVPeh8MP/lfxhcLkYcRCk/bEVHadfN6muXHxTY7N3Ed466l+dHB4ZfAHP25qO8XJ4Z7KiyEdpLgwbqLGtiM3eWLEkQyEKT6r5U/wRUbWg/jNY/Az9tdAaFxDo/dTr/BFZ9XRhLaKZrClKVkBSlKAUpSgJHpyUQZ7Hykgdlwh2fH1CtkhvLV/wC5GoMqEn4n0lm354rCwSCCDoj1q19P5eW9vY7WVxEzg/3AeNgE+P11WE47rAT1eTR8hkY7nFzuXYzJPzttnt8f7iujG9WRQY+3toQjXWu3k6A58k+lUS3t7ya5liWbUTnTHXLelR0WOs5Q7R3CrJs61JyK15Ub/ay/T9Q6nt5NFv8AO5K2vWb+ppIvww3YqfKpO+OTs+KnHe3vY4riWRvjonADFT55AIrIIcdkZIZXt5/zKo/Y4DbOtbH+hrrv89kLG3D3Cdjq2lXx3E73/isVQlwvJ7b1ErG+ePglfxknhmtMWI2ZirOAW8kaG/8AasuqRzOWuMtcLJckaQaRR4FR1bVcdY4ZrilKVmBSlKAUpSgFdeJcpkrZgASJB5pSiBd8W5SKd1J7lGxyfauW1YwyJJEexyG2R9qUrKpcyJy9Et0vKy3uVjH0sI2P3+YVWetGOrZfPLHZJJPilKg/5WUj+0q9KUqoFKUoBSlKA//Z';
+document.querySelectorAll('#loginAvatar, #marcusPanelAvatar').forEach(el => el.src = MARCUS_AVATAR);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITY
+// ═══════════════════════════════════════════════════════════════════════════
+const uid = () => Math.random().toString(36).slice(2,9);
+const fmt = n => `$${n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}`;
+const fmtK = n => n>=1000 ? `$${(n/1000).toFixed(1)}K` : fmt(n);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const COLORS = { scope:'#2563eb', quality:'#059669', risk:'#d97706', communication:'#7c3aed', procurement:'#dc2626' };
+const TYPE_LABELS = { scope:'Scope', quality:'Quality', risk:'Risk', communication:'Comm', procurement:'Procurement' };
+const TOTAL_WEEKS = 18;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE (mirrors the React state from the JSX)
+// ═══════════════════════════════════════════════════════════════════════════
+let currentMode = 'plan'; // 'charter' | 'plan'
+let currentSection = 'overview';
+let teamName = '';
+let marcusChatHistory = [];
+
+let state = {};
+function initState() {
+    state = {
+        charter: {
+            projectName:'Enterprise Portal Modernization',
+            sponsor:'Sarah Chen — VP Digital Transformation', pm:'TBD', date:'2026-03-13',
+            problem:'The current customer portal is 8 years old, built on deprecated technology. It cannot support mobile access, handles only 50 concurrent users, and requires 3x the maintenance cost of modern alternatives. Customer satisfaction scores have dropped 22% over 2 years, and the support team spends 40% of their time on portal-related issues.',
+            solution:'Build a new cloud-native customer portal with responsive design, modern UX, real-time ERP integration, and self-service capabilities. The solution will leverage microservices architecture on AWS, enabling scalability and reducing long-term maintenance costs by an estimated 60%.',
+            objectives:[
+                {id:uid(),description:'Increase customer satisfaction score from 62% to 85% within 6 months of launch',measurable:true,timebound:'6 months post-launch'},
+                {id:uid(),description:'Support 500+ concurrent users with <2 second response time',measurable:true,timebound:'At go-live'},
+                {id:uid(),description:'Reduce portal-related support tickets by 50%',measurable:true,timebound:'3 months post-launch'},
+                {id:uid(),description:'Enable mobile access for 100% of portal features',measurable:true,timebound:'At go-live'},
+            ],
+            constraints:[
+                {id:uid(),type:'Budget',description:'Maximum project budget of $450,000 (labor + procurement)',impact:'High'},
+                {id:uid(),type:'Time',description:'Must launch before Q4 fiscal year-end (18 weeks from approval)',impact:'High'},
+                {id:uid(),type:'Resource',description:'Senior developer pool limited to 2 FTEs due to other commitments',impact:'Medium'},
+                {id:uid(),type:'Technical',description:'Must integrate with existing SAP ERP — no ERP replacement',impact:'High'},
+                {id:uid(),type:'Regulatory',description:'Must comply with SOC 2 and accessibility (WCAG 2.1 AA)',impact:'Medium'},
+            ],
+            highLevelRisks:[
+                {id:uid(),description:'ERP integration complexity may exceed estimates',level:'High',mitigation:'Early proof-of-concept sprint in week 6'},
+                {id:uid(),description:'Key developer attrition during project',level:'Medium',mitigation:'Cross-training and documentation protocol'},
+                {id:uid(),description:'Scope creep from stakeholder feature requests',level:'High',mitigation:'Formal change control process with sponsor sign-off'},
+                {id:uid(),description:'Cloud infrastructure costs exceed projections',level:'Low',mitigation:'Reserved instances + cost monitoring alerts'},
+            ],
+            successCriteria:[
+                {id:uid(),criterion:'All Must Have requirements delivered and accepted by UAT team',verifiedBy:'QA Lead + Sponsor'},
+                {id:uid(),criterion:'Performance benchmarks met (500 users, <2s)',verifiedBy:'QA Specialist'},
+                {id:uid(),criterion:'Zero critical/high security findings at pen test',verifiedBy:'Security Auditor'},
+                {id:uid(),criterion:'User training completed for 100% of identified user groups',verifiedBy:'BA + HR'},
+                {id:uid(),criterion:'Project delivered within ±10% of approved budget',verifiedBy:'Sponsor + Finance'},
+            ],
+            assumptions:[
+                {id:uid(),assumption:'SAP ERP API documentation is current and accurate'},
+                {id:uid(),assumption:'Cloud infrastructure (AWS) will be provisioned within 2 weeks of request'},
+                {id:uid(),assumption:'Stakeholders will be available for reviews within 48 hours of request'},
+                {id:uid(),assumption:'No major organizational restructuring during project timeline'},
+            ],
+            authority:{
+                sponsor:'Sarah Chen — Approve budget, scope changes >$10K, timeline changes >1 week',
+                pm:'Project Manager — Day-to-day decisions, scope changes <$10K, resource allocation',
+                steering:'Steering Committee — GO/NO-GO at phase gates, escalation resolution',
+            },
+        },
+        rateCard:[
+            {id:'rc1',name:'Project Manager',category:'Labor',unit:'/hr',unitCost:125,notes:'Avg market rate, PMP certified'},
+            {id:'rc2',name:'Business Analyst',category:'Labor',unit:'/hr',unitCost:105,notes:'Avg market rate'},
+            {id:'rc3',name:'UX Designer',category:'Labor',unit:'/hr',unitCost:110,notes:'Mid-senior level'},
+            {id:'rc4',name:'Senior Developer',category:'Labor',unit:'/hr',unitCost:135,notes:'Full-stack, 5+ yrs'},
+            {id:'rc5',name:'QA Specialist',category:'Labor',unit:'/hr',unitCost:95,notes:'Manual + automation'},
+            {id:'rc6',name:'DevOps Engineer',category:'Labor',unit:'/hr',unitCost:130,notes:'AWS/Azure certified'},
+            {id:'rc7',name:'Lawyer (IP/Contract)',category:'Labor',unit:'/hr',unitCost:250,notes:'External counsel'},
+            {id:'rc8',name:'Marie Dupont',category:'Labor',unit:'/hr',unitCost:95,notes:'BA — junior, actual cost'},
+            {id:'rc9',name:'Paul Tremblay',category:'Labor',unit:'/hr',unitCost:100,notes:'Dev — new hire, actual cost'},
+            {id:'rc10',name:'Workstation Setup',category:'Equipment',unit:'/unit',unitCost:2500,notes:'Laptop + peripherals'},
+            {id:'rc11',name:'Cloud Server (prod)',category:'Equipment',unit:'/month',unitCost:800,notes:'AWS m5.xlarge equivalent'},
+            {id:'rc12',name:'Testing Device Kit',category:'Equipment',unit:'/unit',unitCost:1200,notes:'Mobile + tablet combo'},
+            {id:'rc13',name:'SSL Certificate',category:'Materials',unit:'/unit',unitCost:150,notes:'Wildcard annual'},
+            {id:'rc14',name:'UI Component License',category:'Materials',unit:'/unit',unitCost:3500,notes:'Annual team license'},
+            {id:'rc15',name:'Training Materials',category:'Materials',unit:'/unit',unitCost:45,notes:'Per participant'},
+        ],
+        stakeholders:[
+            {id:uid(),name:'Sarah Chen',role:'Project Sponsor',influence:'High',interest:'High',needs:'ROI visibility, monthly updates'},
+            {id:uid(),name:'Marcus Johnson',role:'End User Lead',influence:'Medium',interest:'High',needs:'Usability, training schedule'},
+            {id:uid(),name:'VP Operations',role:'Functional Manager',influence:'High',interest:'Medium',needs:'Resource availability, minimal disruption'},
+        ],
+        requirements:[
+            {id:uid(),description:'System must handle 500 concurrent users',priority:'Must Have',source:'Sarah Chen',category:'Performance'},
+            {id:uid(),description:'Mobile-responsive interface',priority:'Must Have',source:'Marcus Johnson',category:'Functional'},
+            {id:uid(),description:'Integration with existing ERP',priority:'Should Have',source:'VP Operations',category:'Technical'},
+            {id:uid(),description:'99.9% uptime SLA',priority:'Must Have',source:'Sarah Chen',category:'Performance'},
+        ],
+        deliverables:[
+            {id:'d1',name:'1.0 Project Management',level:0,parent:null},
+            {id:'d2',name:'2.0 Requirements & Design',level:0,parent:null},
+            {id:'d3',name:'3.0 Development',level:0,parent:null},
+            {id:'d4',name:'4.0 Testing & Deployment',level:0,parent:null},
+            {id:'d1a',name:'1.1 Project Plan',level:1,parent:'d1'},
+            {id:'d1b',name:'1.2 Status Reports',level:1,parent:'d1'},
+            {id:'d2a',name:'2.1 Requirements Document',level:1,parent:'d2'},
+            {id:'d2b',name:'2.2 UX Wireframes',level:1,parent:'d2'},
+            {id:'d3a',name:'3.1 Backend API',level:1,parent:'d3'},
+            {id:'d3b',name:'3.2 Frontend Application',level:1,parent:'d3'},
+            {id:'d4a',name:'4.1 UAT Sign-off',level:1,parent:'d4'},
+            {id:'d4b',name:'4.2 Go-Live',level:1,parent:'d4'},
+        ],
+        resources:[
+            {id:'r1',title:'Project Manager',role:'PM',rateCardId:'rc1',availability:100,person:null,personRateCardId:null},
+            {id:'r2',title:'Business Analyst',role:'BA',rateCardId:'rc2',availability:100,person:'Marie Dupont',personRateCardId:'rc8'},
+            {id:'r3',title:'UX Designer',role:'Design',rateCardId:'rc3',availability:80,person:null,personRateCardId:null},
+            {id:'r4',title:'Senior Developer',role:'Dev',rateCardId:'rc4',availability:100,person:'Paul Tremblay',personRateCardId:'rc9'},
+            {id:'r5',title:'QA Specialist',role:'QA',rateCardId:'rc5',availability:100,person:null,personRateCardId:null},
+            {id:'r6',title:'DevOps Engineer',role:'Ops',rateCardId:'rc6',availability:50,person:null,personRateCardId:null},
+        ],
+        scopeTasks:[
+            {id:'t1',name:'Project Kickoff & Planning',type:'scope',deliverable:'d1a',startWeek:1,duration:2,resourceId:'r1',allocation:100,dependency:null},
+            {id:'t2',name:'Gather Requirements',type:'scope',deliverable:'d2a',startWeek:3,duration:3,resourceId:'r2',allocation:100,dependency:'t1'},
+            {id:'t3',name:'UX Design & Wireframes',type:'scope',deliverable:'d2b',startWeek:5,duration:3,resourceId:'r3',allocation:100,dependency:'t2'},
+            {id:'t4',name:'Backend Development',type:'scope',deliverable:'d3a',startWeek:7,duration:6,resourceId:'r4',allocation:100,dependency:'t3'},
+            {id:'t5',name:'Frontend Development',type:'scope',deliverable:'d3b',startWeek:9,duration:5,resourceId:'r4',allocation:50,dependency:'t3'},
+            {id:'t6',name:'User Acceptance Testing',type:'scope',deliverable:'d4a',startWeek:13,duration:3,resourceId:'r5',allocation:100,dependency:'t4'},
+            {id:'t7',name:'Deployment & Go-Live',type:'scope',deliverable:'d4b',startWeek:16,duration:2,resourceId:'r6',allocation:100,dependency:'t6'},
+        ],
+        qualityTasks:[
+            {id:'qt1',name:'🔍 Requirements Review Session',type:'quality',qaType:'qa',deliverable:'d2a',startWeek:5,duration:1,resourceId:'r2',allocation:50,dependency:'t2'},
+            {id:'qt2',name:'🔍 Design Walkthrough with Users',type:'quality',qaType:'qa',deliverable:'d2b',startWeek:7,duration:1,resourceId:'r3',allocation:25,dependency:'t3'},
+            {id:'qt3',name:'🧪 Performance Load Testing',type:'quality',qaType:'qc',deliverable:'d4a',startWeek:12,duration:1,resourceId:'r5',allocation:100,dependency:'t4'},
+            {id:'qt4',name:'🧪 Integration Test Execution',type:'quality',qaType:'qc',deliverable:'d3a',startWeek:11,duration:2,resourceId:'r5',allocation:80,dependency:'t4'},
+            {id:'qt5',name:'🧪 Security Vulnerability Scan',type:'quality',qaType:'qc',deliverable:'d4a',startWeek:14,duration:1,resourceId:'r6',allocation:50,dependency:'t6'},
+        ],
+        qaItems:[
+            {id:'qa1',activity:'Requirements Review',description:'Formal review of requirements doc with stakeholders',method:'Review',frequency:'Once',trigger:'After requirements gathering'},
+            {id:'qa2',activity:'Code Review Process',description:'Peer review all code before merge to main branch',method:'Audit',frequency:'Ongoing',trigger:'During development'},
+            {id:'qa3',activity:'Design Walkthrough',description:'Walkthrough of UX wireframes with end-user representative',method:'Demo',frequency:'Once',trigger:'After UX design'},
+            {id:'qa4',activity:'Process Compliance Audit',description:'Verify PM processes follow organizational standards',method:'Audit',frequency:'Monthly',trigger:'Monthly checkpoint'},
+        ],
+        qcItems:[
+            {id:'qc1',activity:'Performance Load Testing',description:'Load test to validate 500 concurrent users requirement',method:'Test',acceptance:'≥500 concurrent, <2s response',trigger:'Before UAT'},
+            {id:'qc2',activity:'Security Vulnerability Scan',description:'Automated scan + manual pen test for OWASP Top 10',method:'Inspect',acceptance:'Zero critical/high findings',trigger:'Before deployment'},
+            {id:'qc3',activity:'Integration Test Suite',description:'End-to-end test of ERP integration data flows',method:'Test',acceptance:'100% test cases pass',trigger:'After backend dev'},
+            {id:'qc4',activity:'Accessibility Compliance Check',description:'WCAG 2.1 AA compliance check on all user-facing screens',method:'Check',acceptance:'WCAG 2.1 AA pass',trigger:'Before UAT'},
+        ],
+        riskItems:[
+            {id:'rk1',description:'ERP integration more complex than estimated',probability:'High',impact:'High',strategy:'Mitigate',response:'Early proof-of-concept sprint'},
+            {id:'rk2',description:'Key developer leaves mid-project',probability:'Medium',impact:'High',strategy:'Mitigate',response:'Cross-training and documentation'},
+            {id:'rk3',description:'Scope creep from stakeholder requests',probability:'High',impact:'Medium',strategy:'Accept',response:'Change control process'},
+        ],
+        riskTasks:[
+            {id:'rt1',name:'⚠️ ERP Integration PoC Sprint',type:'risk',deliverable:'d3a',startWeek:6,duration:2,resourceId:'r4',allocation:50,dependency:'t2'},
+            {id:'rt2',name:'⚠️ Cross-Training Sessions',type:'risk',deliverable:'d1b',startWeek:8,duration:1,resourceId:'r4',allocation:25,dependency:null},
+        ],
+        commItems:[
+            {id:'c1',type:'Steering Committee Meeting',audience:'Sponsors & Leads',frequency:'Bi-weekly',method:'In-person',owner:'Project Manager'},
+            {id:'c2',type:'Sprint Review',audience:'All stakeholders',frequency:'Weekly',method:'Teams',owner:'Project Manager'},
+            {id:'c3',type:'Go-Live Communication',audience:'All users',frequency:'Once',method:'Email + Town Hall',owner:'Business Analyst'},
+        ],
+        commTasks:[
+            {id:'ct1',name:'💬 Steering Committee Prep & Meetings',type:'communication',deliverable:'d1b',startWeek:3,duration:14,resourceId:'r1',allocation:10,dependency:null},
+            {id:'ct2',name:'💬 Go-Live Town Hall & Training',type:'communication',deliverable:'d4b',startWeek:16,duration:1,resourceId:'r2',allocation:50,dependency:'t6'},
+        ],
+        procItems:[
+            {id:'p1',item:'Cloud Hosting (AWS)',vendor:'Amazon Web Services',leadTime:'2 weeks',cost:12000,type:'Service'},
+            {id:'p2',item:'UI Component Library License',vendor:'ComponentCo',leadTime:'1 week',cost:3500,type:'License'},
+            {id:'p3',item:'Security Penetration Testing',vendor:'SecureAudit Inc.',leadTime:'3 weeks',cost:15000,type:'Service'},
+        ],
+        procTasks:[
+            {id:'pt1',name:'🛒 Cloud Infrastructure Setup',type:'procurement',deliverable:'d3a',startWeek:5,duration:2,resourceId:'r6',allocation:50,dependency:'t2'},
+            {id:'pt2',name:'🛒 Security Pen Test Coordination',type:'procurement',deliverable:'d4a',startWeek:14,duration:2,resourceId:'r6',allocation:50,dependency:'t6'},
+        ],
+    };
+}
+initState();
+
+// ─── Computed helpers ───
+function getAllTasks() {
+    return [...state.scopeTasks, ...state.qualityTasks, ...state.riskTasks, ...state.commTasks, ...state.procTasks];
+}
+function getRate(res) {
+    if (res.person && res.personRateCardId) {
+        const e = state.rateCard.find(rc => rc.id === res.personRateCardId);
+        if (e) return e.unitCost;
+    }
+    const e = state.rateCard.find(rc => rc.id === res.rateCardId);
+    return e ? e.unitCost : 0;
+}
+function getAvgRate(res) {
+    const e = state.rateCard.find(rc => rc.id === res.rateCardId);
+    return e ? e.unitCost : 0;
+}
+function getResLabel(res) { return res.person || res.title; }
+function taskCost(t) {
+    const res = state.resources.find(r => r.id === t.resourceId);
+    return res ? getRate(res) * 8 * t.duration * 5 * (t.allocation/100) : 0;
+}
+function getTotalBudget() { return getAllTasks().reduce((s,t) => s + taskCost(t), 0); }
+function badgeClass(val) {
+    if (val === 'High') return 'badge-high';
+    if (val === 'Medium') return 'badge-medium';
+    if (val === 'Low') return 'badge-low';
+    return 'badge-blue';
+}
+function typeColor(type) { return COLORS[type] || '#2563eb'; }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════════════════════
+async function doLogin() {
+    const team = document.getElementById('loginTeam').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    if (!team || !pass) { showLoginError('Enter team name and password.'); return; }
+    try {
+        const res = await fetch('/api/auth', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ team, password:pass })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) { showLoginError(data.error || 'Authentication failed.'); return; }
+        teamName = team;
+        // Try loading saved state
+        await loadState();
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        renderSidebar();
+        renderContent();
+    } catch(e) {
+        // Fallback: allow with any password for demo
+        teamName = team;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        renderSidebar();
+        renderContent();
+    }
+}
+function showLoginError(msg) {
+    const el = document.getElementById('loginError');
+    el.textContent = msg; el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════════════
+async function saveState() {
+    showSaveIndicator('saving','💾 Saving...');
+    try {
+        const res = await fetch(`/api/state?tenant=plan-${encodeURIComponent(teamName)}`, {
+            method:'POST', headers:{'Content-Type':'application/json','X-User-Name':teamName},
+            body: JSON.stringify(state)
+        });
+        if (res.ok) showSaveIndicator('saved','✓ Saved');
+        else showSaveIndicator('error','✕ Save failed');
+    } catch(e) { showSaveIndicator('error','✕ Offline'); }
+}
+async function loadState() {
+    try {
+        const res = await fetch(`/api/state?tenant=plan-${encodeURIComponent(teamName)}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.charter) { state = data; }
+        }
+    } catch(e) { /* use defaults */ }
+}
+function showSaveIndicator(cls, text) {
+    const el = document.getElementById('saveIndicator');
+    el.className = 'save-indicator show ' + cls;
+    el.textContent = text;
+    setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// Auto-save every 2 minutes
+setInterval(() => { if (teamName) saveState(); }, 120000);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CHARTER SECTIONS CONFIG
+// ═══════════════════════════════════════════════════════════════════════════
+const CHARTER_SECTIONS = [
+    {key:'ch_overview',label:'Charter Overview',icon:'📜'},
+    {key:'ch_problem',label:'Problem / Opportunity',icon:'🔍'},
+    {key:'ch_solution',label:'Proposed Solution',icon:'💡'},
+    {key:'ch_objectives',label:'Objectives',icon:'🎯'},
+    {key:'ch_constraints',label:'Constraints',icon:'🔒'},
+    {key:'ch_risks',label:'High-Level Risks',icon:'⚡'},
+    {key:'ch_success',label:'Success Criteria',icon:'🏆'},
+    {key:'ch_assumptions',label:'Assumptions',icon:'📌'},
+    {key:'ch_authority',label:'Authority & Sign-off',icon:'✍️'},
+];
+
+const PLAN_SECTIONS = [
+    {key:'overview',label:'Overview',icon:'◉',group:'Plan'},
+    {key:'stakeholders',label:'Stakeholders',icon:'👥',group:'What to Deliver'},
+    {key:'requirements',label:'Requirements',icon:'📝',group:'What to Deliver'},
+    {key:'scope',label:'Scope (WBS)',icon:'📦',group:'What to Deliver'},
+    {key:'schedule',label:'Schedule',icon:'📅',group:'Constraints'},
+    {key:'resources',label:'Resources',icon:'👤',group:'Constraints'},
+    {key:'budget',label:'Budget',icon:'💰',group:'Constraints'},
+    {key:'quality',label:'Quality',icon:'✅',group:'Integration'},
+    {key:'risk',label:'Risk',icon:'⚠️',group:'Integration'},
+    {key:'communication',label:'Communication',icon:'💬',group:'Integration'},
+    {key:'procurement',label:'Procurement',icon:'🛒',group:'Integration'},
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: SIDEBAR
+// ═══════════════════════════════════════════════════════════════════════════
+function renderSidebar() {
+    const sb = document.getElementById('sidebar');
+    let html = `
+    <div class="sidebar-header" style="position:relative">
+        <div class="mode-toggle" onclick="toggleModeDropdown()">
+            <div class="mode-toggle-left">
+                <span class="mode-toggle-icon">${currentMode==='charter'?'📜':'📐'}</span>
+                <div>
+                    <div class="mode-toggle-label" style="color:${currentMode==='charter'?'var(--purple)':'var(--text)'}">${currentMode==='charter'?'Project Charter':'Project Plan'}</div>
+                    <div class="mode-toggle-sub">${currentMode==='charter'?'WHY — Business justification':'HOW — Delivery approach'}</div>
+                </div>
+            </div>
+            <span style="font-size:12px;color:var(--text-dim)">▾</span>
+        </div>
+        <div class="mode-dropdown" id="modeDropdown">
+            <div class="mode-dropdown-item ${currentMode==='charter'?'active':''}" onclick="switchMode('charter','ch_overview')">
+                <span style="font-size:18px">📜</span>
+                <div><div style="font-size:13px;font-weight:700">Project Charter</div><div style="font-size:10px;color:var(--text-dim)">WHY — Business case, objectives, GO/NO-GO</div></div>
+            </div>
+            <div class="mode-dropdown-item ${currentMode==='plan'?'active':''}" onclick="switchMode('plan','overview')">
+                <span style="font-size:18px">📐</span>
+                <div><div style="font-size:13px;font-weight:700">Project Plan</div><div style="font-size:10px;color:var(--text-dim)">HOW — Schedule, resources, budget, integration</div></div>
+            </div>
+            <div class="mode-dropdown-footer">Charter defines WHY → Plan defines HOW</div>
+        </div>
+    </div>
+    <div class="sidebar-nav">`;
+
+    if (currentMode === 'charter') {
+        CHARTER_SECTIONS.forEach(s => {
+            html += `<div class="nav-item ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')">
+                <span class="nav-item-icon">${s.icon}</span> ${s.label}
+            </div>`;
+        });
+    } else {
+        let lastGroup = '';
+        PLAN_SECTIONS.forEach(s => {
+            if (s.group !== lastGroup) {
+                lastGroup = s.group;
+                if (['What to Deliver','Constraints'].includes(s.group)) {
+                    html += `<div class="nav-group-label">${s.group}</div>`;
+                }
+            }
+            if (s.group === 'Integration' && s.key === 'quality') {
+                html += `<div class="nav-group-label">Integration → Schedule</div>
+                <div style="padding:0 12px">`;
+            }
+            if (s.group === 'Integration') {
+                const c = typeColor(s.key === 'communication' ? 'communication' : s.key);
+                html += `<div class="int-node ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')"
+                    style="${currentSection===s.key?'background:'+c+'10;border-color:'+c+'40;color:'+c:''}">
+                    <span>${s.icon}</span> ${s.label}
+                    <span class="arrow-tag" style="color:${c}">→SCH</span>
+                </div>`;
+                if (s.key === 'procurement') html += `</div>`;
+            } else {
+                html += `<div class="nav-item ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')">
+                    <span class="nav-item-icon">${s.icon}</span> ${s.label}
+                    ${s.key==='schedule'?'<span class="nav-item-tag" style="color:var(--info)">HUB</span>':''}
+                </div>`;
+            }
+        });
+    }
+
+    html += `</div>
+    <div class="sidebar-footer">
+        <strong>${esc(teamName)}</strong><br>
+        YCBS 288 · McGill SCS<br>Strategic Project Leadership
+    </div>`;
+    sb.innerHTML = html;
+}
+
+function toggleModeDropdown() {
+    document.getElementById('modeDropdown').classList.toggle('show');
+}
+function switchMode(mode, section) {
+    currentMode = mode;
+    currentSection = section;
+    document.getElementById('modeDropdown').classList.remove('show');
+    renderSidebar();
+    renderContent();
+}
+function goTo(section) {
+    currentSection = section;
+    renderSidebar();
+    renderContent();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: MAIN CONTENT DISPATCHER
+// ═══════════════════════════════════════════════════════════════════════════
+function renderContent() {
+    // Update header
+    const allSections = [...CHARTER_SECTIONS, ...PLAN_SECTIONS];
+    const sec = allSections.find(s => s.key === currentSection) || {icon:'◉',label:'Overview'};
+    document.getElementById('mainTitle').textContent = `${sec.icon} ${sec.label}`;
+    document.getElementById('mainMode').textContent = currentMode === 'charter'
+        ? '📜 Charter — WHY we invest' : '📐 Plan — HOW we deliver';
+    document.getElementById('mainMode').style.color = currentMode === 'charter' ? 'var(--purple)' : 'var(--c-scope)';
+
+    // Header stats
+    const at = getAllTasks();
+    if (currentMode === 'plan') {
+        document.getElementById('headerStats').innerHTML = `Activities: <strong>${at.length}</strong> · Budget: <strong style="color:var(--warning)">${fmt(getTotalBudget())}</strong>`;
+        document.getElementById('btnRateCard').style.display = '';
+    } else {
+        document.getElementById('headerStats').innerHTML = '';
+        document.getElementById('btnRateCard').style.display = 'none';
+    }
+
+    const mc = document.getElementById('mainContent');
+
+    if (currentMode === 'charter') {
+        mc.innerHTML = renderCharter();
+    } else {
+        switch(currentSection) {
+            case 'overview': mc.innerHTML = renderOverview(); break;
+            case 'stakeholders': mc.innerHTML = renderStakeholders(); break;
+            case 'requirements': mc.innerHTML = renderRequirements(); break;
+            case 'scope': mc.innerHTML = renderScope(); break;
+            case 'schedule': mc.innerHTML = renderSchedule(); break;
+            case 'resources': mc.innerHTML = renderResources(); break;
+            case 'budget': mc.innerHTML = renderBudget(); break;
+            case 'quality': mc.innerHTML = renderQuality(); break;
+            case 'risk': mc.innerHTML = renderIntegration('risk'); break;
+            case 'communication': mc.innerHTML = renderIntegration('communication'); break;
+            case 'procurement': mc.innerHTML = renderIntegration('procurement'); break;
+            default: mc.innerHTML = '<p>Section not found.</p>';
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: OVERVIEW
+// ═══════════════════════════════════════════════════════════════════════════
+function renderOverview() {
+    const at = getAllTasks();
+    const scopeCount = at.filter(t => t.type==='scope').length;
+    const intCount = at.filter(t => t.type!=='scope').length;
+    const budget = getTotalBudget();
+    const maxW = Math.max(...at.map(t => t.startWeek+t.duration-1), 0);
+    const ch = state.charter;
+
+    let html = `
+    <div style="cursor:pointer;padding:14px 18px;border-radius:10px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;display:flex;align-items:center;gap:12px;margin-bottom:16px" onclick="switchMode('charter','ch_overview')">
+        <span style="font-size:22px">📜</span>
+        <div style="flex:1">
+            <div style="font-size:14px;font-weight:700;color:var(--purple)">${esc(ch.projectName)}</div>
+            <div style="font-size:11px;color:var(--text-muted)">Charter defines WHY — ${ch.objectives.length} objectives, ${ch.constraints.length} constraints, ${ch.highLevelRisks.length} risks. Click to review.</div>
+        </div>
+        <span style="font-size:11px;color:var(--purple);font-weight:700">View Charter →</span>
+    </div>
+    <div class="int-banner">
+        <strong>This tool connects all knowledge areas into one integrated plan.</strong> Quality, Risk, Communication, and Procurement activities are not just documents — they generate real schedule activities with resources and budget impact.
+        <span class="badge-int" style="margin-left:8px">↻ INTEGRATED</span>
+    </div>
+    <div class="stat-grid stat-grid-4">
+        <div class="stat-card" style="border-top-color:var(--c-scope)"><div class="stat-val" style="color:var(--c-scope)">${scopeCount}</div><div class="stat-label">Scope Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--success)"><div class="stat-val" style="color:var(--success)">${intCount}</div><div class="stat-label">Integration Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--warning)"><div class="stat-val" style="color:var(--warning)">${fmt(budget)}</div><div class="stat-label">Total Budget</div></div>
+        <div class="stat-card" style="border-top-color:var(--purple)"><div class="stat-val" style="color:var(--purple)">${maxW} wks</div><div class="stat-label">Project Duration</div></div>
+    </div>
+    <div class="card"><div class="card-title">Integration Map — Activities by Knowledge Area</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">`;
+    Object.entries(COLORS).forEach(([type,color]) => {
+        const count = at.filter(t => t.type===type).length;
+        const cost = at.filter(t => t.type===type).reduce((s,t) => s+taskCost(t),0);
+        html += `<div style="background:${color}08;border-radius:8px;padding:14px;border:1px solid ${color}20;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:${color}">${count}</div>
+            <div style="font-size:12px;font-weight:600;color:${color}">${TYPE_LABELS[type]}</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:4px">${fmtK(cost)}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+
+    // Charter traceability
+    html += `<div class="card"><div class="card-title">📜 Charter → Plan Traceability</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px">
+        ${[{label:'Objectives',count:ch.objectives.length,icon:'🎯',color:'var(--purple)',note:'Driving requirements'},
+           {label:'Constraints',count:ch.constraints.length,icon:'🔒',color:'var(--warning)',note:'Shaping schedule & budget'},
+           {label:'Charter Risks',count:ch.highLevelRisks.length,icon:'⚡',color:'var(--error)',note:`${state.riskItems.length} detailed in plan`}
+        ].map(i => `<div style="background:${i.color}08;border-radius:6px;padding:10px;border:1px solid ${i.color}20">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                <span style="font-size:14px">${i.icon}</span>
+                <span style="font-size:18px;font-weight:800;color:${i.color}">${i.count}</span>
+                <span style="font-size:12px;font-weight:600;color:${i.color}">${i.label}</span>
+            </div>
+            <div style="font-size:10px;color:var(--text-dim)">${i.note}</div>
+        </div>`).join('')}
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">
+            Every plan element should trace back to a charter objective or constraint. Use the dropdown (top-left) to review the charter.
+        </div>
+    </div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: STAKEHOLDERS
+// ═══════════════════════════════════════════════════════════════════════════
+function renderStakeholders() {
+    const d = state.stakeholders;
+    let html = `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin:0">Stakeholder Register</div>
+            <button class="btn btn-blue" onclick="addStakeholderRow()">+ Add</button>
+        </div>
+        <div id="stakeholderAddRow" style="display:none;margin-bottom:12px"></div>
+        <table class="tbl"><thead><tr><th>Name</th><th>Role</th><th>Influence</th><th>Interest</th><th>Needs</th><th></th></tr></thead><tbody>`;
+    d.forEach(s => {
+        html += `<tr>
+            <td style="font-weight:600">${esc(s.name)}</td>
+            <td>${esc(s.role)}</td>
+            <td><span class="badge ${badgeClass(s.influence)}">${s.influence}</span></td>
+            <td><span class="badge ${badgeClass(s.interest)}">${s.interest}</span></td>
+            <td style="font-size:12px;color:var(--text-muted)">${esc(s.needs)}</td>
+            <td><button class="btn-sm" onclick="removeItem('stakeholders','${s.id}')">✕</button></td>
+        </tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+}
+function addStakeholderRow() {
+    const row = document.getElementById('stakeholderAddRow');
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr 1fr 100px 100px 1fr auto';
+    row.style.gap = '8px';
+    row.innerHTML = `
+        <input class="input-sm" placeholder="Name" id="sh_name">
+        <input class="input-sm" placeholder="Role" id="sh_role">
+        <select class="select-sm" id="sh_inf"><option>High</option><option>Medium</option><option>Low</option></select>
+        <select class="select-sm" id="sh_int"><option>High</option><option>Medium</option><option>Low</option></select>
+        <input class="input-sm" placeholder="Needs" id="sh_needs">
+        <button class="btn btn-green" onclick="saveStakeholder()">Save</button>`;
+}
+function saveStakeholder() {
+    const n = document.getElementById('sh_name').value.trim();
+    if (!n) return;
+    state.stakeholders.push({id:uid(),name:n,role:document.getElementById('sh_role').value,influence:document.getElementById('sh_inf').value,interest:document.getElementById('sh_int').value,needs:document.getElementById('sh_needs').value});
+    renderContent();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: REQUIREMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+function renderRequirements() {
+    const d = state.requirements;
+    let html = `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin:0">Requirements Traceability</div>
+            <button class="btn btn-blue" onclick="addRequirementRow()">+ Add</button>
+        </div>
+        <div id="reqAddRow" style="display:none;margin-bottom:12px"></div>
+        <table class="tbl"><thead><tr><th>Requirement</th><th>Priority</th><th>Source</th><th>Category</th><th></th></tr></thead><tbody>`;
+    d.forEach(r => {
+        const pClass = r.priority==='Must Have'?'badge-high':r.priority==='Should Have'?'badge-medium':'badge-blue';
+        html += `<tr>
+            <td style="max-width:300px">${esc(r.description)}</td>
+            <td><span class="badge ${pClass}">${r.priority}</span></td>
+            <td>${esc(r.source)}</td>
+            <td><span class="badge badge-blue">${r.category}</span></td>
+            <td><button class="btn-sm" onclick="removeItem('requirements','${r.id}')">✕</button></td>
+        </tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+}
+function addRequirementRow() {
+    const row = document.getElementById('reqAddRow');
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '2fr 120px 1fr 120px auto';
+    row.style.gap = '8px';
+    let srcOpts = state.stakeholders.map(s => `<option>${esc(s.name)}</option>`).join('');
+    row.innerHTML = `
+        <input class="input-sm" placeholder="Requirement" id="rq_desc">
+        <select class="select-sm" id="rq_pri"><option>Must Have</option><option>Should Have</option><option>Could Have</option><option>Won't Have</option></select>
+        <select class="select-sm" id="rq_src"><option value="">Source...</option>${srcOpts}</select>
+        <select class="select-sm" id="rq_cat"><option>Functional</option><option>Performance</option><option>Technical</option><option>Security</option><option>Usability</option></select>
+        <button class="btn btn-green" onclick="saveRequirement()">Save</button>`;
+}
+function saveRequirement() {
+    const d = document.getElementById('rq_desc').value.trim();
+    if (!d) return;
+    state.requirements.push({id:uid(),description:d,priority:document.getElementById('rq_pri').value,source:document.getElementById('rq_src').value,category:document.getElementById('rq_cat').value});
+    renderContent();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: SCOPE (WBS)
+// ═══════════════════════════════════════════════════════════════════════════
+function renderScope() {
+    const d = state.deliverables;
+    let html = `<div class="card"><div class="card-title">Work Breakdown Structure</div>`;
+    d.filter(x => x.parent===null).forEach(p => {
+        html += `<div style="margin-bottom:12px">
+            <div style="padding:8px 12px;background:var(--bg-card-hover);border-radius:6px;font-weight:700;font-size:14px;border:1px solid var(--border)">${esc(p.name)}</div>`;
+        d.filter(x => x.parent===p.id).forEach(c => {
+            html += `<div style="padding:6px 12px 6px 32px;border-left:2px solid rgba(37,99,235,0.3);margin-left:12px;font-size:13px;color:var(--text-muted)">${esc(c.name)}</div>`;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: SCHEDULE (Gantt)
+// ═══════════════════════════════════════════════════════════════════════════
+let ganttFilter = 'all';
+function renderSchedule() {
+    const at = getAllTasks();
+    const filtered = ganttFilter==='all' ? at : at.filter(t => t.type===ganttFilter);
+    const wW = 52;
+
+    let filterBtns = ['all',...Object.keys(COLORS)].map(f => {
+        const c = COLORS[f] || '#2563eb';
+        const active = ganttFilter===f;
+        return `<button class="btn-sm" onclick="ganttFilter='${f}';renderContent()" style="${active?'background:'+c+'15;color:'+c+';border-color:'+c+'40;font-weight:700':''}">${f==='all'?'All Activities':TYPE_LABELS[f]}</button>`;
+    }).join('');
+
+    let html = `<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">${filterBtns}</div>
+    <div class="card" style="padding:0;overflow:auto">
+    <div class="gantt-row" style="background:var(--bg-card-hover);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:2">
+        <div class="gantt-label" style="font-weight:700;font-size:11px;color:var(--text-dim)">ACTIVITY</div>
+        <div class="gantt-res" style="font-weight:700;font-size:11px;color:var(--text-dim)">RES</div>
+        <div style="flex:1;display:flex">`;
+    for (let i=0;i<TOTAL_WEEKS;i++) {
+        html += `<div style="width:${wW}px;min-width:${wW}px;text-align:center;font-size:10px;color:var(--text-dim);font-weight:600;padding:6px 0;border-left:1px solid var(--border-light)">W${i+1}</div>`;
+    }
+    html += `</div></div>`;
+
+    filtered.forEach(task => {
+        const res = state.resources.find(r => r.id===task.resourceId);
+        const left = (task.startWeek-1)*wW;
+        const width = task.duration*wW-4;
+        const color = typeColor(task.type);
+        html += `<div class="gantt-row" style="${task.type!=='scope'?'background:'+color+'04':''}">
+            <div class="gantt-label" style="display:flex;align-items:center;gap:6px">
+                <span style="width:6px;height:6px;border-radius:2px;background:${color};flex-shrink:0"></span>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(task.name)}</span>
+            </div>
+            <div class="gantt-res">${res?.role||'—'}</div>
+            <div style="flex:1;position:relative;height:28px">
+                <div class="gantt-bar" style="left:${left}px;width:${width}px;background:linear-gradient(135deg,${color}dd,${color}99);box-shadow:0 1px 4px ${color}30">
+                    ${width>80?`${task.duration}w · ${task.allocation}%`:`${task.duration}w`}
+                </div>
+            </div>
+        </div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: RESOURCES
+// ═══════════════════════════════════════════════════════════════════════════
+function renderResources() {
+    const at = getAllTasks();
+    const planned = at.reduce((s,t) => { const r=state.resources.find(x=>x.id===t.resourceId); return s+(r?getAvgRate(r)*8*t.duration*5*(t.allocation/100):0);},0);
+    const actual = at.reduce((s,t) => { const r=state.resources.find(x=>x.id===t.resourceId); return s+(r?getRate(r)*8*t.duration*5*(t.allocation/100):0);},0);
+    const variance = actual-planned;
+    const assigned = state.resources.filter(r=>r.person).length;
+
+    let html = `<div class="stat-grid stat-grid-4">
+        <div class="stat-card" style="border-top-color:var(--info)"><div class="stat-val" style="color:var(--info)">${state.resources.length}</div><div class="stat-label">Roles Planned</div></div>
+        <div class="stat-card" style="border-top-color:${assigned===state.resources.length?'var(--success)':'var(--warning)'}"><div class="stat-val" style="color:${assigned===state.resources.length?'var(--success)':'var(--warning)'}">${assigned}/${state.resources.length}</div><div class="stat-label">People Assigned</div></div>
+        <div class="stat-card" style="border-top-color:var(--text-dim)"><div class="stat-val" style="color:var(--text-dim)">${fmt(planned)}</div><div class="stat-label">Planned Budget (Avg)</div></div>
+        <div class="stat-card" style="border-top-color:${variance>0?'var(--error)':variance<0?'var(--success)':'var(--info)'}"><div class="stat-val" style="color:${variance>0?'var(--error)':variance<0?'var(--success)':'var(--info)'}">${fmt(actual)}</div><div class="stat-label">Effective Budget</div></div>
+    </div>`;
+
+    // Resource table
+    html += `<div class="card"><div class="card-title">Resource Pool — Planned Roles → Actual Assignments</div>
+    <table class="tbl"><thead><tr><th>Planned Role</th><th>Avg Rate</th><th>Assigned Person</th><th>Effective Rate</th><th>Tasks</th><th>Total Cost</th></tr></thead><tbody>`;
+    state.resources.forEach(res => {
+        const tasks = at.filter(t => t.resourceId===res.id);
+        const effR = getRate(res);
+        const cost = tasks.reduce((s,t) => s+effR*8*t.duration*5*(t.allocation/100),0);
+        html += `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:${res.person?'var(--success)':'var(--text-dim)'}"></span>
+                <div><div style="font-weight:600">${esc(res.title)}</div><div style="font-size:10px;color:var(--text-dim)">${res.role} · ${res.availability}%</div></div>
+            </div></td>
+            <td style="color:var(--text-dim)">${fmt(getAvgRate(res))}/hr</td>
+            <td>${res.person?`<span style="font-weight:600;color:var(--success)">${esc(res.person)}</span>`:'<span style="color:var(--text-dim);font-style:italic;font-size:12px">Not assigned</span>'}</td>
+            <td style="font-weight:700">${fmt(effR)}/hr ${res.person?'<span style="font-size:9px;color:var(--success)">ACTUAL</span>':'<span style="font-size:9px;color:var(--text-dim)">EST</span>'}</td>
+            <td><span style="font-size:11px">${tasks.length} tasks</span></td>
+            <td style="font-weight:700;color:var(--warning)">${fmt(cost)}</td>
+        </tr>`;
+    });
+    html += `</tbody></table></div>`;
+
+    // Histogram
+    html += `<div class="card"><div class="card-title">Resource Allocation Histogram</div>`;
+    state.resources.forEach(res => {
+        const weekLoads = Array.from({length:TOTAL_WEEKS},(_,w) => {
+            const week=w+1;
+            return at.filter(t => t.resourceId===res.id && week>=t.startWeek && week<t.startWeek+t.duration)
+                .reduce((sum,t) => sum+t.allocation,0);
+        });
+        const maxLoad = Math.max(...weekLoads,100);
+        html += `<div style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:${res.person?'var(--success)':'var(--text-dim)'}"></span>
+                <span style="font-weight:700;font-size:13px">${esc(res.person||res.title)}</span>
+                <span style="font-size:11px;color:var(--text-dim)">${res.role} · ${fmt(getRate(res))}/hr</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:2px;height:52px">`;
+        weekLoads.forEach((load,i) => {
+            const h = Math.max((load/maxLoad)*48, load>0?4:0);
+            const col = load>100?'var(--error)':load>80?'var(--warning)':'var(--info)';
+            html += `<div style="display:flex;flex-direction:column;align-items:center;width:28px">
+                <div class="histo-bar" style="width:22px;height:${h}px;background:${col};opacity:${load===0?'0.1':'0.8'}" title="W${i+1}: ${load}%"></div>
+            </div>`;
+        });
+        html += `</div><div style="display:flex;gap:2px">`;
+        weekLoads.forEach((load,i) => {
+            html += `<div style="width:28px;text-align:center;font-size:9px;color:${load>100?'var(--error)':'var(--text-dim)'}">${load>0?load+'%':''}</div>`;
+        });
+        html += `</div></div>`;
+    });
+    html += `<div style="display:flex;gap:16px;margin-top:12px;font-size:11px">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--info);margin-right:4px"></span>Normal (≤80%)</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--warning);margin-right:4px"></span>High (80-100%)</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--error);margin-right:4px"></span>Over-allocated (>100%)</span>
+    </div></div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: BUDGET
+// ═══════════════════════════════════════════════════════════════════════════
+function renderBudget() {
+    const at = getAllTasks();
+    const wW = 48;
+    // Weekly budget by type
+    const weeklyBudget = Array.from({length:TOTAL_WEEKS},(_,w) => {
+        const week=w+1; const byType={};
+        Object.keys(COLORS).forEach(type => {
+            byType[type] = at.filter(t => t.type===type && week>=t.startWeek && week<t.startWeek+t.duration)
+                .reduce((s,t) => { const r=state.resources.find(x=>x.id===t.resourceId); return s+(r?getRate(r)*8*5*(t.allocation/100):0);},0);
+        });
+        return byType;
+    });
+    const totalByType = {};
+    Object.keys(COLORS).forEach(type => { totalByType[type] = weeklyBudget.reduce((s,w) => s+w[type],0); });
+    const grandTotal = Object.values(totalByType).reduce((s,v) => s+v,0);
+    const procTotal = state.procItems.reduce((s,p) => s+(p.cost||0),0);
+    const maxWeekly = Math.max(...weeklyBudget.map(w => Object.values(w).reduce((s,v)=>s+v,0)),1);
+    const barH = 120;
+
+    let html = `<div class="stat-grid stat-grid-3">
+        <div class="stat-card" style="border-top-color:var(--info)"><div class="stat-val" style="color:var(--info)">${fmt(grandTotal)}</div><div class="stat-label">Labor Budget</div></div>
+        <div class="stat-card" style="border-top-color:var(--error)"><div class="stat-val" style="color:var(--error)">${fmt(procTotal)}</div><div class="stat-label">Procurement Budget</div></div>
+        <div class="stat-card" style="border-top-color:var(--warning)"><div class="stat-val" style="color:var(--warning)">${fmt(grandTotal+procTotal)}</div><div class="stat-label">Total Project Budget</div></div>
+    </div>`;
+
+    // Stacked bar chart
+    html += `<div class="card"><div class="card-title">Time-Phased Budget by Knowledge Area (Weekly)</div>
+    <div style="overflow:auto"><div style="display:flex;align-items:flex-end;gap:3px;height:${barH+20}px;padding-bottom:20px">`;
+    weeklyBudget.forEach((w,i) => {
+        const total = Object.values(w).reduce((s,v)=>s+v,0);
+        html += `<div style="display:flex;flex-direction:column;align-items:center;width:${wW}px">
+            <div style="display:flex;flex-direction:column-reverse;width:36px;height:${barH}px">`;
+        Object.keys(COLORS).forEach(type => {
+            const h = total>0 ? (w[type]/maxWeekly)*barH : 0;
+            if (h>0) html += `<div style="width:100%;height:${h}px;background:${COLORS[type]};opacity:0.8" title="${TYPE_LABELS[type]}: ${fmt(w[type])}"></div>`;
+        });
+        html += `</div><div style="font-size:9px;color:var(--text-dim);margin-top:4px">W${i+1}</div>
+            <div style="font-size:9px;color:var(--text-muted);font-weight:600">${total>0?fmtK(total):''}</div></div>`;
+    });
+    html += `</div></div>
+    <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;flex-wrap:wrap">`;
+    Object.entries(COLORS).forEach(([type,color]) => {
+        html += `<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${color};margin-right:4px"></span>${TYPE_LABELS[type]}: ${fmt(totalByType[type])}</span>`;
+    });
+    html += `</div></div>`;
+
+    // Budget breakdown bar
+    html += `<div class="card"><div class="card-title">Budget Breakdown by Knowledge Area</div>
+    <div style="display:flex;height:24px;border-radius:6px;overflow:hidden;margin-bottom:12px">`;
+    Object.entries(COLORS).forEach(([type,color]) => {
+        const pct = grandTotal>0 ? (totalByType[type]/grandTotal)*100 : 0;
+        if (pct>0) html += `<div style="width:${pct}%;background:${color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white">${pct>8?pct.toFixed(0)+'%':''}</div>`;
+    });
+    html += `</div><div style="font-size:12px;color:var(--text-muted)">
+        This is the part most PMs miss: <strong style="color:var(--warning)">${fmt(grandTotal-totalByType.scope)}</strong> of the budget (${grandTotal>0?((1-totalByType.scope/grandTotal)*100).toFixed(0):0}%) comes from integration activities — not from scope work.
+    </div></div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: QUALITY
+// ═══════════════════════════════════════════════════════════════════════════
+function renderQuality() {
+    const qaTasks = state.qualityTasks.filter(t => t.qaType==='qa');
+    const qcTasks = state.qualityTasks.filter(t => t.qaType==='qc');
+    const allQT = state.qualityTasks;
+    const costOf = tasks => tasks.reduce((s,t)=>s+taskCost(t),0);
+
+    let html = `<div class="stat-grid stat-grid-4">
+        <div class="stat-card" style="border-top-color:var(--c-qa)"><div class="stat-val" style="color:var(--c-qa)">${state.qaItems.length}</div><div class="stat-label">QA Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--c-qc)"><div class="stat-val" style="color:var(--c-qc)">${state.qcItems.length}</div><div class="stat-label">QC Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--success)"><div class="stat-val" style="color:var(--success)">${allQT.length}</div><div class="stat-label">Schedule Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--warning)"><div class="stat-val" style="color:var(--warning)">${fmt(costOf(allQT))}</div><div class="stat-label">Total Quality Cost</div></div>
+    </div>`;
+
+    // QA/QC concept banners
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="card" style="border-top:3px solid var(--c-qa);margin:0"><span style="font-size:18px">🔍</span> <strong style="color:var(--c-qa)">Quality Assurance</strong>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.6">
+                <strong>Confidence — "Are we doing things right?"</strong><br>Process-oriented. Proactive. Prevents defects.
+            </div></div>
+        <div class="card" style="border-top:3px solid var(--c-qc);margin:0"><span style="font-size:18px">🧪</span> <strong style="color:var(--c-qc)">Quality Control</strong>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.6">
+                <strong>Compliance — "Did the deliverable meet the standard?"</strong><br>Product-oriented. Reactive. Detects defects.
+            </div></div>
+    </div>`;
+
+    // QA Table
+    html += `<div class="card" style="border-left:3px solid var(--c-qa)"><div class="card-title" style="margin:0 0 12px">🔍 Quality Assurance Plan <span class="badge" style="background:rgba(5,150,105,0.08);color:var(--c-qa);border:1px solid rgba(5,150,105,0.2);font-size:9px">CONFIDENCE</span></div>
+    <table class="tbl"><thead><tr><th>Activity</th><th>Description</th><th>Method</th><th>Frequency</th><th>Trigger</th></tr></thead><tbody>`;
+    state.qaItems.forEach(item => {
+        html += `<tr><td style="font-weight:600">${esc(item.activity)}</td><td style="font-size:12px;color:var(--text-muted);max-width:250px">${esc(item.description)}</td><td><span class="badge badge-quality">${item.method}</span></td><td><span class="badge badge-blue">${item.frequency}</span></td><td style="font-size:12px">${esc(item.trigger)}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+
+    // QC Table
+    html += `<div class="card" style="border-left:3px solid var(--c-qc)"><div class="card-title" style="margin:0 0 12px">🧪 Quality Control Plan <span class="badge" style="background:rgba(8,145,178,0.08);color:var(--c-qc);border:1px solid rgba(8,145,178,0.2);font-size:9px">COMPLIANCE</span></div>
+    <table class="tbl"><thead><tr><th>Activity</th><th>Description</th><th>Method</th><th>Acceptance Criteria</th><th>Trigger</th></tr></thead><tbody>`;
+    state.qcItems.forEach(item => {
+        html += `<tr><td style="font-weight:600">${esc(item.activity)}</td><td style="font-size:12px;color:var(--text-muted);max-width:250px">${esc(item.description)}</td><td><span class="badge" style="background:rgba(8,145,178,0.08);color:var(--c-qc);border:1px solid rgba(8,145,178,0.2)">${item.method}</span></td><td style="font-size:12px;color:var(--c-qc);font-weight:600">${esc(item.acceptance)}</td><td style="font-size:12px">${esc(item.trigger)}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+
+    // Linked tasks
+    html += `<div class="card"><div class="card-title"><span class="badge-int">↻ LINKED TO SCHEDULE</span> Quality activities in the schedule</div>`;
+    html += renderLinkedTasks(allQT);
+    html += `</div>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: INTEGRATION SECTIONS (Risk, Comm, Procurement)
+// ═══════════════════════════════════════════════════════════════════════════
+function renderIntegration(type) {
+    const config = {
+        risk: { title:'Risk', icon:'⚠️', color:COLORS.risk, items:state.riskItems, tasks:getAllTasks().filter(t=>t.type==='risk'),
+            fields:[{key:'description',label:'Risk'},{key:'probability',label:'Probability',badge:true},{key:'impact',label:'Impact',badge:true},{key:'strategy',label:'Strategy',badge:true},{key:'response',label:'Response'}] },
+        communication: { title:'Communication', icon:'💬', color:COLORS.communication, items:state.commItems, tasks:getAllTasks().filter(t=>t.type==='communication'),
+            fields:[{key:'type',label:'Type'},{key:'audience',label:'Audience'},{key:'frequency',label:'Frequency',badge:true},{key:'method',label:'Method'},{key:'owner',label:'Owner'}] },
+        procurement: { title:'Procurement', icon:'🛒', color:COLORS.procurement, items:state.procItems, tasks:getAllTasks().filter(t=>t.type==='procurement'),
+            fields:[{key:'item',label:'Item'},{key:'vendor',label:'Vendor'},{key:'leadTime',label:'Lead Time'},{key:'cost',label:'Cost ($)'},{key:'type',label:'Type',badge:true}] },
+    }[type];
+
+    const totalCost = config.tasks.reduce((s,t)=>s+taskCost(t),0);
+
+    let html = `<div class="stat-grid stat-grid-3">
+        <div class="stat-card" style="border-top-color:${config.color}"><div class="stat-val" style="color:${config.color}">${config.items.length}</div><div class="stat-label">${config.title} Items</div></div>
+        <div class="stat-card" style="border-top-color:${config.color}"><div class="stat-val" style="color:${config.color}">${config.tasks.length}</div><div class="stat-label">Schedule Activities</div></div>
+        <div class="stat-card" style="border-top-color:var(--warning)"><div class="stat-val" style="color:var(--warning)">${fmt(totalCost)}</div><div class="stat-label">Budget Impact</div></div>
+    </div>`;
+
+    // Items table
+    html += `<div class="card"><div class="card-title">${config.icon} ${config.title} Plan Items</div>
+    <table class="tbl"><thead><tr>${config.fields.map(f=>`<th>${f.label}</th>`).join('')}</tr></thead><tbody>`;
+    config.items.forEach(item => {
+        html += `<tr>`;
+        config.fields.forEach((f,i) => {
+            const v = item[f.key];
+            if (f.badge) {
+                html += `<td><span class="badge ${badgeClass(v)}">${esc(v)}</span></td>`;
+            } else if (f.key === 'cost') {
+                html += `<td style="font-weight:700;color:var(--warning)">${fmt(v||0)}</td>`;
+            } else {
+                html += `<td ${i===0?'style="font-weight:600"':''}>${esc(v)}</td>`;
+            }
+        });
+        html += `</tr>`;
+    });
+    html += `</tbody></table></div>`;
+
+    // Linked tasks
+    html += `<div class="card"><div class="card-title"><span class="badge-int">↻ LINKED TO SCHEDULE</span> Activities generated from ${config.title} Plan</div>`;
+    html += renderLinkedTasks(config.tasks);
+    html += `</div>`;
+    return html;
+}
+
+function renderLinkedTasks(tasks) {
+    if (tasks.length === 0) return `<div style="font-size:13px;color:var(--text-dim);padding:12px">No activities linked yet.</div>`;
+    let html = `<table class="tbl"><thead><tr><th>Activity</th><th>Resource</th><th>Start</th><th>Duration</th><th>Alloc</th><th>Cost</th></tr></thead><tbody>`;
+    tasks.forEach(t => {
+        const res = state.resources.find(r => r.id===t.resourceId);
+        const color = typeColor(t.type);
+        html += `<tr>
+            <td style="font-weight:600;color:${color}">${esc(t.name)}</td>
+            <td>${res?esc(getResLabel(res)):'—'}</td>
+            <td>Week ${t.startWeek}</td>
+            <td>${t.duration}w</td>
+            <td>${t.allocation}%</td>
+            <td style="font-weight:700;color:var(--warning)">${fmt(taskCost(t))}</td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: CHARTER
+// ═══════════════════════════════════════════════════════════════════════════
+function renderCharter() {
+    const ch = state.charter;
+    switch(currentSection) {
+    case 'ch_overview': {
+        const riskHigh = ch.highLevelRisks.filter(r=>r.level==='High').length;
+        return `
+        <div class="charter-banner">
+            <div class="charter-title">${esc(ch.projectName)}</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+                <strong style="color:var(--purple)">The Charter answers WHY we should invest in this project.</strong> It defines the problem, the proposed solution, measurable objectives, constraints, and the success criteria that will determine GO/NO-GO.
+                Once approved, the <strong style="color:var(--info)">Project Plan</strong> defines HOW we deliver it.
+            </div>
+        </div>
+        <div class="stat-grid stat-grid-4">
+            <div class="stat-card" style="border-top-color:var(--purple)"><div class="stat-val" style="color:var(--purple)">${ch.objectives.length}</div><div class="stat-label">Objectives</div></div>
+            <div class="stat-card" style="border-top-color:var(--warning)"><div class="stat-val" style="color:var(--warning)">${ch.constraints.length}</div><div class="stat-label">Constraints</div></div>
+            <div class="stat-card" style="border-top-color:var(--error)"><div class="stat-val" style="color:var(--error)">${riskHigh}</div><div class="stat-label">High Risks</div></div>
+            <div class="stat-card" style="border-top-color:var(--success)"><div class="stat-val" style="color:var(--success)">${ch.successCriteria.length}</div><div class="stat-label">Success Criteria</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="card"><div class="card-title">Sponsor</div><div style="font-size:14px;font-weight:600">${esc(ch.sponsor)}</div></div>
+            <div class="card"><div class="card-title">Project Manager</div><div style="font-size:14px;font-weight:600">${esc(ch.pm)}</div></div>
+        </div>
+        <div class="card"><div class="card-title">Problem / Opportunity (Summary)</div><div style="font-size:13px;color:var(--text-muted);line-height:1.7">${esc(ch.problem).slice(0,200)}...</div></div>
+        <div class="card"><div class="card-title">Proposed Solution (Summary)</div><div style="font-size:13px;color:var(--text-muted);line-height:1.7">${esc(ch.solution).slice(0,200)}...</div></div>`;
+    }
+    case 'ch_problem': return renderCharterText('problem','Problem / Opportunity Statement');
+    case 'ch_solution': return renderCharterText('solution','Proposed Solution');
+    case 'ch_objectives':
+        return renderCharterTable('objectives','Project Objectives',
+            [{key:'description',label:'Objective'},{key:'measurable',label:'Measurable',badge:true},{key:'timebound',label:'Time-bound'}]);
+    case 'ch_constraints':
+        return renderCharterTable('constraints','Constraints',
+            [{key:'type',label:'Type',badge:true},{key:'description',label:'Description'},{key:'impact',label:'Impact',badge:true}]);
+    case 'ch_risks':
+        return renderCharterTable('highLevelRisks','High-Level Risks',
+            [{key:'description',label:'Risk'},{key:'level',label:'Level',badge:true},{key:'mitigation',label:'Initial Mitigation'}]);
+    case 'ch_success':
+        return renderCharterTable('successCriteria','Success Criteria',
+            [{key:'criterion',label:'Criterion'},{key:'verifiedBy',label:'Verified By'}]);
+    case 'ch_assumptions':
+        return renderCharterTable('assumptions','Assumptions',
+            [{key:'assumption',label:'Assumption'}]);
+    case 'ch_authority': {
+        const auth = ch.authority;
+        let html = `<div class="card"><div class="card-title">Authority Levels</div>`;
+        [{role:'Project Sponsor',val:auth.sponsor,icon:'👑',color:'var(--warning)'},
+         {role:'Project Manager',val:auth.pm,icon:'📐',color:'var(--info)'},
+         {role:'Steering Committee',val:auth.steering,icon:'🏛️',color:'var(--purple)'}
+        ].forEach(a => {
+            html += `<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-light)">
+                <span style="font-size:20px">${a.icon}</span>
+                <div><div style="font-weight:700;color:${a.color};font-size:13px">${a.role}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${esc(a.val)}</div></div>
+            </div>`;
+        });
+        html += `</div>
+        <div class="card" style="border-top:3px solid var(--purple);text-align:center">
+            <div style="font-size:16px;font-weight:800;color:var(--purple);margin-bottom:8px">✍️ Charter Approval</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Once signed, this charter authorizes the project to proceed to planning phase.</div>
+            <div style="display:flex;justify-content:center;gap:12px">
+                <div class="charter-approval-box" style="background:rgba(22,163,74,0.08);border:2px solid rgba(22,163,74,0.3);color:var(--success)">✓ GO — Proceed to Project Plan</div>
+                <div class="charter-approval-box" style="background:rgba(220,38,38,0.08);border:2px solid rgba(220,38,38,0.3);color:var(--error)">✕ NO-GO — Revise Charter</div>
+            </div>
+        </div>`;
+        return html;
+    }
+    default: return '';
+    }
+}
+
+function renderCharterText(field, label) {
+    return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin:0">${label}</div>
+            <button class="btn-sm" onclick="editCharterField('${field}')">Edit</button>
+        </div>
+        <div id="charterField_${field}" style="font-size:14px;line-height:1.8;white-space:pre-wrap">${esc(state.charter[field])}</div>
+        <div id="charterEdit_${field}" style="display:none">
+            <textarea class="input-sm" id="charterInput_${field}" style="width:100%;min-height:120px;resize:vertical;line-height:1.6"></textarea>
+            <button class="btn btn-green" style="margin-top:8px" onclick="saveCharterField('${field}')">Save</button>
+        </div>
+    </div>`;
+}
+function editCharterField(field) {
+    document.getElementById(`charterField_${field}`).style.display = 'none';
+    document.getElementById(`charterEdit_${field}`).style.display = 'block';
+    document.getElementById(`charterInput_${field}`).value = state.charter[field];
+}
+function saveCharterField(field) {
+    state.charter[field] = document.getElementById(`charterInput_${field}`).value;
+    renderContent();
+}
+
+function renderCharterTable(field, title, columns) {
+    const items = state.charter[field] || [];
+    let html = `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin:0">${title}</div>
+            <button class="btn btn-blue" onclick="addCharterItem('${field}')">+ Add</button>
+        </div>
+        <div id="charterAdd_${field}" style="display:none;margin-bottom:12px"></div>
+        <table class="tbl"><thead><tr>${columns.map(c=>`<th>${c.label}</th>`).join('')}<th></th></tr></thead><tbody>`;
+    items.forEach(item => {
+        html += `<tr>`;
+        columns.forEach((c,i) => {
+            let v = item[c.key];
+            if (c.badge) {
+                if (v === true) v = 'Yes';
+                if (v === false) v = 'No';
+                html += `<td><span class="badge ${badgeClass(String(v))}">${esc(v)}</span></td>`;
+            } else {
+                html += `<td ${i===0?'style="font-weight:600"':''}>${esc(v)}</td>`;
+            }
+        });
+        html += `<td><button class="btn-sm" onclick="removeCharterItem('${field}','${item.id}')">✕</button></td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+}
+function removeCharterItem(field, id) {
+    state.charter[field] = state.charter[field].filter(x => x.id !== id);
+    renderContent();
+}
+function addCharterItem(field) {
+    // Simple prompt-based add for charter items
+    const configs = {
+        objectives: [{key:'description',p:'Objective description'},{key:'measurable',p:'Measurable? (true/false)',def:'true'},{key:'timebound',p:'By when?'}],
+        constraints: [{key:'type',p:'Type (Budget/Time/Resource/Technical/Regulatory)'},{key:'description',p:'Description'},{key:'impact',p:'Impact (High/Medium/Low)',def:'Medium'}],
+        highLevelRisks: [{key:'description',p:'Risk description'},{key:'level',p:'Level (High/Medium/Low)'},{key:'mitigation',p:'Mitigation approach'}],
+        successCriteria: [{key:'criterion',p:'Success criterion'},{key:'verifiedBy',p:'Verified by'}],
+        assumptions: [{key:'assumption',p:'Assumption'}],
+    };
+    const fields = configs[field];
+    if (!fields) return;
+    const item = {id:uid()};
+    const first = prompt(fields[0].p);
+    if (!first) return;
+    item[fields[0].key] = first;
+    for (let i=1; i<fields.length; i++) {
+        item[fields[i].key] = prompt(fields[i].p) || fields[i].def || '';
+    }
+    state.charter[field].push(item);
+    renderContent();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GENERIC REMOVE
+// ═══════════════════════════════════════════════════════════════════════════
+function removeItem(collection, id) {
+    state[collection] = state[collection].filter(x => x.id !== id);
+    renderContent();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RATE CARD MODAL
+// ═══════════════════════════════════════════════════════════════════════════
+function openRateCard() {
+    const cats = ['Labor','Equipment','Materials'];
+    const catColors = {Labor:'#2563eb',Equipment:'#d97706',Materials:'#059669'};
+    const catIcons = {Labor:'👤',Equipment:'🖥️',Materials:'📦'};
+
+    let html = `<div class="modal-overlay" onclick="if(event.target===this)closeRateCard()">
+    <div class="modal-box">
+        <div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800">📋 Unit Cost Rate Card</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:4px">Company master price book — single source of truth for all project costing</div></div>
+            <button class="btn-sm" onclick="closeRateCard()">✕</button>
+        </div>
+        <div style="flex:1;overflow:auto;padding:0 24px 24px">`;
+
+    cats.forEach(cat => {
+        const items = state.rateCard.filter(rc => rc.category===cat);
+        html += `<div style="margin-top:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:16px">${catIcons[cat]}</span>
+                <span style="font-size:14px;font-weight:700;color:${catColors[cat]}">${cat}</span>
+                <span style="font-size:11px;color:var(--text-dim)">(${items.length} entries)</span>
+            </div>
+            <table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th></tr></thead><tbody>`;
+        items.forEach(entry => {
+            html += `<tr><td style="font-weight:600">${esc(entry.name)}</td>
+                <td style="font-weight:700;color:${catColors[cat]};font-size:14px">${fmt(entry.unitCost)}</td>
+                <td>${entry.unit}</td>
+                <td style="font-size:12px;color:var(--text-muted)">${esc(entry.notes)}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+    });
+
+    html += `</div>
+        <div style="padding:12px 24px;border-top:1px solid var(--border);text-align:right">
+            <button class="btn btn-blue" onclick="closeRateCard()">Done</button>
+        </div>
+    </div></div>`;
+
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+function closeRateCard() {
+    document.querySelector('.modal-overlay')?.remove();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MARCUS AI CHAT
+// ═══════════════════════════════════════════════════════════════════════════
+function toggleMarcus() {
+    document.getElementById('marcusPanel').classList.toggle('open');
+}
+function marcusQuick(text) {
+    document.getElementById('marcusInput').value = text;
+    sendToMarcus();
+}
+async function sendToMarcus() {
+    const input = document.getElementById('marcusInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    // Add user message
+    const msgArea = document.getElementById('marcusMessages');
+    msgArea.innerHTML += `<div class="marcus-msg user">${esc(msg)}</div>`;
+    msgArea.innerHTML += `<div class="marcus-msg loading" id="marcusLoading">MARCUS is analyzing<span class="loading-dots"></span></div>`;
+    msgArea.scrollTop = msgArea.scrollHeight;
+
+    document.getElementById('marcusSendBtn').disabled = true;
+
+    // Build context from current state
+    const at = getAllTasks();
+    const budget = getTotalBudget();
+    const maxW = Math.max(...at.map(t=>t.startWeek+t.duration-1),0);
+    const contextSummary = `
+PROJECT: ${state.charter.projectName}
+CHARTER: ${state.charter.objectives.length} objectives, ${state.charter.constraints.length} constraints, ${state.charter.highLevelRisks.length} high-level risks, ${state.charter.successCriteria.length} success criteria
+PLAN: ${at.length} total activities (${at.filter(t=>t.type==='scope').length} scope, ${at.filter(t=>t.type==='quality').length} quality, ${at.filter(t=>t.type==='risk').length} risk, ${at.filter(t=>t.type==='communication').length} comm, ${at.filter(t=>t.type==='procurement').length} procurement)
+BUDGET: ${fmt(budget)} labor + ${fmt(state.procItems.reduce((s,p)=>s+(p.cost||0),0))} procurement = ${fmt(budget+state.procItems.reduce((s,p)=>s+(p.cost||0),0))} total
+DURATION: ${maxW} weeks
+RESOURCES: ${state.resources.length} roles (${state.resources.filter(r=>r.person).length} assigned)
+STAKEHOLDERS: ${state.stakeholders.map(s=>s.name+' ('+s.role+')').join(', ')}
+REQUIREMENTS: ${state.requirements.length} total (${state.requirements.filter(r=>r.priority==='Must Have').length} Must Have)
+RISKS: ${state.riskItems.map(r=>r.description+' [P:'+r.probability+' I:'+r.impact+']').join('; ')}
+QA: ${state.qaItems.length} activities | QC: ${state.qcItems.length} activities
+PROCUREMENT: ${state.procItems.map(p=>p.item+' ($'+p.cost+')').join(', ')}
+`;
+
+    const systemPrompt = `You are MARCUS, an expert project management AI coach for YCBS 288 — Strategic Project Leadership at McGill University.
+You help students build integrated project charters and plans following PMI/PMBOK best practices.
+You are rigorous, constructive, and pedagogical. Always reference specific PMBOK knowledge areas when relevant.
+When analyzing, be specific: cite actual data from the project, identify gaps, and give actionable recommendations.
+Format with clear headings using **bold** and bullet points. Be concise but thorough.
+
+CURRENT PROJECT STATE:
+${contextSummary}`;
+
+    marcusChatHistory.push({role:'user', content:msg});
+
+    try {
+        const response = await fetch('/api/marcus', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                system: systemPrompt,
+                messages: marcusChatHistory.slice(-10),
+                max_tokens: 1500
+            })
+        });
+        const data = await response.json();
+        const aiText = data.content?.[0]?.text || 'I encountered an error. Please try again.';
+        marcusChatHistory.push({role:'assistant', content:aiText});
+
+        document.getElementById('marcusLoading')?.remove();
+        msgArea.innerHTML += `<div class="marcus-msg ai">${formatMarcusText(aiText)}</div>`;
+    } catch(e) {
+        document.getElementById('marcusLoading')?.remove();
+        msgArea.innerHTML += `<div class="marcus-msg ai" style="color:var(--error)">⚠️ Could not reach MARCUS. Check your connection and try again.</div>`;
+    }
+
+    document.getElementById('marcusSendBtn').disabled = false;
+    msgArea.scrollTop = msgArea.scrollHeight;
+}
+
+function formatMarcusText(text) {
+    // Simple markdown-like formatting
+    return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^### (.+)$/gm, '<h4 style="margin:10px 0 4px;font-size:13px">$1</h4>')
+        .replace(/^## (.+)$/gm, '<h4 style="margin:10px 0 4px;font-size:14px">$1</h4>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul style="margin:4px 0;padding-left:18px">$1</ul>')
+        .replace(/\n{2,}/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+        doLogin();
+    }
+});
+</script>
+</body>
+</html>
