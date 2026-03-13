@@ -17,7 +17,7 @@
             --bg-card-hover: #f1f5f9;
             --text: #111827;
             --text-muted: #1e293b;
-            --text-dim: #475569;
+            --text-dim: #1e293b;
             --border: #e2e8f0;
             --border-light: #f3f4f6;
             --accent: #c6a052;
@@ -123,7 +123,7 @@
 
         .sidebar-nav { flex:1; overflow-y:auto; padding:8px 0; position:relative; }
         .nav-group-label {
-            font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;
+            font-size:13px; font-weight:700; color:var(--text-dim); text-transform:uppercase;
             letter-spacing:0.1em; padding:14px 16px 4px;
         }
         .nav-item {
@@ -148,7 +148,7 @@
 
         .sidebar-footer {
             padding:12px 16px; border-top:1px solid var(--border);
-            font-size:11px; color:var(--text-dim); text-align:center; line-height:1.5;
+            font-size:13px; color:var(--text-dim); text-align:center; line-height:1.5;
         }
 
         /* ─── MAIN CONTENT ─── */
@@ -158,7 +158,7 @@
             display:flex; justify-content:space-between; align-items:center; background:white;
         }
         .main-header-title { font-family:'Fraunces',serif; font-size:18px; font-weight:700; }
-        .main-header-mode { font-size:11px; font-weight:600; margin-top:2px; }
+        .main-header-mode { font-size:13px; font-weight:600; margin-top:2px; }
         .main-header-right { display:flex; gap:10px; align-items:center; font-size:13px; color:var(--text-muted); flex-wrap:wrap; justify-content:flex-end; }
 
         .main-content { flex:1; overflow:auto; padding:24px; }
@@ -182,7 +182,7 @@
             padding:16px; text-align:center; border-top:3px solid var(--info);
         }
         .stat-val { font-family:'Fraunces',serif; font-size:28px; font-weight:800; }
-        .stat-label { font-size:12px; color:var(--text-dim); margin-top:4px; }
+        .stat-label { font-size:13px; color:var(--text); margin-top:4px; font-weight:500; }
 
         /* ─── TABLES ─── */
         .tbl { width:100%; border-collapse:collapse; font-size:14px; }
@@ -209,7 +209,7 @@
         .badge-blue { background:rgba(37,99,235,0.08); color:#2563eb; border:1px solid rgba(37,99,235,0.2); }
         .badge-int {
             display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px;
-            font-size:11px; font-weight:700; background:rgba(37,99,235,0.08);
+            font-size:13px; font-weight:700; background:rgba(37,99,235,0.08);
             color:var(--info); border:1px solid rgba(37,99,235,0.2);
         }
 
@@ -244,7 +244,7 @@
         .gantt-row { display:flex; align-items:center; border-bottom:1px solid var(--border-light); min-height:36px; }
         .gantt-row:hover { background:var(--bg-subtle); }
         .gantt-label { width:220px; min-width:220px; padding:6px 12px; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .gantt-res { width:60px; min-width:60px; text-align:center; font-size:11px; color:var(--text-dim); }
+        .gantt-res { width:60px; min-width:60px; text-align:center; font-size:12px; color:var(--text-muted); }
         .gantt-track { flex:1; position:relative; height:28px; }
         .gantt-bar {
             position:absolute; top:4px; height:20px; border-radius:4px;
@@ -312,7 +312,7 @@
         }
         .marcus-suggest-btn {
             padding:6px 12px; border-radius:16px; border:1px solid var(--border);
-            background:white; font-size:11px; color:var(--text-muted); cursor:pointer;
+            background:white; font-size:13px; color:var(--text-muted); cursor:pointer;
             font-family:inherit; transition:all 0.15s;
         }
         .marcus-suggest-btn:hover { border-color:var(--red); color:var(--red); }
@@ -411,7 +411,7 @@
         .fp-tbl tr:nth-child(even) td { background:var(--bg-subtle); }
         .fp-approval { text-align:center; padding:24px; border:2px dashed var(--border); border-radius:10px; margin-top:16px; }
         .fp-sig-line { display:inline-block; width:200px; border-bottom:1px solid var(--text); margin:24px 20px 4px; }
-        .fp-sig-label { font-size:11px; color:var(--text-muted); }
+        .fp-sig-label { font-size:13px; color:var(--text-muted); }
         .fp-print-bar { display:flex; gap:10px; justify-content:center; margin-bottom:24px; }
 
         /* ─── PRINT ─── */
@@ -481,10 +481,10 @@
             <div class="main-header-mode" id="mainMode" style="color:var(--c-scope)">📐 Plan — HOW we deliver</div>
         </div>
         <div class="main-header-right">
+            <button class="btn btn-primary" onclick="goTo('fullplan')" title="View & print full plan" style="padding:6px 14px">🖨️ Print Plan</button>
             <span id="headerStats"></span>
             <button class="btn-sm btn-rate" id="btnRateCard" onclick="openRateCard()" style="display:none">📋 Rate Card</button>
             <button class="btn-sm" onclick="saveState()" title="Save to server">💾 Save</button>
-            <button class="btn btn-primary" onclick="goTo('fullplan')" title="View & print full plan" style="padding:6px 14px">🖨️ Print Plan</button>
         </div>
     </div>
     <div class="main-content" id="mainContent"></div>
@@ -501,7 +501,7 @@
         <img class="marcus-panel-avatar" id="marcusPanelAvatar" alt="MARCUS">
         <div>
             <div style="font-weight:700;font-size:14px">MARCUS</div>
-            <div style="font-size:11px;opacity:0.8">AI Project Coach</div>
+            <div style="font-size:13px;opacity:0.8">AI Project Coach</div>
         </div>
         <button class="marcus-panel-close" onclick="toggleMarcus()">✕</button>
     </div>
@@ -964,7 +964,7 @@ function renderSidebar() {
 
             <!-- Integration column (right side) -->
             <div style="position:absolute;top:282px;right:10px;width:110px;z-index:2">
-                <div style="font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;text-align:center">Integration</div>
+                <div style="font-size:13px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;text-align:center">Integration</div>
                 ${intNode('quality','✅','Quality','#059669',a)}
                 ${intNode('risk','⚠️','Risk','#d97706',a)}
                 ${intNode('communication','💬','Comms','#7c3aed',a)}
@@ -974,7 +974,7 @@ function renderSidebar() {
 
         <!-- Key -->
         <div style="margin-top:24px;padding:0 14px">
-            <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px;color:var(--text-dim)">
+            <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:13px;color:var(--text-dim)">
                 <span>─── flow</span>
                 <span style="color:var(--success)">- - → activities into schedule</span>
             </div>
@@ -1007,7 +1007,7 @@ function intNode(id, icon, label, color, active) {
     const isActive = active === id;
     return `<div onclick="goTo('${id}')" style="display:flex;align-items:center;gap:6px;padding:5px 8px;margin-bottom:4px;border-radius:6px;cursor:pointer;background:${isActive?color+'0a':'white'};border:1px solid ${isActive?color+'40':'var(--border-light)'};transition:all 0.15s">
         <span style="font-size:12px">${icon}</span>
-        <span style="font-size:11px;font-weight:${isActive?'700':'500'};color:${isActive?color:'var(--text-muted)'}">${label}</span>
+        <span style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?color:'var(--text-muted)'}">${label}</span>
         <span style="margin-left:auto;font-size:8px;color:${color}90">→SCH</span>
     </div>`;
 }
@@ -1089,9 +1089,9 @@ function renderOverview() {
         <span style="font-size:22px">📜</span>
         <div style="flex:1">
             <div style="font-size:14px;font-weight:700;color:var(--purple)">${esc(ch.projectName)}</div>
-            <div style="font-size:11px;color:var(--text-muted)">Charter defines WHY — ${ch.objectives.length} objectives, ${ch.constraints.length} constraints, ${ch.highLevelRisks.length} risks. Click to review.</div>
+            <div style="font-size:13px;color:var(--text-muted)">Charter defines WHY — ${ch.objectives.length} objectives, ${ch.constraints.length} constraints, ${ch.highLevelRisks.length} risks. Click to review.</div>
         </div>
-        <span style="font-size:11px;color:var(--purple);font-weight:700">View Charter →</span>
+        <span style="font-size:13px;color:var(--purple);font-weight:700">View Charter →</span>
     </div>
     <div class="int-banner">
         <strong>This tool connects all knowledge areas into one integrated plan.</strong> Quality, Risk, Communication, and Procurement activities are not just documents — they generate real schedule activities with resources and budget impact.
@@ -1111,7 +1111,7 @@ function renderOverview() {
         html += `<div style="background:${color}08;border-radius:8px;padding:14px;border:1px solid ${color}20;text-align:center">
             <div style="font-size:24px;font-weight:800;color:${color}">${count}</div>
             <div style="font-size:12px;font-weight:600;color:${color}">${TYPE_LABELS[type]}</div>
-            <div style="font-size:11px;color:var(--text-dim);margin-top:4px">${fmtK(cost)}</div>
+            <div style="font-size:13px;color:var(--text-dim);margin-top:4px">${fmtK(cost)}</div>
         </div>`;
     });
     html += `</div></div>`;
@@ -1131,7 +1131,7 @@ function renderOverview() {
             <div style="font-size:12px;color:var(--text-dim)">${i.note}</div>
         </div>`).join('')}
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">
+        <div style="margin-top:10px;font-size:13px;color:var(--text-muted)">
             Every plan element should trace back to a charter objective or constraint. Use the dropdown (top-left) to review the charter.
         </div>
     </div>`;
@@ -1264,8 +1264,8 @@ function renderSchedule() {
     let html = `<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">${filterBtns}</div>
     <div class="card" style="padding:0;overflow:auto">
     <div class="gantt-row" style="background:var(--bg-card-hover);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:2">
-        <div class="gantt-label" style="font-weight:700;font-size:11px;color:var(--text-dim)">ACTIVITY</div>
-        <div class="gantt-res" style="font-weight:700;font-size:11px;color:var(--text-dim)">RES</div>
+        <div class="gantt-label" style="font-weight:700;font-size:13px;color:var(--text-dim)">ACTIVITY</div>
+        <div class="gantt-res" style="font-weight:700;font-size:13px;color:var(--text-dim)">RES</div>
         <div style="flex:1;display:flex">`;
     for (let i=0;i<TOTAL_WEEKS;i++) {
         html += `<div style="width:${wW}px;min-width:${wW}px;text-align:center;font-size:12px;color:var(--text-dim);font-weight:600;padding:6px 0;border-left:1px solid var(--border-light)">W${i+1}</div>`;
@@ -1325,8 +1325,8 @@ function renderResources() {
             </div></td>
             <td style="color:var(--text-dim)">${fmt(getAvgRate(res))}/hr</td>
             <td>${res.person?`<span style="font-weight:600;color:var(--success)">${esc(res.person)}</span>`:'<span style="color:var(--text-dim);font-style:italic;font-size:12px">Not assigned</span>'}</td>
-            <td style="font-weight:700">${fmt(effR)}/hr ${res.person?'<span style="font-size:11px;color:var(--success)">ACTUAL</span>':'<span style="font-size:11px;color:var(--text-dim)">EST</span>'}</td>
-            <td><span style="font-size:11px">${tasks.length} tasks</span></td>
+            <td style="font-weight:700">${fmt(effR)}/hr ${res.person?'<span style="font-size:13px;color:var(--success)">ACTUAL</span>':'<span style="font-size:13px;color:var(--text-dim)">EST</span>'}</td>
+            <td><span style="font-size:13px">${tasks.length} tasks</span></td>
             <td style="font-weight:700;color:var(--warning)">${fmt(cost)}</td>
         </tr>`;
     });
@@ -1345,7 +1345,7 @@ function renderResources() {
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
                 <span style="width:8px;height:8px;border-radius:50%;background:${res.person?'var(--success)':'var(--text-dim)'}"></span>
                 <span style="font-weight:700;font-size:13px">${esc(res.person||res.title)}</span>
-                <span style="font-size:11px;color:var(--text-dim)">${res.role} · ${fmt(getRate(res))}/hr</span>
+                <span style="font-size:13px;color:var(--text-dim)">${res.role} · ${fmt(getRate(res))}/hr</span>
             </div>
             <div style="display:flex;align-items:flex-end;gap:2px;height:52px">`;
         weekLoads.forEach((load,i) => {
@@ -1357,11 +1357,11 @@ function renderResources() {
         });
         html += `</div><div style="display:flex;gap:2px">`;
         weekLoads.forEach((load,i) => {
-            html += `<div style="width:28px;text-align:center;font-size:11px;color:${load>100?'var(--error)':'var(--text-dim)'}">${load>0?load+'%':''}</div>`;
+            html += `<div style="width:28px;text-align:center;font-size:13px;color:${load>100?'var(--error)':'var(--text-dim)'}">${load>0?load+'%':''}</div>`;
         });
         html += `</div></div>`;
     });
-    html += `<div style="display:flex;gap:16px;margin-top:12px;font-size:11px">
+    html += `<div style="display:flex;gap:16px;margin-top:12px;font-size:13px">
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--info);margin-right:4px"></span>Normal (≤80%)</span>
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--warning);margin-right:4px"></span>High (80-100%)</span>
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--error);margin-right:4px"></span>Over-allocated (>100%)</span>
@@ -1408,11 +1408,11 @@ function renderBudget() {
             const h = total>0 ? (w[type]/maxWeekly)*barH : 0;
             if (h>0) html += `<div style="width:100%;height:${h}px;background:${COLORS[type]};opacity:0.8" title="${TYPE_LABELS[type]}: ${fmt(w[type])}"></div>`;
         });
-        html += `</div><div style="font-size:11px;color:var(--text-dim);margin-top:4px">W${i+1}</div>
-            <div style="font-size:11px;color:var(--text-muted);font-weight:600">${total>0?fmtK(total):''}</div></div>`;
+        html += `</div><div style="font-size:13px;color:var(--text-dim);margin-top:4px">W${i+1}</div>
+            <div style="font-size:13px;color:var(--text-muted);font-weight:600">${total>0?fmtK(total):''}</div></div>`;
     });
     html += `</div></div>
-    <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;flex-wrap:wrap">`;
+    <div style="display:flex;gap:16px;margin-top:12px;font-size:13px;flex-wrap:wrap">`;
     Object.entries(COLORS).forEach(([type,color]) => {
         html += `<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${color};margin-right:4px"></span>${TYPE_LABELS[type]}: ${fmt(totalByType[type])}</span>`;
     });
@@ -1460,7 +1460,7 @@ function renderQuality() {
     </div>`;
 
     // QA Table
-    html += `<div class="card" style="border-left:3px solid var(--c-qa)"><div class="card-title" style="margin:0 0 12px">🔍 Quality Assurance Plan <span class="badge" style="background:rgba(5,150,105,0.08);color:var(--c-qa);border:1px solid rgba(5,150,105,0.2);font-size:11px">CONFIDENCE</span></div>
+    html += `<div class="card" style="border-left:3px solid var(--c-qa)"><div class="card-title" style="margin:0 0 12px">🔍 Quality Assurance Plan <span class="badge" style="background:rgba(5,150,105,0.08);color:var(--c-qa);border:1px solid rgba(5,150,105,0.2);font-size:13px">CONFIDENCE</span></div>
     <table class="tbl"><thead><tr><th>Activity</th><th>Description</th><th>Method</th><th>Frequency</th><th>Trigger</th></tr></thead><tbody>`;
     state.qaItems.forEach(item => {
         html += `<tr><td style="font-weight:600">${esc(item.activity)}</td><td style="font-size:12px;color:var(--text-muted);max-width:250px">${esc(item.description)}</td><td><span class="badge badge-quality">${item.method}</span></td><td><span class="badge badge-blue">${item.frequency}</span></td><td style="font-size:12px">${esc(item.trigger)}</td></tr>`;
@@ -1468,7 +1468,7 @@ function renderQuality() {
     html += `</tbody></table></div>`;
 
     // QC Table
-    html += `<div class="card" style="border-left:3px solid var(--c-qc)"><div class="card-title" style="margin:0 0 12px">🧪 Quality Control Plan <span class="badge" style="background:rgba(8,145,178,0.08);color:var(--c-qc);border:1px solid rgba(8,145,178,0.2);font-size:11px">COMPLIANCE</span></div>
+    html += `<div class="card" style="border-left:3px solid var(--c-qc)"><div class="card-title" style="margin:0 0 12px">🧪 Quality Control Plan <span class="badge" style="background:rgba(8,145,178,0.08);color:var(--c-qc);border:1px solid rgba(8,145,178,0.2);font-size:13px">COMPLIANCE</span></div>
     <table class="tbl"><thead><tr><th>Activity</th><th>Description</th><th>Method</th><th>Acceptance Criteria</th><th>Trigger</th></tr></thead><tbody>`;
     state.qcItems.forEach(item => {
         html += `<tr><td style="font-weight:600">${esc(item.activity)}</td><td style="font-size:12px;color:var(--text-muted);max-width:250px">${esc(item.description)}</td><td><span class="badge" style="background:rgba(8,145,178,0.08);color:var(--c-qc);border:1px solid rgba(8,145,178,0.2)">${item.method}</span></td><td style="font-size:12px;color:var(--c-qc);font-weight:600">${esc(item.acceptance)}</td><td style="font-size:12px">${esc(item.trigger)}</td></tr>`;
@@ -1786,7 +1786,7 @@ function renderFullPlan() {
     h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px">';
     [{role:'Project Sponsor',name:ch.sponsor.split('—')[0].trim()},{role:'Project Manager',name:ch.pm}].forEach(function(s) {
         h += '<div style="text-align:center">';
-        h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);margin-bottom:24px">' + s.role + '</div>';
+        h += '<div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);margin-bottom:24px">' + s.role + '</div>';
         h += '<div class="fp-sig-line"></div>';
         h += '<div style="font-size:12px;font-weight:600;margin-top:4px">' + esc(s.name) + '</div>';
         h += '<div style="margin-top:16px"><span class="fp-sig-label">Date: _______________</span></div>';
@@ -1795,7 +1795,7 @@ function renderFullPlan() {
     h += '</div></div>';
 
     // Footer
-    h += '<div style="text-align:center;padding:16px;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:8px">';
+    h += '<div style="text-align:center;padding:16px;font-size:13px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:8px">';
     h += esc(ch.projectName) + ' — Rev ' + (state._revision || 1) + '.0 — Generated ' + dateStr + ' at ' + timeStr + ' — ' + esc(teamName);
     h += '<br>YCBS 288 · McGill School of Continuing Studies · Strategic Project Leadership</div>';
 
@@ -1986,7 +1986,7 @@ function renderRateCardModal() {
     // Header
     h += '<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
     h += '<div><div style="font-family:Fraunces,serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px">';
-    h += '📋 Unit Cost Rate Card <span style="font-size:11px;font-weight:600;color:var(--warning);background:rgba(202,138,4,0.08);padding:2px 8px;border-radius:4px">' + state.rateCard.length + ' entries</span>';
+    h += '📋 Unit Cost Rate Card <span style="font-size:13px;font-weight:600;color:var(--warning);background:rgba(202,138,4,0.08);padding:2px 8px;border-radius:4px">' + state.rateCard.length + ' entries</span>';
     h += '</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">Company master price book — single source of truth for all project costing</div></div>';
     h += '<button class="btn-sm" onclick="closeRateCard()" style="font-size:18px;padding:4px 8px">✕</button></div>';
 
@@ -2004,14 +2004,14 @@ function renderRateCardModal() {
     });
     h += '</div><div style="display:flex;gap:6px">';
     RC_CATS.forEach(function(cat) {
-        h += '<button class="btn" style="background:' + RC_COLORS[cat] + ';color:white;border:none;padding:5px 10px;font-size:11px" onclick="startRcAdd(\'' + cat + '\')">+ ' + cat + '</button>';
+        h += '<button class="btn" style="background:' + RC_COLORS[cat] + ';color:white;border:none;padding:5px 10px;font-size:13px" onclick="startRcAdd(\'' + cat + '\')">+ ' + cat + '</button>';
     });
     h += '</div></div>';
 
     // Add/Edit form
     if (rcAdding || rcEditing) {
         h += '<div style="padding:12px 24px;background:var(--bg-subtle);border-bottom:1px solid var(--border)">';
-        h += '<div style="font-size:11px;font-weight:700;color:var(--warning);margin-bottom:8px">' + (rcEditing ? '✏️ Edit Entry' : '➕ New Entry') + '</div>';
+        h += '<div style="font-size:13px;font-weight:700;color:var(--warning);margin-bottom:8px">' + (rcEditing ? '✏️ Edit Entry' : '➕ New Entry') + '</div>';
         h += '<div style="display:grid;grid-template-columns:2fr 120px 100px 100px 2fr auto auto;gap:8px;align-items:end">';
         h += '<div><div style="font-size:12px;color:var(--text-dim);margin-bottom:3px">Name</div><input class="input-sm" id="rc_name" placeholder="e.g. Lawyer, Crane"></div>';
         h += '<div><div style="font-size:12px;color:var(--text-dim);margin-bottom:3px">Category</div><select class="select-sm" id="rc_cat" style="width:100%">';
@@ -2037,7 +2037,7 @@ function renderRateCardModal() {
         h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
         h += '<span style="font-size:16px">' + RC_ICONS[cat] + '</span>';
         h += '<span style="font-size:14px;font-weight:700;color:' + color + '">' + cat + '</span>';
-        h += '<span style="font-size:11px;color:var(--text-dim)">(' + items.length + ' entries)</span></div>';
+        h += '<span style="font-size:13px;color:var(--text-dim)">(' + items.length + ' entries)</span></div>';
         h += '<table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th><th style="width:80px"></th></tr></thead><tbody>';
         items.forEach(function(entry) {
             var highlight = rcEditing === entry.id ? 'background:rgba(202,138,4,0.06)' : '';
@@ -2058,7 +2058,7 @@ function renderRateCardModal() {
 
     // Footer
     h += '<div style="padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
-    h += '<div style="font-size:11px;color:var(--text-dim)">Changes update all resource assignments and budget calculations in real time.</div>';
+    h += '<div style="font-size:13px;color:var(--text-dim)">Changes update all resource assignments and budget calculations in real time.</div>';
     h += '<button class="btn btn-blue" onclick="closeRateCard()">Done</button></div>';
     h += '</div></div>';
 
