@@ -15,9 +15,9 @@
             --bg-subtle: #f8fafc;
             --bg-card: #ffffff;
             --bg-card-hover: #f1f5f9;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --text-dim: #94a3b8;
+            --text: #111827;
+            --text-muted: #374151;
+            --text-dim: #6b7280;
             --border: #e2e8f0;
             --border-light: #f3f4f6;
             --accent: #c6a052;
@@ -1668,136 +1668,141 @@ function removeItem(collection, id) {
 let rcFilter = 'All';
 let rcEditing = null;
 let rcAdding = false;
+const RC_CATS = ['Labor','Equipment','Materials'];
+const RC_COLORS = {Labor:'#2563eb',Equipment:'#d97706',Materials:'#059669'};
+const RC_ICONS = {Labor:'👤',Equipment:'🖥️',Materials:'📦'};
+const RC_UNITS = ['/hr','/day','/month','/kg','/unit','/lot'];
 
-function openRateCard() {
-    renderRateCardModal();
-}
+function openRateCard() { renderRateCardModal(); }
+
 function renderRateCardModal() {
     closeRateCard();
-    const cats = ['Labor','Equipment','Materials'];
-    const catColors = {Labor:'#2563eb',Equipment:'#d97706',Materials:'#059669'};
-    const catIcons = {Labor:'👤',Equipment:'🖥️',Materials:'📦'};
-    const units = ['/hr','/day','/month','/kg','/unit','/lot'];
+    var h = '';
+    h += '<div class="modal-overlay" id="rateCardOverlay" onclick="if(event.target===this)closeRateCard()">';
+    h += '<div class="modal-box" style="max-width:920px">';
 
-    let html = `<div class="modal-overlay" id="rateCardOverlay" onclick="if(event.target===this)closeRateCard()">
-    <div class="modal-box" style="max-width:920px">
-        <!-- Header -->
-        <div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px">
-                📋 Unit Cost Rate Card
-                <span style="font-size:11px;font-weight:600;color:var(--warning);background:rgba(202,138,4,0.08);padding:2px 8px;border-radius:4px">${state.rateCard.length} entries</span>
-            </div>
-            <div style="font-size:12px;color:var(--text-dim);margin-top:4px">Company master price book — single source of truth for all project costing</div></div>
-            <button class="btn-sm" onclick="closeRateCard()" style="font-size:18px;padding:4px 8px">✕</button>
-        </div>
+    // Header
+    h += '<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+    h += '<div><div style="font-family:Fraunces,serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px">';
+    h += '📋 Unit Cost Rate Card <span style="font-size:11px;font-weight:600;color:var(--warning);background:rgba(202,138,4,0.08);padding:2px 8px;border-radius:4px">' + state.rateCard.length + ' entries</span>';
+    h += '</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">Company master price book — single source of truth for all project costing</div></div>';
+    h += '<button class="btn-sm" onclick="closeRateCard()" style="font-size:18px;padding:4px 8px">✕</button></div>';
 
-        <!-- Filters + Add buttons -->
-        <div style="padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light)">
-            <div style="display:flex;gap:6px">
-                ${['All',...cats].map(cat => {
-                    const active = rcFilter===cat;
-                    const c = catColors[cat]||'var(--text)';
-                    return `<button class="btn-sm" onclick="rcFilter='${cat}';renderRateCardModal()" style="font-size:12px;padding:5px 12px;${active?'background:'+c+'12;color:'+c+';border-color:'+c+'40;font-weight:700':''}">
-                        ${cat!=='All'?'<span style="margin-right:4px">'+catIcons[cat]+'</span>':''}${cat} ${cat!=='All'?'('+state.rateCard.filter(rc=>rc.category===cat).length+')':''}
-                    </button>`;
-                }).join('')}
-            </div>
-            <div style="display:flex;gap:6px">
-                ${cats.map(cat => `<button class="btn btn-sm" style="background:${catColors[cat]};color:white;border:none;padding:5px 10px" onclick="startRcAdd('${cat}')">+ ${cat}</button>`).join('')}
-            </div>
-        </div>
-
-        <!-- Add/Edit form -->
-        ${rcAdding || rcEditing ? `<div style="padding:12px 24px;background:var(--bg-subtle);border-bottom:1px solid var(--border)">
-            <div style="font-size:11px;font-weight:700;color:var(--warning);margin-bottom:8px">${rcEditing?'✏️ Edit Entry':'➕ New Entry'}</div>
-            <div style="display:grid;grid-template-columns:2fr 120px 100px 100px 2fr auto auto;gap:8px;align-items:end">
-                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Name</div>
-                    <input class="input-sm" id="rc_name" placeholder="e.g. Lawyer, Plastic, Crane"></div>
-                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Category</div>
-                    <select class="select-sm" id="rc_cat" style="width:100%">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
-                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Unit</div>
-                    <select class="select-sm" id="rc_unit" style="width:100%">${units.map(u=>`<option>${u}</option>`).join('')}</select></div>
-                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Cost ($)</div>
-                    <input class="input-sm" type="number" id="rc_cost" placeholder="0"></div>
-                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Notes</div>
-                    <input class="input-sm" id="rc_notes" placeholder="Optional note"></div>
-                <button class="btn btn-green" onclick="saveRcEntry()">Save</button>
-                <button class="btn-sm" onclick="rcAdding=false;rcEditing=null;renderRateCardModal()">Cancel</button>
-            </div>
-        </div>` : ''}
-
-        <!-- Table by category -->
-        <div style="flex:1;overflow:auto;padding:0 24px 24px">`;
-
-    cats.filter(cat => rcFilter==='All' || rcFilter===cat).forEach(cat => {
-        const items = state.rateCard.filter(rc => rc.category===cat);
-        if (items.length === 0 && rcFilter !== 'All') return;
-        html += `<div style="margin-top:16px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <span style="font-size:16px">${catIcons[cat]}</span>
-                <span style="font-size:14px;font-weight:700;color:${catColors[cat]}">${cat}</span>
-                <span style="font-size:11px;color:var(--text-dim)">(${items.length} entries)</span>
-            </div>
-            <table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th><th style="width:80px"></th></tr></thead><tbody>`;
-        items.forEach(entry => {
-            html += `<tr style="${rcEditing===entry.id?'background:rgba(202,138,4,0.06)':''}">
-                <td style="font-weight:600">${esc(entry.name)}</td>
-                <td style="font-weight:700;color:${catColors[cat]};font-size:14px">${fmt(entry.unitCost)}</td>
-                <td>${entry.unit}</td>
-                <td style="font-size:12px;color:var(--text-muted)">${esc(entry.notes||'')}</td>
-                <td><div style="display:flex;gap:4px">
-                    <button class="btn-sm" style="color:var(--info);border-color:rgba(37,99,235,0.3)" onclick="startRcEdit('${entry.id}')">✏️</button>
-                    <button class="btn-sm" style="color:var(--error);border-color:rgba(220,38,38,0.3)" onclick="removeRcEntry('${entry.id}')">✕</button>
-                </div></td>
-            </tr>`;
-        });
-        if (items.length === 0) html += `<tr><td colspan="5" style="text-align:center;color:var(--text-dim);font-style:italic;padding:12px">No ${cat.toLowerCase()} entries yet</td></tr>`;
-        html += `</tbody></table></div>`;
+    // Filter tabs + Add buttons
+    h += '<div style="padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);flex-wrap:wrap;gap:8px">';
+    h += '<div style="display:flex;gap:6px">';
+    ['All'].concat(RC_CATS).forEach(function(cat) {
+        var active = rcFilter === cat;
+        var c = RC_COLORS[cat] || 'var(--text)';
+        var count = cat !== 'All' ? ' (' + state.rateCard.filter(function(rc){return rc.category===cat}).length + ')' : '';
+        var icon = cat !== 'All' ? RC_ICONS[cat] + ' ' : '';
+        h += '<button class="btn-sm" onclick="rcFilter=\'' + cat + '\';renderRateCardModal()" style="font-size:12px;padding:5px 12px;';
+        if (active) h += 'background:' + c + '12;color:' + c + ';border-color:' + c + '40;font-weight:700';
+        h += '">' + icon + cat + count + '</button>';
     });
+    h += '</div><div style="display:flex;gap:6px">';
+    RC_CATS.forEach(function(cat) {
+        h += '<button class="btn" style="background:' + RC_COLORS[cat] + ';color:white;border:none;padding:5px 10px;font-size:11px" onclick="startRcAdd(\'' + cat + '\')">+ ' + cat + '</button>';
+    });
+    h += '</div></div>';
 
-    html += `</div>
-        <!-- Footer -->
-        <div style="padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:11px;color:var(--text-dim)">Changes here update all resource assignments and budget calculations in real time.</div>
-            <button class="btn btn-blue" onclick="closeRateCard()">Done</button>
-        </div>
-    </div></div>`;
+    // Add/Edit form
+    if (rcAdding || rcEditing) {
+        h += '<div style="padding:12px 24px;background:var(--bg-subtle);border-bottom:1px solid var(--border)">';
+        h += '<div style="font-size:11px;font-weight:700;color:var(--warning);margin-bottom:8px">' + (rcEditing ? '✏️ Edit Entry' : '➕ New Entry') + '</div>';
+        h += '<div style="display:grid;grid-template-columns:2fr 120px 100px 100px 2fr auto auto;gap:8px;align-items:end">';
+        h += '<div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Name</div><input class="input-sm" id="rc_name" placeholder="e.g. Lawyer, Crane"></div>';
+        h += '<div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Category</div><select class="select-sm" id="rc_cat" style="width:100%">';
+        RC_CATS.forEach(function(c){ h += '<option>' + c + '</option>'; });
+        h += '</select></div>';
+        h += '<div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Unit</div><select class="select-sm" id="rc_unit" style="width:100%">';
+        RC_UNITS.forEach(function(u){ h += '<option>' + u + '</option>'; });
+        h += '</select></div>';
+        h += '<div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Cost ($)</div><input class="input-sm" type="number" id="rc_cost" placeholder="0"></div>';
+        h += '<div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Notes</div><input class="input-sm" id="rc_notes" placeholder="Optional note"></div>';
+        h += '<button class="btn btn-green" onclick="saveRcEntry()">Save</button>';
+        h += '<button class="btn-sm" onclick="rcAdding=false;rcEditing=null;renderRateCardModal()">Cancel</button>';
+        h += '</div></div>';
+    }
 
-    document.body.insertAdjacentHTML('beforeend', html);
+    // Tables by category
+    h += '<div style="flex:1;overflow:auto;padding:0 24px 24px">';
+    RC_CATS.forEach(function(cat) {
+        if (rcFilter !== 'All' && rcFilter !== cat) return;
+        var items = state.rateCard.filter(function(rc){ return rc.category === cat; });
+        var color = RC_COLORS[cat];
+        h += '<div style="margin-top:16px">';
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+        h += '<span style="font-size:16px">' + RC_ICONS[cat] + '</span>';
+        h += '<span style="font-size:14px;font-weight:700;color:' + color + '">' + cat + '</span>';
+        h += '<span style="font-size:11px;color:var(--text-dim)">(' + items.length + ' entries)</span></div>';
+        h += '<table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th><th style="width:80px"></th></tr></thead><tbody>';
+        items.forEach(function(entry) {
+            var highlight = rcEditing === entry.id ? 'background:rgba(202,138,4,0.06)' : '';
+            h += '<tr style="' + highlight + '">';
+            h += '<td style="font-weight:600">' + esc(entry.name) + '</td>';
+            h += '<td style="font-weight:700;color:' + color + ';font-size:14px">' + fmt(entry.unitCost) + '</td>';
+            h += '<td>' + entry.unit + '</td>';
+            h += '<td style="font-size:12px;color:var(--text-muted)">' + esc(entry.notes || '') + '</td>';
+            h += '<td><div style="display:flex;gap:4px">';
+            h += '<button class="btn-sm" style="color:var(--info);border-color:rgba(37,99,235,0.3)" onclick="startRcEdit(\'' + entry.id + '\')">✏️</button>';
+            h += '<button class="btn-sm" style="color:var(--error);border-color:rgba(220,38,38,0.3)" onclick="removeRcEntry(\'' + entry.id + '\')">✕</button>';
+            h += '</div></td></tr>';
+        });
+        if (items.length === 0) h += '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);font-style:italic;padding:12px">No ' + cat.toLowerCase() + ' entries yet</td></tr>';
+        h += '</tbody></table></div>';
+    });
+    h += '</div>';
+
+    // Footer
+    h += '<div style="padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+    h += '<div style="font-size:11px;color:var(--text-dim)">Changes update all resource assignments and budget calculations in real time.</div>';
+    h += '<button class="btn btn-blue" onclick="closeRateCard()">Done</button></div>';
+    h += '</div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', h);
 
     // Populate form if editing
     if (rcEditing) {
-        const e = state.rateCard.find(rc => rc.id === rcEditing);
-        if (e) { document.getElementById('rc_name').value=e.name; document.getElementById('rc_cat').value=e.category; document.getElementById('rc_unit').value=e.unit; document.getElementById('rc_cost').value=e.unitCost; document.getElementById('rc_notes').value=e.notes||''; }
+        var e = state.rateCard.find(function(rc){ return rc.id === rcEditing; });
+        if (e) {
+            document.getElementById('rc_name').value = e.name;
+            document.getElementById('rc_cat').value = e.category;
+            document.getElementById('rc_unit').value = e.unit;
+            document.getElementById('rc_cost').value = e.unitCost;
+            document.getElementById('rc_notes').value = e.notes || '';
+        }
     }
 }
 function startRcAdd(cat) {
-    rcAdding=true; rcEditing=null; renderRateCardModal();
-    setTimeout(() => {
-        const el = document.getElementById('rc_cat');
+    rcAdding = true; rcEditing = null;
+    renderRateCardModal();
+    setTimeout(function() {
+        var el = document.getElementById('rc_cat');
         if (el) el.value = cat;
-        const uEl = document.getElementById('rc_unit');
-        if (uEl) uEl.value = cat==='Materials'?'/kg':cat==='Equipment'?'/unit':'/hr';
+        var uEl = document.getElementById('rc_unit');
+        if (uEl) uEl.value = cat === 'Materials' ? '/kg' : cat === 'Equipment' ? '/unit' : '/hr';
     }, 50);
 }
-function startRcEdit(id) { rcEditing=id; rcAdding=false; renderRateCardModal(); }
+function startRcEdit(id) { rcEditing = id; rcAdding = false; renderRateCardModal(); }
 function saveRcEntry() {
-    const name = document.getElementById('rc_name').value.trim();
-    const cost = Number(document.getElementById('rc_cost').value);
+    var name = document.getElementById('rc_name').value.trim();
+    var cost = Number(document.getElementById('rc_cost').value);
     if (!name || !cost) return;
-    const entry = { name, category:document.getElementById('rc_cat').value, unit:document.getElementById('rc_unit').value, unitCost:cost, notes:document.getElementById('rc_notes').value };
+    var entry = { name: name, category: document.getElementById('rc_cat').value, unit: document.getElementById('rc_unit').value, unitCost: cost, notes: document.getElementById('rc_notes').value };
     if (rcEditing) {
-        state.rateCard = state.rateCard.map(rc => rc.id===rcEditing ? {...rc,...entry} : rc);
+        state.rateCard = state.rateCard.map(function(rc) { return rc.id === rcEditing ? Object.assign({}, rc, entry) : rc; });
         rcEditing = null;
     } else {
-        state.rateCard.push({...entry, id:uid()});
+        entry.id = uid();
+        state.rateCard.push(entry);
         rcAdding = false;
     }
     renderRateCardModal();
-    renderContent(); // update budget displays
+    renderContent();
 }
 function removeRcEntry(id) {
-    state.rateCard = state.rateCard.filter(rc => rc.id !== id);
+    state.rateCard = state.rateCard.filter(function(rc) { return rc.id !== id; });
     renderRateCardModal();
     renderContent();
 }
