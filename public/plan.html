@@ -816,6 +816,8 @@ const PLAN_SECTIONS = [
 // ═══════════════════════════════════════════════════════════════════════════
 function renderSidebar() {
     const sb = document.getElementById('sidebar');
+    const a = currentSection; // active section shorthand
+
     let html = `
     <div class="sidebar-header" style="position:relative">
         <div class="mode-toggle" onclick="toggleModeDropdown()">
@@ -843,39 +845,99 @@ function renderSidebar() {
     <div class="sidebar-nav">`;
 
     if (currentMode === 'charter') {
-        CHARTER_SECTIONS.forEach(s => {
-            html += `<div class="nav-item ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')">
+        // ─── Charter: vertical flow with arrows ───
+        html += `<div style="position:relative;padding:8px 0">
+        <svg style="position:absolute;top:0;left:0;width:100%;height:600px;pointer-events:none;z-index:0" viewBox="0 0 272 600" preserveAspectRatio="xMidYMid meet">
+            <defs><marker id="carw" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#7c3aed"/></marker></defs>
+            ${[65,120,175,230,285,340,395,450].map(y => `<line x1="30" y1="${y}" x2="30" y2="${y+22}" stroke="rgba(124,58,237,0.2)" stroke-width="1.5" marker-end="url(#carw)"/>`).join('')}
+            <text x="42" y="80" fill="#94a3b8" font-size="8" font-weight="600">why?</text>
+            <text x="42" y="140" fill="#94a3b8" font-size="8" font-weight="600">what?</text>
+            <text x="42" y="200" fill="#94a3b8" font-size="8" font-weight="600">targets</text>
+            <text x="42" y="260" fill="#94a3b8" font-size="8" font-weight="600">limits</text>
+            <text x="42" y="320" fill="#94a3b8" font-size="8" font-weight="600">threats</text>
+            <text x="42" y="380" fill="#94a3b8" font-size="8" font-weight="600">done when?</text>
+            <text x="42" y="440" fill="#94a3b8" font-size="8" font-weight="600">if true</text>
+            <text x="42" y="500" fill="#94a3b8" font-size="8" font-weight="600">GO/NO-GO</text>
+        </svg>
+        <div style="position:relative;z-index:1">`;
+        CHARTER_SECTIONS.forEach((s,i) => {
+            const isLast = i === CHARTER_SECTIONS.length-1;
+            html += `<div class="nav-item ${a===s.key?'active':''}" onclick="goTo('${s.key}')" style="${a===s.key?'background:var(--purple-bg);border-color:#ddd6fe;color:var(--purple);font-weight:700':''}${isLast?';border:2px dashed rgba(124,58,237,0.25)':''}">
                 <span class="nav-item-icon">${s.icon}</span> ${s.label}
             </div>`;
         });
+        html += `</div></div>`;
     } else {
-        let lastGroup = '';
-        PLAN_SECTIONS.forEach(s => {
-            if (s.group !== lastGroup) {
-                lastGroup = s.group;
-                if (['What to Deliver','Constraints'].includes(s.group)) {
-                    html += `<div class="nav-group-label">${s.group}</div>`;
-                }
-            }
-            if (s.group === 'Integration' && s.key === 'quality') {
-                html += `<div class="nav-group-label">Integration → Schedule</div>
-                <div style="padding:0 12px">`;
-            }
-            if (s.group === 'Integration') {
-                const c = typeColor(s.key === 'communication' ? 'communication' : s.key);
-                html += `<div class="int-node ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')"
-                    style="${currentSection===s.key?'background:'+c+'10;border-color:'+c+'40;color:'+c:''}">
-                    <span>${s.icon}</span> ${s.label}
-                    <span class="arrow-tag" style="color:${c}">→SCH</span>
-                </div>`;
-                if (s.key === 'procurement') html += `</div>`;
-            } else {
-                html += `<div class="nav-item ${currentSection===s.key?'active':''}" onclick="goTo('${s.key}')">
-                    <span class="nav-item-icon">${s.icon}</span> ${s.label}
-                    ${s.key==='schedule'?'<span class="nav-item-tag" style="color:var(--info)">HUB</span>':''}
-                </div>`;
-            }
-        });
+        // ─── Plan: flow diagram with SVG connections ───
+        html += `<div style="position:relative;min-height:680px;padding:8px 0">
+        <svg style="position:absolute;top:0;left:0;width:100%;height:680px;pointer-events:none;z-index:0" viewBox="0 0 272 680" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <marker id="arw" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#94a3b8"/></marker>
+                <marker id="arwB" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2563eb"/></marker>
+                <marker id="arwG" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#059669"/></marker>
+                <marker id="arwO" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#d97706"/></marker>
+                <marker id="arwP" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#7c3aed"/></marker>
+                <marker id="arwR" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#dc2626"/></marker>
+            </defs>
+            <!-- Main vertical spine -->
+            <line x1="60" y1="72" x2="60" y2="108" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+            <text x="68" y="94" fill="#94a3b8" font-size="8" font-weight="600">needs</text>
+            <line x1="60" y1="145" x2="60" y2="181" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+            <text x="68" y="167" fill="#94a3b8" font-size="8" font-weight="600">deliverables</text>
+            <line x1="60" y1="218" x2="60" y2="254" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+
+            <!-- Scope → Schedule (main flow, dashed) -->
+            <line x1="60" y1="290" x2="60" y2="408" stroke="rgba(37,99,235,0.5)" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arwB)"/>
+            <text x="34" y="355" fill="#2563eb" font-size="8" font-weight="700" transform="rotate(-90 34 355)">activities</text>
+
+            <!-- Integration branches → Schedule -->
+            <path d="M 200 320 C 200 360, 140 385, 90 410" stroke="#059669" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arwG)" opacity="0.7"/>
+            <path d="M 200 358 C 190 385, 140 398, 90 414" stroke="#d97706" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arwO)" opacity="0.7"/>
+            <path d="M 200 396 C 180 410, 140 416, 90 418" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arwP)" opacity="0.7"/>
+            <path d="M 200 434 C 170 434, 130 425, 90 422" stroke="#dc2626" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arwR)" opacity="0.7"/>
+
+            <!-- Schedule → Resources → Budget -->
+            <line x1="60" y1="450" x2="60" y2="488" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+            <line x1="60" y1="525" x2="60" y2="563" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+            <text x="68" y="548" fill="#94a3b8" font-size="8" font-weight="600">cost</text>
+
+            <!-- Convergence label -->
+            <text x="100" y="404" fill="rgba(37,99,235,0.5)" font-size="8" font-weight="700">INTEGRATION</text>
+        </svg>
+
+        <div style="position:relative;z-index:1">
+            <!-- Overview -->
+            ${flowNode('overview','◉','Overview',a,null,true)}
+
+            <div class="nav-group-label" style="margin-top:4px">What to Deliver</div>
+            ${flowNode('stakeholders','👥','Stakeholders',a)}
+            ${flowNode('requirements','📝','Requirements',a)}
+            ${flowNode('scope','📦','Scope (WBS)',a)}
+
+            <!-- Schedule hub -->
+            <div class="nav-group-label" style="margin-top:140px">Constraints</div>
+            ${flowNode('schedule','📅','Schedule',a,'#2563eb',false,true)}
+            ${flowNode('resources','👤','Resources',a)}
+            ${flowNode('budget','💰','Budget',a,'#d97706')}
+
+            <!-- Integration column (right side) -->
+            <div style="position:absolute;top:282px;right:10px;width:110px;z-index:2">
+                <div style="font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;text-align:center">Integration</div>
+                ${intNode('quality','✅','Quality','#059669',a)}
+                ${intNode('risk','⚠️','Risk','#d97706',a)}
+                ${intNode('communication','💬','Comms','#7c3aed',a)}
+                ${intNode('procurement','🛒','Procure','#dc2626',a)}
+            </div>
+        </div>
+
+        <!-- Key -->
+        <div style="margin-top:24px;padding:0 14px">
+            <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:9px;color:var(--text-dim)">
+                <span>─── flow</span>
+                <span style="color:var(--success)">- - → activities into schedule</span>
+            </div>
+        </div>
+        </div>`;
     }
 
     html += `</div>
@@ -884,6 +946,28 @@ function renderSidebar() {
         YCBS 288 · McGill SCS<br>Strategic Project Leadership
     </div>`;
     sb.innerHTML = html;
+}
+
+function flowNode(id, icon, label, active, accent, full, hub) {
+    const isActive = active === id;
+    const color = accent || (isActive ? 'var(--text)' : 'var(--text-muted)');
+    const bg = isActive ? (hub ? 'rgba(37,99,235,0.06)' : 'var(--bg-card-hover)') : (hub ? 'var(--bg-subtle)' : 'transparent');
+    const border = hub ? `2px solid ${isActive ? '#2563eb' : 'var(--border)'}` : isActive ? '1px solid var(--border)' : '1px solid transparent';
+    const shadow = hub && isActive ? 'box-shadow:0 0 12px rgba(37,99,235,0.12);' : '';
+    return `<div onclick="goTo('${id}')" style="display:flex;align-items:center;gap:8px;${full?'':''}margin:0 12px 4px;padding:${hub?'8px 10px':'7px 10px'};border-radius:7px;cursor:pointer;background:${bg};border:${border};${shadow}transition:all 0.15s">
+        <span style="font-size:${hub?'16px':'14px'};flex-shrink:0">${icon}</span>
+        <span style="font-size:${hub?'13px':'12px'};font-weight:${isActive?'700':hub?'600':'400'};color:${isActive?(accent||'var(--text)'):'var(--text-muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
+        ${hub?'<span style="margin-left:auto;font-size:8px;font-weight:800;color:rgba(37,99,235,0.5);letter-spacing:0.08em">HUB</span>':''}
+    </div>`;
+}
+
+function intNode(id, icon, label, color, active) {
+    const isActive = active === id;
+    return `<div onclick="goTo('${id}')" style="display:flex;align-items:center;gap:6px;padding:5px 8px;margin-bottom:4px;border-radius:6px;cursor:pointer;background:${isActive?color+'0a':'white'};border:1px solid ${isActive?color+'40':'var(--border-light)'};transition:all 0.15s">
+        <span style="font-size:12px">${icon}</span>
+        <span style="font-size:11px;font-weight:${isActive?'700':'500'};color:${isActive?color:'var(--text-muted)'}">${label}</span>
+        <span style="margin-left:auto;font-size:8px;color:${color}90">→SCH</span>
+    </div>`;
 }
 
 function toggleModeDropdown() {
@@ -1581,48 +1665,145 @@ function removeItem(collection, id) {
 // ═══════════════════════════════════════════════════════════════════════════
 // RATE CARD MODAL
 // ═══════════════════════════════════════════════════════════════════════════
+let rcFilter = 'All';
+let rcEditing = null;
+let rcAdding = false;
+
 function openRateCard() {
+    renderRateCardModal();
+}
+function renderRateCardModal() {
+    closeRateCard();
     const cats = ['Labor','Equipment','Materials'];
     const catColors = {Labor:'#2563eb',Equipment:'#d97706',Materials:'#059669'};
     const catIcons = {Labor:'👤',Equipment:'🖥️',Materials:'📦'};
+    const units = ['/hr','/day','/month','/kg','/unit','/lot'];
 
-    let html = `<div class="modal-overlay" onclick="if(event.target===this)closeRateCard()">
-    <div class="modal-box">
+    let html = `<div class="modal-overlay" id="rateCardOverlay" onclick="if(event.target===this)closeRateCard()">
+    <div class="modal-box" style="max-width:920px">
+        <!-- Header -->
         <div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800">📋 Unit Cost Rate Card</div>
+            <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px">
+                📋 Unit Cost Rate Card
+                <span style="font-size:11px;font-weight:600;color:var(--warning);background:rgba(202,138,4,0.08);padding:2px 8px;border-radius:4px">${state.rateCard.length} entries</span>
+            </div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:4px">Company master price book — single source of truth for all project costing</div></div>
-            <button class="btn-sm" onclick="closeRateCard()">✕</button>
+            <button class="btn-sm" onclick="closeRateCard()" style="font-size:18px;padding:4px 8px">✕</button>
         </div>
+
+        <!-- Filters + Add buttons -->
+        <div style="padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;gap:6px">
+                ${['All',...cats].map(cat => {
+                    const active = rcFilter===cat;
+                    const c = catColors[cat]||'var(--text)';
+                    return `<button class="btn-sm" onclick="rcFilter='${cat}';renderRateCardModal()" style="font-size:12px;padding:5px 12px;${active?'background:'+c+'12;color:'+c+';border-color:'+c+'40;font-weight:700':''}">
+                        ${cat!=='All'?'<span style="margin-right:4px">'+catIcons[cat]+'</span>':''}${cat} ${cat!=='All'?'('+state.rateCard.filter(rc=>rc.category===cat).length+')':''}
+                    </button>`;
+                }).join('')}
+            </div>
+            <div style="display:flex;gap:6px">
+                ${cats.map(cat => `<button class="btn btn-sm" style="background:${catColors[cat]};color:white;border:none;padding:5px 10px" onclick="startRcAdd('${cat}')">+ ${cat}</button>`).join('')}
+            </div>
+        </div>
+
+        <!-- Add/Edit form -->
+        ${rcAdding || rcEditing ? `<div style="padding:12px 24px;background:var(--bg-subtle);border-bottom:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:var(--warning);margin-bottom:8px">${rcEditing?'✏️ Edit Entry':'➕ New Entry'}</div>
+            <div style="display:grid;grid-template-columns:2fr 120px 100px 100px 2fr auto auto;gap:8px;align-items:end">
+                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Name</div>
+                    <input class="input-sm" id="rc_name" placeholder="e.g. Lawyer, Plastic, Crane"></div>
+                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Category</div>
+                    <select class="select-sm" id="rc_cat" style="width:100%">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
+                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Unit</div>
+                    <select class="select-sm" id="rc_unit" style="width:100%">${units.map(u=>`<option>${u}</option>`).join('')}</select></div>
+                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Cost ($)</div>
+                    <input class="input-sm" type="number" id="rc_cost" placeholder="0"></div>
+                <div><div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">Notes</div>
+                    <input class="input-sm" id="rc_notes" placeholder="Optional note"></div>
+                <button class="btn btn-green" onclick="saveRcEntry()">Save</button>
+                <button class="btn-sm" onclick="rcAdding=false;rcEditing=null;renderRateCardModal()">Cancel</button>
+            </div>
+        </div>` : ''}
+
+        <!-- Table by category -->
         <div style="flex:1;overflow:auto;padding:0 24px 24px">`;
 
-    cats.forEach(cat => {
+    cats.filter(cat => rcFilter==='All' || rcFilter===cat).forEach(cat => {
         const items = state.rateCard.filter(rc => rc.category===cat);
+        if (items.length === 0 && rcFilter !== 'All') return;
         html += `<div style="margin-top:16px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-size:16px">${catIcons[cat]}</span>
                 <span style="font-size:14px;font-weight:700;color:${catColors[cat]}">${cat}</span>
                 <span style="font-size:11px;color:var(--text-dim)">(${items.length} entries)</span>
             </div>
-            <table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th></tr></thead><tbody>`;
+            <table class="tbl"><thead><tr><th>Name</th><th>Unit Cost</th><th>Unit</th><th>Notes</th><th style="width:80px"></th></tr></thead><tbody>`;
         items.forEach(entry => {
-            html += `<tr><td style="font-weight:600">${esc(entry.name)}</td>
+            html += `<tr style="${rcEditing===entry.id?'background:rgba(202,138,4,0.06)':''}">
+                <td style="font-weight:600">${esc(entry.name)}</td>
                 <td style="font-weight:700;color:${catColors[cat]};font-size:14px">${fmt(entry.unitCost)}</td>
                 <td>${entry.unit}</td>
-                <td style="font-size:12px;color:var(--text-muted)">${esc(entry.notes)}</td></tr>`;
+                <td style="font-size:12px;color:var(--text-muted)">${esc(entry.notes||'')}</td>
+                <td><div style="display:flex;gap:4px">
+                    <button class="btn-sm" style="color:var(--info);border-color:rgba(37,99,235,0.3)" onclick="startRcEdit('${entry.id}')">✏️</button>
+                    <button class="btn-sm" style="color:var(--error);border-color:rgba(220,38,38,0.3)" onclick="removeRcEntry('${entry.id}')">✕</button>
+                </div></td>
+            </tr>`;
         });
+        if (items.length === 0) html += `<tr><td colspan="5" style="text-align:center;color:var(--text-dim);font-style:italic;padding:12px">No ${cat.toLowerCase()} entries yet</td></tr>`;
         html += `</tbody></table></div>`;
     });
 
     html += `</div>
-        <div style="padding:12px 24px;border-top:1px solid var(--border);text-align:right">
+        <!-- Footer -->
+        <div style="padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;color:var(--text-dim)">Changes here update all resource assignments and budget calculations in real time.</div>
             <button class="btn btn-blue" onclick="closeRateCard()">Done</button>
         </div>
     </div></div>`;
 
     document.body.insertAdjacentHTML('beforeend', html);
+
+    // Populate form if editing
+    if (rcEditing) {
+        const e = state.rateCard.find(rc => rc.id === rcEditing);
+        if (e) { document.getElementById('rc_name').value=e.name; document.getElementById('rc_cat').value=e.category; document.getElementById('rc_unit').value=e.unit; document.getElementById('rc_cost').value=e.unitCost; document.getElementById('rc_notes').value=e.notes||''; }
+    }
+}
+function startRcAdd(cat) {
+    rcAdding=true; rcEditing=null; renderRateCardModal();
+    setTimeout(() => {
+        const el = document.getElementById('rc_cat');
+        if (el) el.value = cat;
+        const uEl = document.getElementById('rc_unit');
+        if (uEl) uEl.value = cat==='Materials'?'/kg':cat==='Equipment'?'/unit':'/hr';
+    }, 50);
+}
+function startRcEdit(id) { rcEditing=id; rcAdding=false; renderRateCardModal(); }
+function saveRcEntry() {
+    const name = document.getElementById('rc_name').value.trim();
+    const cost = Number(document.getElementById('rc_cost').value);
+    if (!name || !cost) return;
+    const entry = { name, category:document.getElementById('rc_cat').value, unit:document.getElementById('rc_unit').value, unitCost:cost, notes:document.getElementById('rc_notes').value };
+    if (rcEditing) {
+        state.rateCard = state.rateCard.map(rc => rc.id===rcEditing ? {...rc,...entry} : rc);
+        rcEditing = null;
+    } else {
+        state.rateCard.push({...entry, id:uid()});
+        rcAdding = false;
+    }
+    renderRateCardModal();
+    renderContent(); // update budget displays
+}
+function removeRcEntry(id) {
+    state.rateCard = state.rateCard.filter(rc => rc.id !== id);
+    renderRateCardModal();
+    renderContent();
 }
 function closeRateCard() {
-    document.querySelector('.modal-overlay')?.remove();
+    rcAdding=false; rcEditing=null;
+    document.getElementById('rateCardOverlay')?.remove();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
