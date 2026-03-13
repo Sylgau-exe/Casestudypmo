@@ -390,6 +390,47 @@
         @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
         .loading-dots::after { content:'...'; animation:dots 1.5s infinite; }
         @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+
+        /* ─── FULL PLAN DOCUMENT VIEW ─── */
+        .fp-doc { max-width:900px; margin:0 auto; }
+        .fp-cover { text-align:center; padding:40px 24px; margin-bottom:24px; border:2px solid var(--border); border-radius:12px; background:white; }
+        .fp-cover-logo { font-size:48px; margin-bottom:12px; }
+        .fp-cover-title { font-family:'Fraunces',serif; font-size:28px; font-weight:800; margin-bottom:4px; }
+        .fp-cover-subtitle { font-size:14px; color:var(--text-muted); margin-bottom:20px; }
+        .fp-meta { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin:0 auto; max-width:600px; }
+        .fp-meta-cell { background:white; padding:10px 16px; }
+        .fp-meta-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim); margin-bottom:2px; }
+        .fp-meta-val { font-size:13px; font-weight:600; }
+        .fp-section { background:white; border:1px solid var(--border); border-radius:10px; padding:20px 24px; margin-bottom:16px; page-break-inside:avoid; }
+        .fp-section-title { font-family:'Fraunces',serif; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+        .fp-section-title .fp-num { background:var(--red); color:white; width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; font-family:'DM Sans',sans-serif; }
+        .fp-text { font-size:13px; line-height:1.8; white-space:pre-wrap; }
+        .fp-tbl { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+        .fp-tbl th { text-align:left; padding:6px 10px; background:var(--bg-subtle); font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:0.04em; border:1px solid var(--border); }
+        .fp-tbl td { padding:6px 10px; border:1px solid var(--border); }
+        .fp-tbl tr:nth-child(even) td { background:var(--bg-subtle); }
+        .fp-approval { text-align:center; padding:24px; border:2px dashed var(--border); border-radius:10px; margin-top:16px; }
+        .fp-sig-line { display:inline-block; width:200px; border-bottom:1px solid var(--text); margin:24px 20px 4px; }
+        .fp-sig-label { font-size:11px; color:var(--text-muted); }
+        .fp-print-bar { display:flex; gap:10px; justify-content:center; margin-bottom:24px; }
+
+        /* ─── PRINT ─── */
+        @media print {
+            body { background:white !important; }
+            #loginScreen, .sidebar, .main-header, .marcus-fab, .marcus-panel,
+            .save-indicator, .fp-print-bar { display:none !important; }
+            #appScreen { display:block !important; }
+            .app-layout { display:block !important; }
+            .main-area { overflow:visible !important; }
+            .main-content { overflow:visible !important; padding:0 !important; }
+            .fp-doc { max-width:100%; }
+            .fp-cover { border:none; padding:24px 0; }
+            .fp-section { border:1px solid #ccc; box-shadow:none; break-inside:avoid; }
+            .card, .stat-card { box-shadow:none; border:1px solid #ccc; }
+            .gantt-bar { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+            .badge, .badge-int { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+            .histo-bar { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+        }
     </style>
 </head>
 <body>
@@ -442,6 +483,7 @@
         <div class="main-header-right">
             <span id="headerStats"></span>
             <button class="btn-sm btn-rate" id="btnRateCard" onclick="openRateCard()" style="display:none">📋 Rate Card</button>
+            <button class="btn-sm" onclick="goTo('fullplan')" title="View & print full plan">🖨️ Full Plan</button>
             <button class="btn-sm" onclick="saveState()" title="Save to server">💾 Save</button>
         </div>
     </div>
@@ -991,7 +1033,7 @@ function goTo(section) {
 // ═══════════════════════════════════════════════════════════════════════════
 function renderContent() {
     // Update header
-    const allSections = [...CHARTER_SECTIONS, ...PLAN_SECTIONS];
+    const allSections = [...CHARTER_SECTIONS, ...PLAN_SECTIONS, {key:'fullplan',label:'Full Project Plan',icon:'🖨️'}];
     const sec = allSections.find(s => s.key === currentSection) || {icon:'◉',label:'Overview'};
     document.getElementById('mainTitle').textContent = `${sec.icon} ${sec.label}`;
     document.getElementById('mainMode').textContent = currentMode === 'charter'
@@ -1025,6 +1067,7 @@ function renderContent() {
             case 'risk': mc.innerHTML = renderIntegration('risk'); break;
             case 'communication': mc.innerHTML = renderIntegration('communication'); break;
             case 'procurement': mc.innerHTML = renderIntegration('procurement'); break;
+            case 'fullplan': mc.innerHTML = renderFullPlan(); break;
             default: mc.innerHTML = '<p>Section not found.</p>';
         }
     }
@@ -1503,6 +1546,265 @@ function renderLinkedTasks(tasks) {
     });
     html += `</tbody></table>`;
     return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER: FULL PLAN (printable document view)
+// ═══════════════════════════════════════════════════════════════════════════
+function renderFullPlan() {
+    var ch = state.charter;
+    var at = getAllTasks();
+    var budget = getTotalBudget();
+    var procTotal = state.procItems.reduce(function(s,p){ return s+(p.cost||0); },0);
+    var maxW = Math.max.apply(null, at.map(function(t){ return t.startWeek+t.duration-1; }).concat([0]));
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-CA');
+    var timeStr = now.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+
+    var h = '<div class="fp-doc">';
+
+    // Print bar
+    h += '<div class="fp-print-bar">';
+    h += '<button class="btn btn-primary" onclick="window.print()" style="padding:10px 24px;font-size:14px">🖨️ Print / Export PDF</button>';
+    h += '<button class="btn-sm" onclick="goTo(\'overview\')">← Back to Plan</button>';
+    h += '</div>';
+
+    // ── Cover page ──
+    h += '<div class="fp-cover">';
+    h += '<div class="fp-cover-logo">📐</div>';
+    h += '<div class="fp-cover-title">' + esc(ch.projectName) + '</div>';
+    h += '<div class="fp-cover-subtitle">Integrated Project Charter &amp; Plan</div>';
+    h += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">YCBS 288 — Strategic Project Leadership · McGill School of Continuing Studies</div>';
+
+    h += '<div class="fp-meta">';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Sponsor</div><div class="fp-meta-val">' + esc(ch.sponsor.split('—')[0].trim()) + '</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Manager</div><div class="fp-meta-val">' + esc(ch.pm) + '</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Team</div><div class="fp-meta-val">' + esc(teamName) + '</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Duration</div><div class="fp-meta-val">' + maxW + ' weeks</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Total Budget</div><div class="fp-meta-val">' + fmt(budget+procTotal) + '</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Revision Date</div><div class="fp-meta-val">' + dateStr + ' at ' + timeStr + '</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Document Version</div><div class="fp-meta-val">Rev ' + (state._revision || 1) + '.0</div></div>';
+    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Last Updated By</div><div class="fp-meta-val">' + esc(teamName) + '</div></div>';
+    h += '</div></div>';
+
+    // ── Table of Contents ──
+    h += '<div class="fp-section">';
+    h += '<div class="fp-section-title"><span class="fp-num">📑</span> Table of Contents</div>';
+    var toc = [
+        'A. CHARTER','1. Problem / Opportunity','2. Proposed Solution','3. Objectives','4. Constraints','5. High-Level Risks','6. Success Criteria','7. Assumptions','8. Authority & Sign-off',
+        'B. PROJECT PLAN','9. Stakeholders','10. Requirements','11. Scope (WBS)','12. Schedule','13. Resources','14. Budget','15. Quality','16. Risk','17. Communication','18. Procurement',
+        'C. APPROVAL'
+    ];
+    h += '<div style="columns:2;column-gap:24px;font-size:12px;line-height:2">';
+    toc.forEach(function(item) {
+        var isBold = item.charAt(0) <= 'C' && item.charAt(1) === '.';
+        h += '<div style="' + (isBold ? 'font-weight:700;margin-top:8px;color:var(--text)' : 'padding-left:12px;color:var(--text-muted)') + '">' + item + '</div>';
+    });
+    h += '</div></div>';
+
+    // ═══ PART A: CHARTER ═══
+    h += '<div class="fp-section" style="background:var(--purple-bg);border-color:#ddd6fe">';
+    h += '<div style="font-family:Fraunces,serif;font-size:18px;font-weight:800;color:var(--purple)">Part A — Project Charter</div>';
+    h += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">WHY — Business justification for the project investment</div>';
+    h += '</div>';
+
+    // 1. Problem
+    h += fpSection(1, '🔍 Problem / Opportunity');
+    h += '<div class="fp-text">' + esc(ch.problem) + '</div></div>';
+
+    // 2. Solution
+    h += fpSection(2, '💡 Proposed Solution');
+    h += '<div class="fp-text">' + esc(ch.solution) + '</div></div>';
+
+    // 3. Objectives
+    h += fpSection(3, '🎯 Objectives');
+    h += '<table class="fp-tbl"><thead><tr><th>Objective</th><th>Measurable</th><th>Time-bound</th></tr></thead><tbody>';
+    ch.objectives.forEach(function(o) {
+        h += '<tr><td>' + esc(o.description) + '</td><td>' + (o.measurable ? 'Yes' : 'No') + '</td><td>' + esc(o.timebound) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 4. Constraints
+    h += fpSection(4, '🔒 Constraints');
+    h += '<table class="fp-tbl"><thead><tr><th>Type</th><th>Description</th><th>Impact</th></tr></thead><tbody>';
+    ch.constraints.forEach(function(c) {
+        h += '<tr><td style="font-weight:600">' + esc(c.type) + '</td><td>' + esc(c.description) + '</td><td>' + esc(c.impact) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 5. High-Level Risks
+    h += fpSection(5, '⚡ High-Level Risks');
+    h += '<table class="fp-tbl"><thead><tr><th>Risk</th><th>Level</th><th>Initial Mitigation</th></tr></thead><tbody>';
+    ch.highLevelRisks.forEach(function(r) {
+        h += '<tr><td>' + esc(r.description) + '</td><td style="font-weight:600">' + esc(r.level) + '</td><td>' + esc(r.mitigation) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 6. Success Criteria
+    h += fpSection(6, '🏆 Success Criteria');
+    h += '<table class="fp-tbl"><thead><tr><th>Criterion</th><th>Verified By</th></tr></thead><tbody>';
+    ch.successCriteria.forEach(function(s) {
+        h += '<tr><td>' + esc(s.criterion) + '</td><td>' + esc(s.verifiedBy) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 7. Assumptions
+    h += fpSection(7, '📌 Assumptions');
+    h += '<table class="fp-tbl"><thead><tr><th>Assumption</th></tr></thead><tbody>';
+    ch.assumptions.forEach(function(a) { h += '<tr><td>' + esc(a.assumption) + '</td></tr>'; });
+    h += '</tbody></table></div>';
+
+    // 8. Authority
+    h += fpSection(8, '✍️ Authority & Decision Rights');
+    var auth = ch.authority;
+    [{r:'Project Sponsor',v:auth.sponsor,i:'👑'},{r:'Project Manager',v:auth.pm,i:'📐'},{r:'Steering Committee',v:auth.steering,i:'🏛️'}].forEach(function(a) {
+        h += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light)">';
+        h += '<span style="font-size:18px">' + a.i + '</span>';
+        h += '<div><div style="font-weight:700;font-size:12px">' + a.r + '</div><div style="font-size:12px;color:var(--text-muted)">' + esc(a.v) + '</div></div></div>';
+    });
+    h += '</div>';
+
+    // ═══ PART B: PROJECT PLAN ═══
+    h += '<div class="fp-section" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe">';
+    h += '<div style="font-family:Fraunces,serif;font-size:18px;font-weight:800;color:var(--info)">Part B — Project Plan</div>';
+    h += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">HOW — Integrated delivery approach across all knowledge areas</div>';
+    h += '</div>';
+
+    // 9. Stakeholders
+    h += fpSection(9, '👥 Stakeholders');
+    h += '<table class="fp-tbl"><thead><tr><th>Name</th><th>Role</th><th>Influence</th><th>Interest</th><th>Needs</th></tr></thead><tbody>';
+    state.stakeholders.forEach(function(s) {
+        h += '<tr><td style="font-weight:600">' + esc(s.name) + '</td><td>' + esc(s.role) + '</td><td>' + s.influence + '</td><td>' + s.interest + '</td><td>' + esc(s.needs) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 10. Requirements
+    h += fpSection(10, '📝 Requirements');
+    h += '<table class="fp-tbl"><thead><tr><th>Requirement</th><th>Priority</th><th>Source</th><th>Category</th></tr></thead><tbody>';
+    state.requirements.forEach(function(r) {
+        h += '<tr><td>' + esc(r.description) + '</td><td style="font-weight:600">' + esc(r.priority) + '</td><td>' + esc(r.source) + '</td><td>' + esc(r.category) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 11. Scope (WBS)
+    h += fpSection(11, '📦 Scope — Work Breakdown Structure');
+    state.deliverables.filter(function(d){ return d.parent===null; }).forEach(function(p) {
+        h += '<div style="margin-bottom:8px"><div style="font-weight:700;font-size:13px;padding:6px 10px;background:var(--bg-subtle);border-radius:4px;border:1px solid var(--border)">' + esc(p.name) + '</div>';
+        state.deliverables.filter(function(d){ return d.parent===p.id; }).forEach(function(c) {
+            h += '<div style="padding:4px 10px 4px 28px;font-size:12px;border-left:2px solid rgba(37,99,235,0.3);margin-left:10px;color:var(--text-muted)">' + esc(c.name) + '</div>';
+        });
+        h += '</div>';
+    });
+    h += '</div>';
+
+    // 12. Schedule
+    h += fpSection(12, '📅 Schedule — All Activities');
+    h += '<table class="fp-tbl"><thead><tr><th>#</th><th>Activity</th><th>Type</th><th>Resource</th><th>Start</th><th>Duration</th><th>Alloc</th><th>Cost</th></tr></thead><tbody>';
+    at.forEach(function(t, i) {
+        var res = state.resources.find(function(r){ return r.id===t.resourceId; });
+        h += '<tr><td>' + (i+1) + '</td><td style="font-weight:600">' + esc(t.name) + '</td>';
+        h += '<td>' + (TYPE_LABELS[t.type]||t.type) + '</td>';
+        h += '<td>' + (res ? esc(getResLabel(res)) : '—') + '</td>';
+        h += '<td>W' + t.startWeek + '</td><td>' + t.duration + 'w</td><td>' + t.allocation + '%</td>';
+        h += '<td style="font-weight:600">' + fmt(taskCost(t)) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 13. Resources
+    h += fpSection(13, '👤 Resources');
+    h += '<table class="fp-tbl"><thead><tr><th>Planned Role</th><th>Avg Rate</th><th>Assigned Person</th><th>Effective Rate</th><th>Tasks</th><th>Total Cost</th></tr></thead><tbody>';
+    state.resources.forEach(function(res) {
+        var tasks = at.filter(function(t){ return t.resourceId===res.id; });
+        var effR = getRate(res);
+        var cost = tasks.reduce(function(s,t){ return s+effR*8*t.duration*5*(t.allocation/100); },0);
+        h += '<tr><td style="font-weight:600">' + esc(res.title) + ' <span style="font-size:10px;color:var(--text-dim)">(' + res.role + ' · ' + res.availability + '%)</span></td>';
+        h += '<td>' + fmt(getAvgRate(res)) + '/hr</td>';
+        h += '<td>' + (res.person ? '<strong>' + esc(res.person) + '</strong>' : '<em style="color:var(--text-dim)">Not assigned</em>') + '</td>';
+        h += '<td style="font-weight:600">' + fmt(effR) + '/hr</td>';
+        h += '<td>' + tasks.length + '</td>';
+        h += '<td style="font-weight:700">' + fmt(cost) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 14. Budget
+    var totalByType = {};
+    Object.keys(COLORS).forEach(function(type) {
+        totalByType[type] = at.filter(function(t){return t.type===type}).reduce(function(s,t){return s+taskCost(t)},0);
+    });
+    h += fpSection(14, '💰 Budget Summary');
+    h += '<table class="fp-tbl"><thead><tr><th>Category</th><th>Amount</th><th>% of Labor</th></tr></thead><tbody>';
+    Object.keys(COLORS).forEach(function(type) {
+        var pct = budget > 0 ? ((totalByType[type]/budget)*100).toFixed(1) : '0';
+        h += '<tr><td style="font-weight:600">' + TYPE_LABELS[type] + '</td><td>' + fmt(totalByType[type]) + '</td><td>' + pct + '%</td></tr>';
+    });
+    h += '<tr style="font-weight:700;background:var(--bg-subtle)"><td>Total Labor</td><td>' + fmt(budget) + '</td><td>100%</td></tr>';
+    h += '<tr><td style="font-weight:600">Procurement</td><td>' + fmt(procTotal) + '</td><td>—</td></tr>';
+    h += '<tr style="font-weight:700;background:rgba(202,138,4,0.08)"><td>GRAND TOTAL</td><td>' + fmt(budget+procTotal) + '</td><td>—</td></tr>';
+    h += '</tbody></table></div>';
+
+    // 15. Quality
+    h += fpSection(15, '✅ Quality Plan');
+    h += '<div style="font-weight:700;font-size:12px;margin-bottom:6px">Quality Assurance (Preventive)</div>';
+    h += '<table class="fp-tbl"><thead><tr><th>Activity</th><th>Method</th><th>Frequency</th><th>Trigger</th></tr></thead><tbody>';
+    state.qaItems.forEach(function(q) { h += '<tr><td>' + esc(q.activity) + '</td><td>' + q.method + '</td><td>' + q.frequency + '</td><td>' + esc(q.trigger) + '</td></tr>'; });
+    h += '</tbody></table>';
+    h += '<div style="font-weight:700;font-size:12px;margin:12px 0 6px">Quality Control (Detective)</div>';
+    h += '<table class="fp-tbl"><thead><tr><th>Activity</th><th>Method</th><th>Acceptance Criteria</th><th>Trigger</th></tr></thead><tbody>';
+    state.qcItems.forEach(function(q) { h += '<tr><td>' + esc(q.activity) + '</td><td>' + q.method + '</td><td>' + esc(q.acceptance) + '</td><td>' + esc(q.trigger) + '</td></tr>'; });
+    h += '</tbody></table></div>';
+
+    // 16. Risk
+    h += fpSection(16, '⚠️ Risk Register');
+    h += '<table class="fp-tbl"><thead><tr><th>Risk</th><th>Probability</th><th>Impact</th><th>Strategy</th><th>Response</th></tr></thead><tbody>';
+    state.riskItems.forEach(function(r) {
+        h += '<tr><td>' + esc(r.description) + '</td><td>' + r.probability + '</td><td>' + r.impact + '</td><td>' + r.strategy + '</td><td>' + esc(r.response) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 17. Communication
+    h += fpSection(17, '💬 Communication Plan');
+    h += '<table class="fp-tbl"><thead><tr><th>Type</th><th>Audience</th><th>Frequency</th><th>Method</th><th>Owner</th></tr></thead><tbody>';
+    state.commItems.forEach(function(c) {
+        h += '<tr><td>' + esc(c.type) + '</td><td>' + esc(c.audience) + '</td><td>' + c.frequency + '</td><td>' + esc(c.method) + '</td><td>' + esc(c.owner) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // 18. Procurement
+    h += fpSection(18, '🛒 Procurement Plan');
+    h += '<table class="fp-tbl"><thead><tr><th>Item</th><th>Vendor</th><th>Lead Time</th><th>Cost</th><th>Type</th></tr></thead><tbody>';
+    state.procItems.forEach(function(p) {
+        h += '<tr><td style="font-weight:600">' + esc(p.item) + '</td><td>' + esc(p.vendor) + '</td><td>' + esc(p.leadTime) + '</td><td style="font-weight:700">' + fmt(p.cost||0) + '</td><td>' + esc(p.type) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // ═══ PART C: APPROVAL ═══
+    h += '<div class="fp-section">';
+    h += '<div class="fp-section-title"><span class="fp-num">C</span> Document Approval</div>';
+    h += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.7">';
+    h += 'By signing below, the undersigned acknowledge they have reviewed this Project Charter and Plan document and approve the project to proceed as described herein.</div>';
+
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px">';
+    [{role:'Project Sponsor',name:ch.sponsor.split('—')[0].trim()},{role:'Project Manager',name:ch.pm}].forEach(function(s) {
+        h += '<div style="text-align:center">';
+        h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);margin-bottom:24px">' + s.role + '</div>';
+        h += '<div class="fp-sig-line"></div>';
+        h += '<div style="font-size:12px;font-weight:600;margin-top:4px">' + esc(s.name) + '</div>';
+        h += '<div style="margin-top:16px"><span class="fp-sig-label">Date: _______________</span></div>';
+        h += '</div>';
+    });
+    h += '</div></div>';
+
+    // Footer
+    h += '<div style="text-align:center;padding:16px;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:8px">';
+    h += esc(ch.projectName) + ' — Rev ' + (state._revision || 1) + '.0 — Generated ' + dateStr + ' at ' + timeStr + ' — ' + esc(teamName);
+    h += '<br>YCBS 288 · McGill School of Continuing Studies · Strategic Project Leadership</div>';
+
+    h += '</div>'; // /fp-doc
+    return h;
+}
+
+function fpSection(num, title) {
+    return '<div class="fp-section"><div class="fp-section-title"><span class="fp-num">' + num + '</span> ' + title + '</div>';
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
