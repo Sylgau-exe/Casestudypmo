@@ -114,6 +114,37 @@ export default async function handler(req, res) {
             });
         }
 
+        // ═══ PLAN TOOL LOGIN (team name + password) ═══
+        if (action === 'plan-login') {
+            const { team, password } = req.body;
+            if (!team || !password) {
+                return res.status(400).json({ error: 'Team name and password are required' });
+            }
+
+            // Find team by display name (case-insensitive)
+            const result = await sql`
+                SELECT tenant_id, team_display_name, team_password
+                FROM pmo_state
+                WHERE LOWER(team_display_name) = LOWER(${team.trim()})
+            `;
+
+            if (result.length === 0) {
+                return res.status(400).json({ error: 'Team not found. Check your team name.' });
+            }
+            if (!result[0].team_password) {
+                return res.status(400).json({ error: 'Team password not set yet. Ask your instructor.' });
+            }
+            if (result[0].team_password !== password) {
+                return res.status(400).json({ error: 'Incorrect password.' });
+            }
+
+            return res.status(200).json({
+                success: true,
+                teamId: result[0].tenant_id,
+                teamName: result[0].team_display_name
+            });
+        }
+
         // ═══ ADMIN LOGIN ═══
         if (action === 'admin-login') {
             const { password } = req.body;

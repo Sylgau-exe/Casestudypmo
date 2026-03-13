@@ -518,6 +518,7 @@ const TOTAL_WEEKS = 18;
 let currentMode = 'plan'; // 'charter' | 'plan'
 let currentSection = 'overview';
 let teamName = '';
+let teamId = '';
 let marcusChatHistory = [];
 
 let state = {};
@@ -715,20 +716,21 @@ async function doLogin() {
     try {
         const res = await fetch('/api/auth', {
             method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ team, password:pass })
+            body: JSON.stringify({ action:'plan-login', team, password:pass })
         });
         const data = await res.json();
         if (!res.ok || data.error) { showLoginError(data.error || 'Authentication failed.'); return; }
-        teamName = team;
-        // Try loading saved state
+        teamName = data.teamName || team;
+        teamId = data.teamId || team.toLowerCase().replace(/\s+/g,'-');
         await loadState();
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         renderSidebar();
         renderContent();
     } catch(e) {
-        // Fallback: allow with any password for demo
+        // Fallback: allow with any password for demo (offline/no DB)
         teamName = team;
+        teamId = team.toLowerCase().replace(/\s+/g,'-');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         renderSidebar();
@@ -742,27 +744,33 @@ function showLoginError(msg) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// STATE PERSISTENCE
+// STATE PERSISTENCE (uses /api/plan-state with dedicated plan_state table)
 // ═══════════════════════════════════════════════════════════════════════════
 async function saveState() {
     showSaveIndicator('saving','💾 Saving...');
     try {
-        const res = await fetch(`/api/state?tenant=plan-${encodeURIComponent(teamName)}`, {
-            method:'POST', headers:{'Content-Type':'application/json','X-User-Name':teamName},
+        const res = await fetch(`/api/plan-state?team=${encodeURIComponent(teamId)}`, {
+            method:'POST', headers:{'Content-Type':'application/json','X-Team-Name':teamName},
             body: JSON.stringify(state)
         });
-        if (res.ok) showSaveIndicator('saved','✓ Saved');
-        else showSaveIndicator('error','✕ Save failed');
-    } catch(e) { showSaveIndicator('error','✕ Offline'); }
+        if (res.ok) {
+            const data = await res.json();
+            showSaveIndicator('saved',`✓ Saved ${new Date(data.updatedAt).toLocaleTimeString()}`);
+        } else {
+            showSaveIndicator('error','✕ Save failed');
+        }
+    } catch(e) { showSaveIndicator('error','✕ Offline — not saved'); }
 }
 async function loadState() {
     try {
-        const res = await fetch(`/api/state?tenant=plan-${encodeURIComponent(teamName)}`);
+        const res = await fetch(`/api/plan-state?team=${encodeURIComponent(teamId)}`);
         if (res.ok) {
             const data = await res.json();
-            if (data && data.charter) { state = data; }
+            if (data && data.state && data.state.charter) {
+                state = data.state;
+            }
         }
-    } catch(e) { /* use defaults */ }
+    } catch(e) { /* use defaults — first time or offline */ }
 }
 function showSaveIndicator(cls, text) {
     const el = document.getElementById('saveIndicator');
@@ -772,7 +780,7 @@ function showSaveIndicator(cls, text) {
 }
 
 // Auto-save every 2 minutes
-setInterval(() => { if (teamName) saveState(); }, 120000);
+setInterval(() => { if (teamId) saveState(); }, 120000);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CHARTER SECTIONS CONFIG
