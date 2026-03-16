@@ -616,8 +616,8 @@ function initState() {
                 {id:uid(),description:'Enable mobile access for 100% of portal features',measurable:true,timebound:'At go-live'},
             ],
             constraints:[
-                {id:uid(),type:'Budget',description:'Maximum project budget of $450,000 (labor + procurement)',impact:'High'},
-                {id:uid(),type:'Time',description:'Must launch before Q4 fiscal year-end (18 weeks from approval)',impact:'High'},
+                {id:uid(),type:'Budget',description:'Maximum project budget of $160,000 (labor + procurement)',impact:'High'},
+                {id:uid(),type:'Time',description:'Must launch before Q4 fiscal year-end (14 weeks from approval)',impact:'High'},
                 {id:uid(),type:'Resource',description:'Senior developer pool limited to 2 FTEs due to other commitments',impact:'Medium'},
                 {id:uid(),type:'Technical',description:'Must integrate with existing SAP ERP — no ERP replacement',impact:'High'},
                 {id:uid(),type:'Regulatory',description:'Must comply with SOC 2 and accessibility (WCAG 2.1 AA)',impact:'Medium'},
@@ -688,6 +688,8 @@ function initState() {
             {id:'d3b',name:'3.2 Frontend Application',level:1,parent:'d3'},
             {id:'d4a',name:'4.1 UAT Sign-off',level:1,parent:'d4'},
             {id:'d4b',name:'4.2 Go-Live',level:1,parent:'d4'},
+            {id:'d3c',name:'3.3 Data Migration Scripts',level:1,parent:'d3'},
+            {id:'d2c',name:'2.3 Training Manual',level:1,parent:'d2'},
         ],
         resources:[
             {id:'r1',title:'Project Manager',role:'PM',rateCardId:'rc1',availability:100,person:null,personRateCardId:null},
