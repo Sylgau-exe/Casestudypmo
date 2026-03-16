@@ -453,15 +453,34 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <label class="form-label">Team Name</label>
-            <input type="text" class="form-input" id="loginTeam" placeholder="e.g. Team Alpha">
+        <div style="display:flex;gap:0;margin-bottom:1.25rem;border-bottom:2px solid var(--border)">
+            <button id="tabLogin" onclick="setLoginMode('login')" style="flex:1;padding:0.6rem;font-size:0.85rem;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--red);color:var(--red);margin-bottom:-2px;font-family:inherit">Login</button>
+            <button id="tabRegister" onclick="setLoginMode('register')" style="flex:1;padding:0.6rem;font-size:0.85rem;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);margin-bottom:-2px;font-family:inherit">Register Team</button>
         </div>
-        <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-input" id="loginPass" placeholder="Team password">
+        <div id="formLogin">
+            <div class="form-group">
+                <label class="form-label">Team Name</label>
+                <input type="text" class="form-input" id="loginTeam" placeholder="e.g. Team Alpha">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="loginPass" placeholder="Team password">
+            </div>
+            <button class="btn-login" onclick="doLogin()">Enter Plan Tool</button>
+            <p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem">Don't have an account? Click <strong>Register Team</strong> above.</p>
         </div>
-        <button class="btn-login" onclick="doLogin()">Enter Plan Tool</button>
+        <div id="formRegister" style="display:none">
+            <div class="form-group">
+                <label class="form-label">Team Name</label>
+                <input type="text" class="form-input" id="regTeam" placeholder="e.g. Team Alpha">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Choose a Password</label>
+                <input type="password" class="form-input" id="regPass" placeholder="Min 4 characters">
+            </div>
+            <button class="btn-login" onclick="doRegister()">Create Team & Enter</button>
+            <p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem">Your instructor will tell you which team name to use.</p>
+        </div>
         <div class="login-error" id="loginError">Invalid password. Please try again.</div>
     </div>
 </div>
@@ -768,16 +787,26 @@ function badgeClass(val) {
 function typeColor(type) { return COLORS[type] || '#2563eb'; }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// LOGIN
+// LOGIN / REGISTER
 // ═══════════════════════════════════════════════════════════════════════════
+function setLoginMode(mode) {
+    document.getElementById('formLogin').style.display = mode === 'login' ? 'block' : 'none';
+    document.getElementById('formRegister').style.display = mode === 'register' ? 'block' : 'none';
+    document.getElementById('tabLogin').style.borderBottomColor = mode === 'login' ? 'var(--red)' : 'transparent';
+    document.getElementById('tabLogin').style.color = mode === 'login' ? 'var(--red)' : 'var(--text-muted)';
+    document.getElementById('tabRegister').style.borderBottomColor = mode === 'register' ? 'var(--red)' : 'transparent';
+    document.getElementById('tabRegister').style.color = mode === 'register' ? 'var(--red)' : 'var(--text-muted)';
+    document.getElementById('loginError').style.display = 'none';
+}
+
 async function doLogin() {
     const team = document.getElementById('loginTeam').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
     if (!team || !pass) { showLoginError('Enter team name and password.'); return; }
     try {
-        const res = await fetch('/api/auth', {
+        const res = await fetch('/api/plan-state', {
             method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ action:'plan-login', team, password:pass })
+            body: JSON.stringify({ action:'login', team, password:pass })
         });
         const data = await res.json();
         if (!res.ok || data.error) { showLoginError(data.error || 'Authentication failed.'); return; }
@@ -789,13 +818,30 @@ async function doLogin() {
         renderSidebar();
         renderContent();
     } catch(e) {
-        // Fallback: allow with any password for demo (offline/no DB)
-        teamName = team;
-        teamId = team.toLowerCase().replace(/\s+/g,'-');
+        showLoginError('Connection error. Please try again.');
+    }
+}
+
+async function doRegister() {
+    const team = document.getElementById('regTeam').value.trim();
+    const pass = document.getElementById('regPass').value.trim();
+    if (!team || !pass) { showLoginError('Enter team name and password.'); return; }
+    if (pass.length < 4) { showLoginError('Password must be at least 4 characters.'); return; }
+    try {
+        const res = await fetch('/api/plan-state', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ action:'register', team, password:pass })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) { showLoginError(data.error || 'Registration failed.'); return; }
+        teamName = data.teamName || team;
+        teamId = data.teamId || team.toLowerCase().replace(/\s+/g,'-');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         renderSidebar();
         renderContent();
+    } catch(e) {
+        showLoginError('Connection error. Please try again.');
     }
 }
 function showLoginError(msg) {
@@ -2227,7 +2273,8 @@ function formatMarcusText(text) {
 // ═══════════════════════════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
     if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
-        doLogin();
+        if (document.getElementById('formRegister').style.display !== 'none') { doRegister(); }
+        else { doLogin(); }
     }
 });
 </script>
