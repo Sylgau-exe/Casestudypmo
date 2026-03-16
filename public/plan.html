@@ -500,7 +500,7 @@
             <div class="main-header-mode" id="mainMode" style="color:var(--c-scope)">📐 Plan — HOW we deliver</div>
         </div>
         <div class="main-header-right">
-            <button class="btn btn-primary" onclick="goTo('fullplan')" title="View & print full plan" style="padding:6px 14px">🖨️ Print Plan</button>
+            <button class="btn btn-primary" id="btnPrint" onclick="goTo('fullplan')" title="View & print" style="padding:6px 14px">🖨️ Print Plan</button>
             <span id="headerStats"></span>
             <button class="btn-sm btn-rate" id="btnRateCard" onclick="openRateCard()" style="display:none">📋 Rate Card</button>
             <button class="btn-sm" onclick="saveState()" title="Save to server">💾 Save</button>
@@ -1102,25 +1102,30 @@ function renderContent() {
     // Update header
     const allSections = [...CHARTER_SECTIONS, ...PLAN_SECTIONS, {key:'fullplan',label:'Full Project Plan',icon:'🖨️'}];
     const sec = allSections.find(s => s.key === currentSection) || {icon:'◉',label:'Overview'};
-    document.getElementById('mainTitle').textContent = `${sec.icon} ${sec.label}`;
+    var headerLabel = sec.label;
+    if (currentSection === 'fullplan' && currentMode === 'charter') headerLabel = 'Full Project Charter';
+    document.getElementById('mainTitle').textContent = `${sec.icon} ${headerLabel}`;
     document.getElementById('mainMode').textContent = currentMode === 'charter'
         ? '📜 Charter — WHY we invest' : '📐 Plan — HOW we deliver';
     document.getElementById('mainMode').style.color = currentMode === 'charter' ? 'var(--purple)' : 'var(--c-scope)';
 
     // Header stats
     const at = getAllTasks();
+    const btnPrint = document.getElementById('btnPrint');
     if (currentMode === 'plan') {
         document.getElementById('headerStats').innerHTML = `Activities: <strong>${at.length}</strong> · Budget: <strong style="color:var(--warning)">${fmt(getTotalBudget())}</strong>`;
         document.getElementById('btnRateCard').style.display = '';
+        if (btnPrint) btnPrint.innerHTML = '🖨️ Print Plan';
     } else {
         document.getElementById('headerStats').innerHTML = '';
         document.getElementById('btnRateCard').style.display = 'none';
+        if (btnPrint) btnPrint.innerHTML = '🖨️ Print Charter';
     }
 
     const mc = document.getElementById('mainContent');
 
     if (currentSection === 'fullplan') {
-        try { mc.innerHTML = renderFullPlan(); } catch(e) { mc.innerHTML = '<div style="padding:40px;color:red"><h2>Print Error</h2><p>'+e.message+'</p><pre>'+e.stack+'</pre></div>'; }
+        try { mc.innerHTML = renderFullPlan(currentMode); } catch(e) { mc.innerHTML = '<div style="padding:40px;color:red"><h2>Print Error</h2><p>'+e.message+'</p><pre>'+e.stack+'</pre></div>'; }
     } else if (currentMode === 'charter') {
         mc.innerHTML = renderCharter();
     } else {
@@ -1620,7 +1625,8 @@ function renderLinkedTasks(tasks) {
 // ═══════════════════════════════════════════════════════════════════════════
 // RENDER: FULL PLAN (printable document view)
 // ═══════════════════════════════════════════════════════════════════════════
-function renderFullPlan() {
+function renderFullPlan(printMode) {
+    var isCharterOnly = printMode === 'charter';
     var ch = state.charter;
     var at = getAllTasks();
     var budget = getTotalBudget();
@@ -1629,28 +1635,32 @@ function renderFullPlan() {
     var now = new Date();
     var dateStr = now.toLocaleDateString('en-CA');
     var timeStr = now.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+    var docTitle = isCharterOnly ? 'Project Charter' : 'Integrated Project Charter &amp; Plan';
+    var docIcon = isCharterOnly ? '📜' : '📐';
 
     var h = '<div class="fp-doc">';
 
     // Print bar
     h += '<div class="fp-print-bar">';
     h += '<button class="btn btn-primary" onclick="window.print()" style="padding:10px 24px;font-size:14px">🖨️ Print / Export PDF</button>';
-    h += '<button class="btn-sm" onclick="goTo(\'overview\')">← Back to Plan</button>';
+    h += '<button class="btn-sm" onclick="goTo(\'' + (isCharterOnly ? 'ch_overview' : 'overview') + '\')">← Back to ' + (isCharterOnly ? 'Charter' : 'Plan') + '</button>';
     h += '</div>';
 
     // ── Cover page ──
     h += '<div class="fp-cover">';
-    h += '<div class="fp-cover-logo">📐</div>';
+    h += '<div class="fp-cover-logo">' + docIcon + '</div>';
     h += '<div class="fp-cover-title">' + esc(ch.projectName) + '</div>';
-    h += '<div class="fp-cover-subtitle">Integrated Project Charter &amp; Plan</div>';
+    h += '<div class="fp-cover-subtitle">' + docTitle + '</div>';
     h += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">YCBS 288 — Strategic Project Leadership · McGill School of Continuing Studies</div>';
 
     h += '<div class="fp-meta">';
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Sponsor</div><div class="fp-meta-val">' + esc(ch.sponsor.split('—')[0].trim()) + '</div></div>';
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Manager</div><div class="fp-meta-val">' + esc(ch.pm) + '</div></div>';
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Team</div><div class="fp-meta-val">' + esc(teamName) + '</div></div>';
-    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Duration</div><div class="fp-meta-val">' + maxW + ' weeks</div></div>';
-    h += '<div class="fp-meta-cell"><div class="fp-meta-label">Total Budget</div><div class="fp-meta-val">' + fmt(budget+procTotal) + '</div></div>';
+    if (!isCharterOnly) {
+        h += '<div class="fp-meta-cell"><div class="fp-meta-label">Project Duration</div><div class="fp-meta-val">' + maxW + ' weeks</div></div>';
+        h += '<div class="fp-meta-cell"><div class="fp-meta-label">Total Budget</div><div class="fp-meta-val">' + fmt(budget+procTotal) + '</div></div>';
+    }
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Revision Date</div><div class="fp-meta-val">' + dateStr + ' at ' + timeStr + '</div></div>';
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Document Version</div><div class="fp-meta-val">Rev ' + (state._revision || 1) + '.0</div></div>';
     h += '<div class="fp-meta-cell"><div class="fp-meta-label">Last Updated By</div><div class="fp-meta-val">' + esc(teamName) + '</div></div>';
@@ -1659,11 +1669,19 @@ function renderFullPlan() {
     // ── Table of Contents ──
     h += '<div class="fp-section">';
     h += '<div class="fp-section-title"><span class="fp-num">📑</span> Table of Contents</div>';
-    var toc = [
-        'A. CHARTER','1. Problem / Opportunity','2. Proposed Solution','3. Objectives','4. Constraints','5. High-Level Risks','6. Success Criteria','7. Assumptions','8. Authority & Sign-off',
-        'B. PROJECT PLAN','9. Stakeholders','10. Requirements','11. Scope (WBS)','12. Schedule','13. Resources','14. Budget','15. Quality','16. Risk','17. Communication','18. Procurement',
-        'C. APPROVAL'
-    ];
+    var toc;
+    if (isCharterOnly) {
+        toc = [
+            'A. CHARTER','1. Problem / Opportunity','2. Proposed Solution','3. Objectives','4. Constraints','5. High-Level Risks','6. Success Criteria','7. Assumptions','8. Authority & Sign-off',
+            'B. APPROVAL'
+        ];
+    } else {
+        toc = [
+            'A. CHARTER','1. Problem / Opportunity','2. Proposed Solution','3. Objectives','4. Constraints','5. High-Level Risks','6. Success Criteria','7. Assumptions','8. Authority & Sign-off',
+            'B. PROJECT PLAN','9. Stakeholders','10. Requirements','11. Scope (WBS)','12. Schedule','13. Resources','14. Budget','15. Quality','16. Risk','17. Communication','18. Procurement',
+            'C. APPROVAL'
+        ];
+    }
     h += '<div style="columns:2;column-gap:24px;font-size:12px;line-height:2">';
     toc.forEach(function(item) {
         var isBold = item.charAt(0) <= 'C' && item.charAt(1) === '.';
@@ -1733,7 +1751,8 @@ function renderFullPlan() {
     });
     h += '</div>';
 
-    // ═══ PART B: PROJECT PLAN ═══
+    // ═══ PART B: PROJECT PLAN (only in full plan mode) ═══
+    if (!isCharterOnly) {
     h += '<div class="fp-section" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe">';
     h += '<div style="font-family:Fraunces,serif;font-size:18px;font-weight:800;color:var(--info)">Part B — Project Plan</div>';
     h += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">HOW — Integrated delivery approach across all knowledge areas</div>';
@@ -1846,11 +1865,13 @@ function renderFullPlan() {
     });
     h += '</tbody></table></div>';
 
+    } // end if (!isCharterOnly) — Part B
+
     // ═══ PART C: APPROVAL ═══
     h += '<div class="fp-section">';
-    h += '<div class="fp-section-title"><span class="fp-num">C</span> Document Approval</div>';
+    h += '<div class="fp-section-title"><span class="fp-num">' + (isCharterOnly ? 'B' : 'C') + '</span> Document Approval</div>';
     h += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.7">';
-    h += 'By signing below, the undersigned acknowledge they have reviewed this Project Charter and Plan document and approve the project to proceed as described herein.</div>';
+    h += 'By signing below, the undersigned acknowledge they have reviewed this ' + (isCharterOnly ? 'Project Charter' : 'Project Charter and Plan') + ' document and approve the project to proceed as described herein.</div>';
 
     h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px">';
     [{role:'Project Sponsor',name:ch.sponsor.split('—')[0].trim()},{role:'Project Manager',name:ch.pm}].forEach(function(s) {
@@ -1865,7 +1886,7 @@ function renderFullPlan() {
 
     // Footer
     h += '<div style="text-align:center;padding:16px;font-size:13px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:8px">';
-    h += esc(ch.projectName) + ' — Rev ' + (state._revision || 1) + '.0 — Generated ' + dateStr + ' at ' + timeStr + ' — ' + esc(teamName);
+    h += esc(ch.projectName) + ' — ' + (isCharterOnly ? 'Charter' : 'Charter &amp; Plan') + ' — Rev ' + (state._revision || 1) + '.0 — Generated ' + dateStr + ' at ' + timeStr + ' — ' + esc(teamName);
     h += '<br>YCBS 288 · McGill School of Continuing Studies · Strategic Project Leadership</div>';
 
     h += '</div>'; // /fp-doc
