@@ -1119,7 +1119,9 @@ function renderContent() {
 
     const mc = document.getElementById('mainContent');
 
-    if (currentMode === 'charter') {
+    if (currentSection === 'fullplan') {
+        try { mc.innerHTML = renderFullPlan(); } catch(e) { mc.innerHTML = '<div style="padding:40px;color:red"><h2>Print Error</h2><p>'+e.message+'</p><pre>'+e.stack+'</pre></div>'; }
+    } else if (currentMode === 'charter') {
         mc.innerHTML = renderCharter();
     } else {
         switch(currentSection) {
