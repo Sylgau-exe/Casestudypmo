@@ -1125,24 +1125,27 @@ function renderContent() {
     const mc = document.getElementById('mainContent');
 
     if (currentSection === 'fullplan') {
+        document.title = currentMode === 'charter' ? 'YCBS 288 — Project Charter' : 'YCBS 288 — Project Charter & Plan';
         try { mc.innerHTML = renderFullPlan(currentMode); } catch(e) { mc.innerHTML = '<div style="padding:40px;color:red"><h2>Print Error</h2><p>'+e.message+'</p><pre>'+e.stack+'</pre></div>'; }
-    } else if (currentMode === 'charter') {
-        mc.innerHTML = renderCharter();
     } else {
-        switch(currentSection) {
-            case 'overview': mc.innerHTML = renderOverview(); break;
-            case 'stakeholders': mc.innerHTML = renderStakeholders(); break;
-            case 'requirements': mc.innerHTML = renderRequirements(); break;
-            case 'scope': mc.innerHTML = renderScope(); break;
-            case 'schedule': mc.innerHTML = renderSchedule(); break;
-            case 'resources': mc.innerHTML = renderResources(); break;
-            case 'budget': mc.innerHTML = renderBudget(); break;
-            case 'quality': mc.innerHTML = renderQuality(); break;
-            case 'risk': mc.innerHTML = renderIntegration('risk'); break;
-            case 'communication': mc.innerHTML = renderIntegration('communication'); break;
-            case 'procurement': mc.innerHTML = renderIntegration('procurement'); break;
-            case 'fullplan': mc.innerHTML = renderFullPlan(); break;
-            default: mc.innerHTML = '<p>Section not found.</p>';
+        document.title = 'YCBS 288 — Project Charter & Plan';
+        if (currentMode === 'charter') {
+            mc.innerHTML = renderCharter();
+        } else {
+            switch(currentSection) {
+                case 'overview': mc.innerHTML = renderOverview(); break;
+                case 'stakeholders': mc.innerHTML = renderStakeholders(); break;
+                case 'requirements': mc.innerHTML = renderRequirements(); break;
+                case 'scope': mc.innerHTML = renderScope(); break;
+                case 'schedule': mc.innerHTML = renderSchedule(); break;
+                case 'resources': mc.innerHTML = renderResources(); break;
+                case 'budget': mc.innerHTML = renderBudget(); break;
+                case 'quality': mc.innerHTML = renderQuality(); break;
+                case 'risk': mc.innerHTML = renderIntegration('risk'); break;
+                case 'communication': mc.innerHTML = renderIntegration('communication'); break;
+                case 'procurement': mc.innerHTML = renderIntegration('procurement'); break;
+                default: mc.innerHTML = '<p>Section not found.</p>';
+            }
         }
     }
 }
