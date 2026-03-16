@@ -390,18 +390,17 @@
             <!-- Mode Tabs -->
             <div style="display:flex;border-radius:8px;overflow:hidden;margin-bottom:1.25rem;border:2px solid #e2e8f0" id="authTabs">
                 <button onclick="setAuthMode('login')" class="auth-tab active" id="tabLogin" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Login</button>
-                <button onclick="setAuthMode('register')" class="auth-tab" id="tabRegister" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Register</button>
                 <button onclick="setAuthMode('admin')" class="auth-tab" id="tabAdmin" style="flex:1;padding:0.6rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Instructor</button>
             </div>
 
             <div id="authError" style="display:none;background:#fed7d7;color:#c53030;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.82rem;text-align:center"></div>
             <div id="authSuccess" style="display:none;background:#c6f6d5;color:#276749;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.82rem;text-align:center"></div>
 
-            <!-- ─── LOGIN FORM ─── -->
+            <!-- ─── LOGIN FORM (Team Name + Password) ─── -->
             <div id="formLogin">
                 <div style="margin-bottom:0.85rem">
-                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Email</label>
-                    <input type="email" id="loginEmail" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="your.email@university.edu" onkeypress="if(event.key==='Enter')doStudentLogin()">
+                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Team Name</label>
+                    <input type="text" id="loginTeam" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="e.g. Alpha, Bravo, Charlie" autocomplete="off" onkeypress="if(event.key==='Enter')doStudentLogin()">
                 </div>
                 <div style="margin-bottom:1.25rem">
                     <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Team Password</label>
@@ -410,35 +409,7 @@
                 <button onclick="doStudentLogin()" style="width:100%;padding:0.75rem;background:linear-gradient(135deg,#3182ce,#2b6cb0);color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
                     Log in
                 </button>
-                <p style="text-align:center;margin:1rem 0 0;font-size:0.78rem;color:#a0aec0">Don't have an account? Click <b>Register</b> above.</p>
-            </div>
-
-            <!-- ─── REGISTER FORM ─── -->
-            <div id="formRegister" style="display:none">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.85rem">
-                    <div>
-                        <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">First Name</label>
-                        <input type="text" id="regFirst" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="First name">
-                    </div>
-                    <div>
-                        <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Last Name</label>
-                        <input type="text" id="regLast" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="Last name">
-                    </div>
-                </div>
-                <div style="margin-bottom:0.85rem">
-                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Email</label>
-                    <input type="email" id="regEmail" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box" placeholder="your.email@university.edu">
-                </div>
-                <div style="margin-bottom:1.25rem">
-                    <label style="display:block;font-size:0.78rem;font-weight:600;color:#4a5568;margin-bottom:0.3rem">Select Your Team</label>
-                    <select id="regTeam" style="width:100%;padding:0.65rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9rem;box-sizing:border-box;background:white;cursor:pointer">
-                        <option value="">— Choose your team —</option>
-                    </select>
-                </div>
-                <button onclick="doRegister()" style="width:100%;padding:0.75rem;background:linear-gradient(135deg,#38a169,#2f855a);color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
-                    Create Account
-                </button>
-                <p style="text-align:center;margin:1rem 0 0;font-size:0.78rem;color:#a0aec0">Your instructor will give you the team password to log in.</p>
+                <p style="text-align:center;margin:1rem 0 0;font-size:0.78rem;color:#a0aec0">Enter the team name and password provided by your instructor.</p>
             </div>
 
             <!-- ─── ADMIN FORM ─── -->
@@ -1075,7 +1046,7 @@ async function saveState() {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-User-Name': currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Anonymous'
+                'X-User-Name': currentUser ? (currentUser.teamName || currentTeam || 'Anonymous') : 'Anonymous'
             },
             body: JSON.stringify({
                 projects: STATE.projects,
@@ -3562,7 +3533,6 @@ function setAuthMode(mode) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
     document.getElementById('formLogin').style.display = mode === 'login' ? 'block' : 'none';
-    document.getElementById('formRegister').style.display = mode === 'register' ? 'block' : 'none';
     document.getElementById('formAdmin').style.display = mode === 'admin' ? 'block' : 'none';
     document.getElementById('authError').style.display = 'none';
     document.getElementById('authSuccess').style.display = 'none';
@@ -3579,63 +3549,33 @@ function showAuthSuccess(msg) {
     document.getElementById('authError').style.display = 'none';
 }
 
-// ─── STUDENT LOGIN ───
+// ─── TEAM LOGIN ───
 async function doStudentLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
+    const team = document.getElementById('loginTeam').value.trim();
     const pass = document.getElementById('loginPass').value;
-    if (!email || !pass) return showAuthError('Email and password are required');
+    if (!team || !pass) return showAuthError('Team name and password are required');
     
     try {
         const resp = await fetch('/api/auth', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'login', email, password: pass })
+            body: JSON.stringify({ action: 'plan-login', team, password: pass })
         });
         const data = await resp.json();
         if (!resp.ok) return showAuthError(data.error);
         
         // Success — store session
-        currentTeam = data.user.teamId;
-        currentUser = data.user;
+        currentTeam = data.teamId;
+        currentUser = { teamId: data.teamId, teamName: data.teamName };
         sessionStorage.setItem('pmo_logged_in', 'true');
-        sessionStorage.setItem('pmo_team', data.user.teamId);
-        sessionStorage.setItem('pmo_user', JSON.stringify(data.user));
+        sessionStorage.setItem('pmo_team', data.teamId);
+        sessionStorage.setItem('pmo_user', JSON.stringify(currentUser));
         
         document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('headerTeamName').textContent = data.user.teamName;
-        document.getElementById('headerUserName').textContent = data.user.firstName;
+        document.getElementById('headerTeamName').textContent = data.teamName;
+        document.getElementById('headerUserName').textContent = '';
         document.getElementById('navAdminTab').style.display = 'none';
         init();
-    } catch(e) {
-        showAuthError('Connection error. Try again.');
-    }
-}
-
-// ─── STUDENT REGISTRATION ───
-async function doRegister() {
-    const firstName = document.getElementById('regFirst').value.trim();
-    const lastName = document.getElementById('regLast').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const teamId = document.getElementById('regTeam').value;
-    
-    if (!firstName || !lastName || !email || !teamId) return showAuthError('All fields are required');
-    if (!email.includes('@')) return showAuthError('Please enter a valid email');
-    
-    try {
-        const resp = await fetch('/api/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'register', firstName, lastName, email, teamId })
-        });
-        const data = await resp.json();
-        if (!resp.ok) return showAuthError(data.error);
-        
-        showAuthSuccess(`Welcome ${firstName}! You're registered on ${data.teamName}. Your instructor will give you the team password to log in.`);
-        // Clear register form
-        document.getElementById('regFirst').value = '';
-        document.getElementById('regLast').value = '';
-        document.getElementById('regEmail').value = '';
-        document.getElementById('regTeam').value = '';
     } catch(e) {
         showAuthError('Connection error. Try again.');
     }
@@ -3669,32 +3609,6 @@ async function doAdminLogin() {
         loadAdminDashboard();
     } catch(e) {
         showAuthError('Connection error. Try again.');
-    }
-}
-
-// ─── LOAD TEAMS FOR REGISTER DROPDOWN ───
-async function loadTeamsForRegister() {
-    try {
-        const resp = await fetch('/api/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'list-teams' })
-        });
-        if (resp.ok) {
-            const data = await resp.json();
-            const select = document.getElementById('regTeam');
-            if (select) {
-                select.innerHTML = '<option value="">— Choose your team —</option>';
-                data.teams.forEach(t => {
-                    const opt = document.createElement('option');
-                    opt.value = t.tenant_id;
-                    opt.textContent = t.team_display_name || t.tenant_id;
-                    select.appendChild(opt);
-                });
-            }
-        }
-    } catch(e) {
-        console.log('Could not load teams:', e.message);
     }
 }
 
@@ -3842,9 +3756,6 @@ function checkLogin() {
     const loginAvatar = document.getElementById('loginMarcusAvatar');
     if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
     
-    // Load teams for register dropdown
-    loadTeamsForRegister();
-    
     if (isLoggedIn && isAdmin) {
         loginScreen.style.display = 'none';
         document.getElementById('headerTeamName').textContent = '🎓 Instructor';
@@ -3855,7 +3766,7 @@ function checkLogin() {
     } else if (isLoggedIn && currentTeam && currentUser) {
         loginScreen.style.display = 'none';
         document.getElementById('headerTeamName').textContent = currentUser.teamName || currentTeam;
-        document.getElementById('headerUserName').textContent = currentUser.firstName || '';
+        document.getElementById('headerUserName').textContent = '';
         document.getElementById('navAdminTab').style.display = 'none';
     } else {
         loginScreen.style.display = 'flex';
@@ -3874,7 +3785,7 @@ function doLogout() {
         const loginAvatar = document.getElementById('loginMarcusAvatar');
         if (loginAvatar) loginAvatar.src = MARCUS_AVATAR;
     }
-    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginTeam').value = '';
     document.getElementById('loginPass').value = '';
     document.getElementById('adminPass').value = '';
     document.getElementById('authError').style.display = 'none';
