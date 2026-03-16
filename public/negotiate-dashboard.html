@@ -10,23 +10,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg-primary:#0a0a14;--bg-secondary:#0f0f1e;--bg-card:#171728;--bg-card-hover:#1e1e32;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#94a3b8;--accent-primary:#6366f1;--accent-secondary:#8b5cf6;--accent-tertiary:#06b6d4;--accent-success:#10b981;--accent-warning:#f59e0b;--accent-error:#ef4444;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06b6d4 100%);--border-subtle:rgba(255,255,255,0.08);--border-accent:rgba(99,102,241,0.3);--glow-primary:rgba(99,102,241,0.4);--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--louis-gold:#f59e0b;--louis-bg:rgba(245,158,11,0.08);--louis-border:rgba(245,158,11,0.25);--font-display:'Space Grotesk',sans-serif;--font-body:'DM Sans',-apple-system,sans-serif}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary)}.gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-nav{display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-bottom:1px solid var(--border-subtle);background:var(--bg-secondary)}
+:root{--bg-primary:#ffffff;--bg-secondary:#f8fafc;--bg-card:#ffffff;--bg-card-hover:#f1f5f9;--text-primary:#111827;--text-secondary:#334155;--text-muted:#6b7280;--accent-primary:#ED1B2F;--accent-secondary:#c41426;--accent-tertiary:#2563eb;--accent-success:#059669;--accent-warning:#d97706;--accent-error:#dc2626;--accent-gradient:linear-gradient(135deg,#ED1B2F 0%,#c41426 100%);--border-subtle:#e2e8f0;--border-accent:rgba(237,27,47,0.3);--glow-primary:rgba(237,27,47,0.15);--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--louis-gold:#1B2A4A;--louis-bg:rgba(27,42,74,0.06);--louis-border:rgba(27,42,74,0.2);--font-display:'DM Sans',sans-serif;--font-body:'DM Sans',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:#f8fafc;color:var(--text-primary)}.gradient-text{color:var(--accent-primary)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-bottom:1px solid #e2e8f0;background:#ffffff}
 .nav-logo{font-family:var(--font-display);font-size:26px;font-weight:700}
-.nav-right{display:flex;gap:16px;align-items:center;font-size:17px;color:#e2e8f0}
-.nav-right a{color:#cbd5e1;text-decoration:none;cursor:pointer}.nav-right a:hover{color:var(--accent-error)}
+.nav-right{display:flex;gap:16px;align-items:center;font-size:17px;color:#334155}
+.nav-right a{color:#6b7280;text-decoration:none;cursor:pointer}.nav-right a:hover{color:var(--accent-error)}
 .container{max-width:1000px;margin:0 auto;padding:32px 24px}
-.welcome{display:flex;gap:16px;align-items:center;background:var(--bg-card);border:1px solid var(--louis-border);border-radius:var(--radius-md);padding:24px;margin-bottom:28px}
+.welcome{display:flex;gap:16px;align-items:center;background:var(--bg-card);border:1px solid rgba(27,42,74,0.2);border-radius:var(--radius-md);padding:24px;margin-bottom:28px}
 .welcome-avatar{width:64px;height:64px;border-radius:50%;background:var(--bg-card-hover);border:2px solid var(--louis-gold);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden}
-.welcome h3{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--louis-gold)}.welcome p{font-size:17px;color:#e2e8f0;line-height:1.5}
+.welcome h3{font-family:var(--font-display);font-size:20px;font-weight:600;color:#1B2A4A}.welcome p{font-size:17px;color:#334155;line-height:1.5}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-.stat-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;text-align:center}
-.stat-value{font-family:var(--font-display);font-size:34px;font-weight:700}.stat-label{font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:0.8px;margin-top:6px}
+.stat-card{background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #e2e8f0;border-radius:var(--radius-md);padding:20px;text-align:center}
+.stat-value{font-family:var(--font-display);font-size:34px;font-weight:700}.stat-label{font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:0.8px;margin-top:6px}
 h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:20px}
 .scenario-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:32px}
-.sc-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:22px;cursor:pointer;transition:all 0.25s;position:relative}
-.sc-card:hover{border-color:var(--border-accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
+.sc-card{background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #e2e8f0;border-radius:var(--radius-md);padding:22px;cursor:pointer;transition:all 0.25s;position:relative}
+.sc-card:hover{border-color:#ED1B2F;transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 .sc-card.locked{opacity:0.65}.sc-card.locked:hover{transform:none;box-shadow:none;border-color:var(--border-subtle)}
 .sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .sc-top span:first-child{font-size:32px}.sc-diff{font-size:13px;font-weight:600;padding:5px 12px;border-radius:var(--radius-sm)}
@@ -34,16 +34,16 @@ h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:
 .sc-badge.free{background:rgba(16,185,129,0.15);color:var(--accent-success);border:1px solid rgba(16,185,129,0.3)}
 .sc-badge.used{background:rgba(148,163,184,0.15);color:var(--text-muted);border:1px solid rgba(148,163,184,0.3)}
 .sc-badge.lock{background:rgba(99,102,241,0.1);color:var(--accent-primary);border:1px solid var(--border-accent)}
-.sc-title{font-family:var(--font-display);font-size:20px;font-weight:600;margin-bottom:4px}.sc-sub{font-size:15px;color:#e2e8f0;margin-bottom:12px}
-.sc-meta{display:flex;gap:12px;font-size:14px;color:#cbd5e1;margin-bottom:10px}
-.sc-skills{display:flex;gap:5px;flex-wrap:wrap}.sc-skill{font-size:13px;padding:4px 10px;background:var(--bg-card-hover);border-radius:var(--radius-sm);color:#e2e8f0}
+.sc-title{font-family:var(--font-display);font-size:20px;font-weight:600;margin-bottom:4px}.sc-sub{font-size:15px;color:#334155;margin-bottom:12px}
+.sc-meta{display:flex;gap:12px;font-size:14px;color:#6b7280;margin-bottom:10px}
+.sc-skills{display:flex;gap:5px;flex-wrap:wrap}.sc-skill{font-size:13px;padding:4px 10px;background:var(--bg-card-hover);border-radius:var(--radius-sm);color:#334155}
 .sc-start{text-align:right;margin-top:12px;font-size:15px;font-weight:600}
-.recent-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:12px;color:#e2e8f0}
-.recent-table{width:100%;border-collapse:collapse}.recent-table th{text-align:left;font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:0.8px;padding:10px 12px;border-bottom:1px solid var(--border-subtle)}
-.recent-table td{padding:12px 12px;font-size:16px;border-bottom:1px solid var(--border-subtle);color:#e2e8f0}
+.recent-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:12px;color:#334155}
+.recent-table{width:100%;border-collapse:collapse}.recent-table th{text-align:left;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:0.8px;padding:10px 12px;border-bottom:1px solid #e2e8f0}
+.recent-table td{padding:12px 12px;font-size:16px;border-bottom:1px solid #e2e8f0;color:#334155}
 .recent-table tr.clickable{cursor:pointer;transition:background 0.2s}.recent-table tr.clickable:hover{background:var(--bg-card-hover)}
 .grade-badge{font-family:var(--font-display);font-weight:700;font-size:18px;padding:2px 10px;border-radius:var(--radius-sm)}
-.empty-state{text-align:center;padding:40px;color:#cbd5e1;font-size:16px}
+.empty-state{text-align:center;padding:40px;color:#6b7280;font-size:16px}
 /* Modal CSS removed — course edition */
 @media(max-width:768px){nav{padding:14px 20px}.stats-row{grid-template-columns:repeat(2,1fr)}.scenario-grid{grid-template-columns:1fr}.plan-cards{grid-template-columns:1fr}}
 </style></head><body>
@@ -67,8 +67,8 @@ h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:
 (function(){
   var overlay=document.createElement('div');
   overlay.id='errorOverlay';
-  overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(15,23,42,0.95);z-index:9999;align-items:center;justify-content:center;font-family:system-ui,sans-serif';
-  overlay.innerHTML='<div style="text-align:center;max-width:480px;padding:40px"><div style="font-size:48px;margin-bottom:20px">⚠️</div><h2 id="errTitle" style="color:#fff;font-size:22px;margin-bottom:12px">Something went wrong</h2><p id="errDetail" style="color:#94a3b8;font-size:15px;line-height:1.6;margin-bottom:24px">An unexpected error occurred. Please try again.</p><div style="display:flex;gap:12px;justify-content:center"><a href="/negotiate/dashboard" style="padding:10px 24px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Reload page</a><a href="/" style="padding:10px 24px;background:transparent;color:#94a3b8;border:1px solid #334155;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to Hub</a></div></div>';
+  overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(255,255,255,0.97);z-index:9999;align-items:center;justify-content:center;font-family:system-ui,sans-serif';
+  overlay.innerHTML='<div style="text-align:center;max-width:480px;padding:40px"><div style="font-size:48px;margin-bottom:20px">⚠️</div><h2 id="errTitle" style="color:#1e293b;font-size:22px;margin-bottom:12px">Something went wrong</h2><p id="errDetail" style="color:#6b7280;font-size:15px;line-height:1.6;margin-bottom:24px">An unexpected error occurred. Please try again.</p><div style="display:flex;gap:12px;justify-content:center"><a href="/negotiate/dashboard" style="padding:10px 24px;background:#ED1B2F;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Reload page</a><a href="/" style="padding:10px 24px;background:transparent;color:#6b7280;border:1px solid #334155;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to Hub</a></div></div>';
   document.body.appendChild(overlay);
   function showError(title,detail){
     document.getElementById('errTitle').textContent=title||'Something went wrong';
