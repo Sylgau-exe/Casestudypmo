@@ -1,8 +1,8 @@
 // api/game/score.js — Generate scorecard for completed session
-import { cors, getUserFromRequest } from '../../lib-neg/auth.js';
-import { SessionDB, MessageDB } from '../../lib-neg/db.js';
-import { getScenario, calculateGrade } from '../../lib-neg/scenarios.js';
-import { getScoringPrompt, getDebriefPrompt } from '../../lib-neg/louis.js';
+import { cors, getUserFromRequest } from '../../../lib-neg/auth.js';
+import { SessionDB, MessageDB } from '../../../lib-neg/db.js';
+import { getScenario, calculateGrade } from '../../../lib-neg/scenarios.js';
+import { getScoringPrompt, getDebriefPrompt } from '../../../lib-neg/louis.js';
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });

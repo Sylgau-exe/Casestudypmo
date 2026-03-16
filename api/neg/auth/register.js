@@ -1,6 +1,6 @@
 // api/neg/auth/register.js - YCBS 288 Course Edition
-import { UserDB } from '../../lib-neg/db.js';
-import { generateToken, cors } from '../../lib-neg/auth.js';
+import { UserDB } from '../../../lib-neg/db.js';
+import { generateToken, cors } from '../../../lib-neg/auth.js';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {

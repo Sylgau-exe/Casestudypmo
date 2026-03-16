@@ -1,5 +1,5 @@
 // api/game/tts.js - Edge TTS proxy (Microsoft Neural voices - FREE, unlimited)
-import { cors, getUserFromRequest } from '../../lib-neg/auth.js';
+import { cors, getUserFromRequest } from '../../../lib-neg/auth.js';
 import { EdgeTTS } from '@andresaya/edge-tts';
 
 // Voice mapping — professional male voices for "Louis"

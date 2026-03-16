@@ -1,7 +1,7 @@
 // api/auth/me.js (adapted to use db.js like BizSimHub)
 import { sql } from '@vercel/postgres';
-import { requireAuth, cors } from '../../lib-neg/auth.js';
-import { UserDB } from '../../lib-neg/db.js';
+import { requireAuth, cors } from '../../../lib-neg/auth.js';
+import { UserDB } from '../../../lib-neg/db.js';
 
 export default async function handler(req, res) {
   cors(res);

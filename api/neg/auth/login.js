@@ -1,6 +1,6 @@
 // api/auth/login.js (adapted to use db.js like BizSimHub)
-import { UserDB } from '../../lib-neg/db.js';
-import { generateToken, cors } from '../../lib-neg/auth.js';
+import { UserDB } from '../../../lib-neg/db.js';
+import { generateToken, cors } from '../../../lib-neg/auth.js';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {

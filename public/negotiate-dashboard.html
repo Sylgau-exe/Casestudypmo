@@ -44,25 +44,7 @@ h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:
 .recent-table tr.clickable{cursor:pointer;transition:background 0.2s}.recent-table tr.clickable:hover{background:var(--bg-card-hover)}
 .grade-badge{font-family:var(--font-display);font-weight:700;font-size:18px;padding:2px 10px;border-radius:var(--radius-sm)}
 .empty-state{text-align:center;padding:40px;color:#cbd5e1;font-size:16px}
-/* Upgrade Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:var(--bg-secondary);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:36px;max-width:520px;width:90%;position:relative;animation:modalIn 0.3s}
-@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-.modal-close{position:absolute;top:14px;right:18px;font-size:24px;color:var(--text-muted);cursor:pointer;background:none;border:none}
-.modal h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:8px;text-align:center}
-.modal p.sub{font-size:16px;color:#cbd5e1;text-align:center;margin-bottom:24px;line-height:1.5}
-.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.plan-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
-.plan-card:hover{border-color:var(--accent-primary);transform:translateY(-2px)}
-.plan-card.highlight{border-color:var(--accent-primary);background:rgba(99,102,241,0.06)}
-.plan-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:#cbd5e1;margin-bottom:6px}
-.plan-price{font-family:var(--font-display);font-size:36px;font-weight:700;margin-bottom:6px}
-.plan-desc{font-size:14px;color:#94a3b8;margin-bottom:14px}
-.plan-btn{width:100%;padding:12px;font-weight:700;font-size:15px;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body)}
-.plan-btn.primary{background:var(--accent-gradient);color:#fff}
-.plan-btn.outline{background:transparent;color:var(--accent-primary);border:1px solid var(--border-accent)}
-.best-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent-gradient);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
+/* Modal CSS removed — course edition */
 @media(max-width:768px){nav{padding:14px 20px}.stats-row{grid-template-columns:repeat(2,1fr)}.scenario-grid{grid-template-columns:1fr}.plan-cards{grid-template-columns:1fr}}
 </style></head><body>
 <nav><div class="nav-logo">Negotiate<span class="gradient-text">Sim</span></div><div class="nav-right"><span id="langToggle"></span><a id="adminLink" href="/admin.html" style="display:none;color:var(--accent-warning);font-weight:600;text-decoration:none">⚙️ Admin</a><span id="navUser">🎩</span><a onclick="logout()" id="btnSignout"></a></div></nav>
@@ -81,6 +63,22 @@ h2{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:
 
 <script src="/i18n.js"></script>
 <script>
+// ═══ GLOBAL ERROR SAFETY NET ═══
+(function(){
+  var overlay=document.createElement('div');
+  overlay.id='errorOverlay';
+  overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(15,23,42,0.95);z-index:9999;align-items:center;justify-content:center;font-family:system-ui,sans-serif';
+  overlay.innerHTML='<div style="text-align:center;max-width:480px;padding:40px"><div style="font-size:48px;margin-bottom:20px">⚠️</div><h2 id="errTitle" style="color:#fff;font-size:22px;margin-bottom:12px">Something went wrong</h2><p id="errDetail" style="color:#94a3b8;font-size:15px;line-height:1.6;margin-bottom:24px">An unexpected error occurred. Please try again.</p><div style="display:flex;gap:12px;justify-content:center"><a href="/negotiate/dashboard" style="padding:10px 24px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Reload page</a><a href="/" style="padding:10px 24px;background:transparent;color:#94a3b8;border:1px solid #334155;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to Hub</a></div></div>';
+  document.body.appendChild(overlay);
+  function showError(title,detail){
+    document.getElementById('errTitle').textContent=title||'Something went wrong';
+    document.getElementById('errDetail').textContent=detail||'An unexpected error occurred. Please try again.';
+    overlay.style.display='flex';
+  }
+  window.__showError=showError;
+  window.onerror=function(msg){showError('Page Error','Something went wrong loading this page: '+msg+'. Try reloading or go back to the Hub.');return true};
+  window.onunhandledrejection=function(e){var msg=e.reason&&e.reason.message?e.reason.message:'Unknown error';showError('Connection Error','Could not load data: '+msg+'. Check your internet connection and try reloading.')};
+})();
 const API='',token=localStorage.getItem('auth_token'),userName=localStorage.getItem('user_name')||'Negotiator';
 if(!token)window.location.href='/negotiate';
 
@@ -132,7 +130,7 @@ async function loadUser(){
       // Update sessions left display
       document.getElementById('s-left').textContent='∞';
     }
-  }catch(e){console.error('User load error:',e)}
+  }catch(e){console.error('User load error:',e);if(e.message&&e.message.includes('User not found')){localStorage.removeItem('auth_token');window.location.href='/negotiate'}else if(e.message&&(e.message.includes('token')||e.message.includes('unauthorized')||e.message.includes('jwt'))){localStorage.removeItem('auth_token');window.location.href='/negotiate'}else{window.__showError&&window.__showError('Could not load your profile','The server may be temporarily unavailable. Try reloading the page.')}}
   renderScenarios();
 }
 
@@ -157,31 +155,10 @@ async function loadStats(){
   }catch(e){console.error('Stats error:',e)}
 }
 
-function showModal(){document.getElementById('upgradeModal').classList.add('show')}
-function closeModal(){document.getElementById('upgradeModal').classList.remove('show')}
-document.getElementById('upgradeModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
-
-function choosePlan(plan){ /* Disabled for course use */ }
-
 function startScenario(id){window.location.href='/negotiate/play?scenario='+id}
 function logout(){localStorage.removeItem('auth_token');localStorage.removeItem('user_name');window.location.href='/'}
 
 loadUser();
 loadStats();
 
-// Handle Stripe redirect
-(function(){
-  var params=new URLSearchParams(window.location.search);
-  if(params.get('payment')==='success'){
-    var banner=document.createElement('div');
-    banner.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:16px;text-align:center;font-weight:700;font-size:16px;z-index:9999;animation:slideDown 0.3s';
-    banner.innerHTML='🎉 '+(getLang()==='fr'?'Paiement réussi ! Bienvenue dans NegotiateSim Premium !':'Payment successful! Welcome to NegotiateSim Premium!')+'<span onclick="this.parentElement.remove()" style="float:right;cursor:pointer;margin-left:20px">✕</span>';
-    document.body.prepend(banner);
-    window.history.replaceState({},'','/negotiate/dashboard');
-    setTimeout(function(){loadUser();loadStats()},1000);
-  }
-  if(params.get('payment')==='cancelled'){
-    window.history.replaceState({},'','/negotiate/dashboard');
-  }
-})();
 </script></body></html>

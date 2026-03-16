@@ -1,6 +1,6 @@
 // api/game/history.js — User session history and progress
-import { cors, getUserFromRequest } from '../../lib-neg/auth.js';
-import { UserDB, SessionDB } from '../../lib-neg/db.js';
+import { cors, getUserFromRequest } from '../../../lib-neg/auth.js';
+import { UserDB, SessionDB } from '../../../lib-neg/db.js';
 
 export default async function handler(req, res) {
   cors(res);

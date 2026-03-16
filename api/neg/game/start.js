@@ -1,8 +1,8 @@
 // api/game/start.js - Start a new negotiation session
-import { cors, getUserFromRequest } from '../../lib-neg/auth.js';
-import { UserDB, SessionDB, MessageDB } from '../../lib-neg/db.js';
-import { getScenario } from '../../lib-neg/scenarios.js';
-import { getBriefingPrompt } from '../../lib-neg/louis.js';
+import { cors, getUserFromRequest } from '../../../lib-neg/auth.js';
+import { UserDB, SessionDB, MessageDB } from '../../../lib-neg/db.js';
+import { getScenario } from '../../../lib-neg/scenarios.js';
+import { getBriefingPrompt } from '../../../lib-neg/louis.js';
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });

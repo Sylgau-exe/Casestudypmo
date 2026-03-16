@@ -119,6 +119,24 @@
 <div id="app"></div>
 <script src="/i18n.js"></script>
 <script>
+// ═══ GLOBAL ERROR SAFETY NET ═══
+(function(){
+  var overlay=document.createElement('div');
+  overlay.id='errorOverlay';
+  overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(15,23,42,0.95);z-index:9999;align-items:center;justify-content:center;font-family:system-ui,sans-serif';
+  overlay.innerHTML='<div style="text-align:center;max-width:480px;padding:40px"><div style="font-size:48px;margin-bottom:20px">⚠️</div><h2 id="errTitle" style="color:#fff;font-size:22px;margin-bottom:12px">Something went wrong</h2><p id="errDetail" style="color:#94a3b8;font-size:15px;line-height:1.6;margin-bottom:24px">An unexpected error occurred. Please try again.</p><div style="display:flex;gap:12px;justify-content:center"><a href="/negotiate/dashboard" style="padding:10px 24px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to scenarios</a><a href="/" style="padding:10px 24px;background:transparent;color:#94a3b8;border:1px solid #334155;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to Hub</a></div></div>';
+  document.body.appendChild(overlay);
+  function showError(title,detail){
+    document.getElementById('errTitle').textContent=title||'Something went wrong';
+    document.getElementById('errDetail').textContent=detail||'An unexpected error occurred. Please try again.';
+    overlay.style.display='flex';
+  }
+  window.__showError=showError;
+  window.onerror=function(msg){showError('Page Error','Something went wrong during the negotiation: '+msg+'. Try reloading or go back to scenarios.');return true};
+  window.onunhandledrejection=function(e){var msg=e.reason&&e.reason.message?e.reason.message:'Unknown error';showError('Connection Error','Could not connect to the server: '+msg+'. Check your internet and try again.')};
+})();
+</script>
+<script>
 const API='',token=localStorage.getItem('auth_token'),userName=localStorage.getItem('user_name')||'Negotiator';
 const params=new URLSearchParams(window.location.search),scenarioId=params.get('scenario');
 if(!token)window.location.href='/negotiate';
@@ -292,7 +310,7 @@ async function init(){
       document.getElementById('app').innerHTML='<div class="loading-screen"><h2>'+t('neg_active_session')+'</h2><p style="color:#e2e8f0;font-size:17px;margin-bottom:20px">'+t('neg_active_msg')+'</p><div style="display:flex;gap:12px;justify-content:center"><button onclick="abandonAndRestart()" style="padding:12px 24px;background:var(--accent-gradient);color:#fff;font-weight:700;font-size:16px;border:none;border-radius:8px;cursor:pointer;font-family:var(--font-body)">'+t('neg_start_fresh')+'</button><a href="/negotiate/dashboard" style="padding:12px 24px;background:var(--bg-card);color:#e2e8f0;font-weight:600;font-size:16px;border:1px solid var(--border-subtle);border-radius:8px;text-decoration:none;display:inline-block">'+t('neg_back_dashboard')+'</a></div></div>';
       return;
     }
-    if(err.message.includes('LIMIT_REACHED')||err.message.includes('SCENARIO_LOCKED')){document.getElementById('app').innerHTML='<div class="loading-screen"><h2>'+t('neg_free_used')+'</h2><p style="color:#e2e8f0;font-size:17px"><a href="/negotiate/dashboard" style="color:var(--accent-primary)">'+t('neg_upgrade')+'</a></p></div>';return}
+    if(err.message.includes('LIMIT_REACHED')||err.message.includes('SCENARIO_LOCKED')){document.getElementById('app').innerHTML='<div class="loading-screen"><h2>Access Issue</h2><p style="color:#e2e8f0;font-size:17px">Please contact your instructor for assistance.</p><a href="/negotiate/dashboard" style="color:var(--accent-primary);font-size:16px">'+t('neg_back_dashboard')+'</a></div>';return}
     document.getElementById('app').innerHTML='<div class="loading-screen"><h2>Error</h2><p style="color:#e2e8f0;font-size:17px">'+err.message+'</p><a href="/negotiate/dashboard" style="color:var(--accent-primary);font-size:16px">'+t('neg_back_dashboard')+'</a></div>'
   }
 }

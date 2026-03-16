@@ -536,6 +536,25 @@
 </div><!-- /appScreen -->
 
 <script>
+// ═══ GLOBAL ERROR SAFETY NET ═══
+(function(){
+  var overlay=document.createElement('div');
+  overlay.id='errorOverlay';
+  overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(255,255,255,0.97);z-index:9999;align-items:center;justify-content:center;font-family:DM Sans,system-ui,sans-serif';
+  overlay.innerHTML='<div style="text-align:center;max-width:480px;padding:40px"><div style="font-size:48px;margin-bottom:20px">⚠️</div><h2 id="errTitle" style="color:#1e293b;font-size:22px;margin-bottom:12px">Something went wrong</h2><p id="errDetail" style="color:#64748b;font-size:15px;line-height:1.6;margin-bottom:24px">An unexpected error occurred. Please try again.</p><div style="display:flex;gap:12px;justify-content:center"><a onclick="location.reload()" style="padding:10px 24px;background:#ED1B2F;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;cursor:pointer">Reload page</a><a href="/" style="padding:10px 24px;background:transparent;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Back to Hub</a></div></div>';
+  document.body.appendChild(overlay);
+  function showError(title,detail){
+    document.getElementById('errTitle').textContent=title||'Something went wrong';
+    document.getElementById('errDetail').textContent=detail||'An unexpected error occurred. Please try again.';
+    overlay.style.display='flex';
+  }
+  window.__showError=showError;
+  window.onerror=function(msg){showError('Page Error','Something went wrong loading the Plan tool: '+msg+'. Try reloading or go back to the Hub.');return true};
+  window.onunhandledrejection=function(e){var msg=e.reason&&e.reason.message?e.reason.message:'Unknown error';showError('Connection Error','Could not save or load your plan: '+msg+'. Check your internet and try reloading.')};
+})();
+</script>
+
+<script>
 // ═══════════════════════════════════════════════════════════════════════════
 // MARCUS AVATAR (base64)
 // ═══════════════════════════════════════════════════════════════════════════

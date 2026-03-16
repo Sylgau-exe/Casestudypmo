@@ -1,6 +1,6 @@
 // api/game/scenarios.js - List available scenarios
-import { cors } from '../../lib-neg/auth.js';
-import { getScenarioList } from '../../lib-neg/scenarios.js';
+import { cors } from '../../../lib-neg/auth.js';
+import { getScenarioList } from '../../../lib-neg/scenarios.js';
 
 export default async function handler(req, res) {
   cors(res);
