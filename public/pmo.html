@@ -1831,6 +1831,7 @@ function updateRes(id, val) { const p = STATE.projects.find(x=>x.id===id); if(p)
 // ═══════════════════════════════════════════════════════════════
 // CRITERIA & WEIGHTS EDITOR (Combined)
 // ═══════════════════════════════════════════════════════════════
+function openWeightsEditor() { openCriteriaEditor(); }
 function openCriteriaEditor() {
     let html = `<div class="modal-overlay" id="criteriaOverlay" onclick="if(event.target===this)closeCriteria()">
     <div class="modal-box" style="max-width:820px;max-height:90vh;overflow-y:auto">
@@ -2751,7 +2752,7 @@ function copyGate0Report() {
     const yearlyAvail = STATE.people.reduce((s,p) => s + getPersonYearlyAvail(p.id), 0);
     const avgMonthlyAvail = Math.round(yearlyAvail / MONTHS.length);
     const goP=results.filter(r=>r.canFit); const blockP=results.filter(r=>!r.canFit);
-    const lines = ['═══════════════════════════════════════','RAPPORT DE RECOMMANDATION — GATE 0','CAMIONS BL — PMO & Innovation','Date: '+new Date().toLocaleDateString('fr-CA'),'Horizon: '+MONTHS.length+' mois ('+MONTH_LABELS[MONTHS[0]]+' à '+MONTH_LABELS[MONTHS[MONTHS.length-1]]+')','═══════════════════════════════════════','',
+    const lines = ['═══════════════════════════════════════','RAPPORT DE RECOMMANDATION — GATE 0','NovaTech Robotics — YCBS 288','Date: '+new Date().toLocaleDateString('fr-CA'),'Horizon: '+MONTHS.length+' mois ('+MONTH_LABELS[MONTHS[0]]+' à '+MONTH_LABELS[MONTHS[MONTHS.length-1]]+')','═══════════════════════════════════════','',
         'CAPACITÉ: '+avgMonthlyAvail+'h/mois moy. | PROJECTS: '+results.length+' | GO: '+goP.length+' | GOULOT: '+blockP.length,'',
         '─── PROJECTS GO ───',...goP.map((p,i)=>(i+1)+'. '+p.name+' | '+pct(p.scores)+'% | '+p.totalH+'h/yr | Chef:'+p.chef),'',
         '─── PROJECTS GOULOT ───',...blockP.map((p,i)=>(i+1)+'. '+p.name+' | '+pct(p.scores)+'% | '+p.totalH+'h/yr | Month bloqués: '+p.blockedMonths.map(m=>MONTH_LABELS[m]).join(', ')),'',
@@ -3469,7 +3470,7 @@ function resetStep3() {
 function executeReset() {
     // Reset all data
     STATE.projects = [];
-    STATE.people = { TI: [], Ops: [], RH: [], Ventes: [], Finance: [], Direction: [] };
+    STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
     STATE.assignments = {};
     STATE.triageItems = [];
     
