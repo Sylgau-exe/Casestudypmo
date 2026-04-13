@@ -250,7 +250,7 @@
         .branch-card { padding: 0.85rem; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
 
         /* ─── TRIAGE CHAT ─── */
-        .chat-area { background: #fafbfc; border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none; height: 340px; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
+        .chat-area { background: #fafbfc; border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none; min-height: 80px; max-height: 340px; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
         .chat-area::-webkit-scrollbar { width: 5px; }
         .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         .chat-msg { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 10px; font-size: 0.88rem; line-height: 1.5; white-space: pre-line; }
@@ -1394,7 +1394,7 @@ function renderTriage() {
     let ihtml = '';
     if (S.step === 'desc') {
         ihtml = `<div style="display:flex;gap:0.5rem">
-            <input class="form-control" id="triageDescInput" placeholder="E.g., NR-400 Warehouse Robot Development..." onkeydown="if(event.key==='Enter')triageDesc()" style="flex:1">
+            <input class="form-control" id="triageDescInput" placeholder="E.g., NR-400 Warehouse Robot Development..." onkeydown="if(event.key==='Enter')triageDesc()" style="flex:1" autocomplete="off">
             <button class="btn btn-gold" onclick="triageDesc()">Next →</button>
         </div>`;
     } else if (S.step === 'source') {
