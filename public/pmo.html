@@ -3501,7 +3501,7 @@ function closeResetModal() {
 // QUICK ADD — Add initiative directly from Portfolio tab
 // ═══════════════════════════════════════════════════════════════
 function openQuickAdd() {
-    const html = `<div class="modal-overlay" id="quickAddOverlay" onclick="if(event.target===this)closeQuickAdd()" style="z-index:2000">
+    const html = `<div class="modal-overlay" id="quickAddOverlay" autocomplete="off" onclick="if(event.target===this)closeQuickAdd()" style="z-index:2000">
     <div class="modal-box" style="max-width:520px;padding:0">
         <div class="charter-modal-header">
             <div style="display:flex;align-items:center;gap:0.6rem">
@@ -3517,7 +3517,7 @@ function openQuickAdd() {
 
             <div class="form-group">
                 <label class="form-label">Initiative Name <span class="req">*</span></label>
-                <input class="form-control" id="qa_name" placeholder="e.g. NR-400 Warehouse Robot Development" autocomplete="off">
+                <input class="form-control" id="qa_name" placeholder="e.g. NR-400 Warehouse Robot Development" autocomplete="off" data-form-type="other" data-lpignore="true">
             </div>
 
             <div class="form-group">
@@ -3542,7 +3542,7 @@ function openQuickAdd() {
 
             <div class="form-group">
                 <label class="form-label">Source</label>
-                <select class="form-control" id="qa_source">
+                <select class="form-control" id="qa_source" autocomplete="off">
                     ${SOURCES.map(s => '<option value="'+s.v+'">'+s.icon+' '+s.l+'</option>').join('')}
                 </select>
             </div>
