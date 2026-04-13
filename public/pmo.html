@@ -990,18 +990,36 @@ async function init() {
     }
     
     const tenant = currentTeam;
+    let needsSeed = false;
     try {
         // Try to load from API first
         const response = await fetch('/api/state?tenant=' + encodeURIComponent(tenant));
         if (response.ok) {
             const d = await response.json();
-            STATE.projects = Array.isArray(d.projects) ? d.projects : DEFAULT_PROJECTS; 
-            STATE.maxCapacity = d.maxCapacity || 70; 
-            STATE.weights = d.weights || {...DEFAULT_WEIGHTS};
-            STATE.criteria = d.criteria || JSON.parse(JSON.stringify(DEFAULT_CRITERIA));
-            STATE.people = Array.isArray(d.people) ? d.people : JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
-            STATE.assignments = d.assignments || JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
-            STATE.triageItems = d.triageItems || [];
+            // Check if team is uninitialized (empty projects AND empty people = first login)
+            const hasProjects = Array.isArray(d.projects) && d.projects.length > 0;
+            const hasPeople = Array.isArray(d.people) && d.people.length > 0;
+            
+            if (!hasProjects && !hasPeople) {
+                // Team never initialized — seed with demo data (in-progress projects + resources)
+                console.log('⚡ Team uninitialized — seeding with NovaTech demo data');
+                STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+                STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
+                STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+                STATE.weights = {...DEFAULT_WEIGHTS};
+                STATE.criteria = JSON.parse(JSON.stringify(DEFAULT_CRITERIA));
+                STATE.triageItems = [];
+                STATE.maxCapacity = 70;
+                needsSeed = true;
+            } else {
+                STATE.projects = d.projects; 
+                STATE.people = d.people;
+                STATE.assignments = d.assignments || JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+                STATE.weights = d.criteriaWeights || {...DEFAULT_WEIGHTS};
+                STATE.criteria = d.criteria || JSON.parse(JSON.stringify(DEFAULT_CRITERIA));
+                STATE.triageItems = d.triageItems || [];
+                STATE.maxCapacity = d.maxCapacity || 70;
+            }
             lastSyncTime = Date.now();
             console.log('✓ Data loaded from database');
         } else {
@@ -1015,18 +1033,40 @@ async function init() {
             const raw = localStorage.getItem(teamKey);
             if (raw) { 
                 const d = JSON.parse(raw); 
-                STATE.projects = Array.isArray(d.projects) ? d.projects : DEFAULT_PROJECTS; 
+                const hasProjects = Array.isArray(d.projects) && d.projects.length > 0;
+                const hasPeople = Array.isArray(d.people) && d.people.length > 0;
+                if (!hasProjects && !hasPeople) {
+                    STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+                    STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
+                    STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+                } else {
+                    STATE.projects = d.projects;
+                    STATE.people = d.people;
+                    STATE.assignments = d.assignments || JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+                }
                 STATE.maxCapacity = d.maxCapacity || 70; 
-                STATE.weights = d.weights || {...DEFAULT_WEIGHTS};
+                STATE.weights = d.criteriaWeights || d.weights || {...DEFAULT_WEIGHTS};
                 STATE.criteria = d.criteria || JSON.parse(JSON.stringify(DEFAULT_CRITERIA));
-                STATE.people = Array.isArray(d.people) ? d.people : JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
-                STATE.assignments = d.assignments || JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
             }
-            else { STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS)); }
-        } catch(e2) { STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS)); }
+            else { 
+                STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS)); 
+                STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
+                STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+            }
+        } catch(e2) { 
+            STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+            STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
+            STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+        }
     }
     setupTabs();
     renderAll();
+    
+    // If team was seeded, persist to DB immediately so data is there on next load
+    if (needsSeed) {
+        console.log('💾 Persisting seed data to database...');
+        await saveState();
+    }
     
     // Start sync check every 10 seconds
     setInterval(checkForUpdates, 10000);
