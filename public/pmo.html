@@ -996,12 +996,11 @@ async function init() {
         const response = await fetch('/api/state?tenant=' + encodeURIComponent(tenant));
         if (response.ok) {
             const d = await response.json();
-            // Check if team is uninitialized (empty projects AND empty people = first login)
+            // Check if team has no projects — seed with demo data (in-progress projects + correct 6 resources)
             const hasProjects = Array.isArray(d.projects) && d.projects.length > 0;
-            const hasPeople = Array.isArray(d.people) && d.people.length > 0;
             
-            if (!hasProjects && !hasPeople) {
-                // Team never initialized — seed with demo data (in-progress projects + resources)
+            if (!hasProjects) {
+                // No projects = team needs initialization (seed demo data)
                 console.log('⚡ Team uninitialized — seeding with NovaTech demo data');
                 STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
                 STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
@@ -1034,8 +1033,7 @@ async function init() {
             if (raw) { 
                 const d = JSON.parse(raw); 
                 const hasProjects = Array.isArray(d.projects) && d.projects.length > 0;
-                const hasPeople = Array.isArray(d.people) && d.people.length > 0;
-                if (!hasProjects && !hasPeople) {
+                if (!hasProjects) {
                     STATE.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
                     STATE.people = JSON.parse(JSON.stringify(DEFAULT_PEOPLE));
                     STATE.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
