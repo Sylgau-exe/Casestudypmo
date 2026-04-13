@@ -2406,9 +2406,9 @@ function getCapacityResults(month) {
             }
         });
 
-        const canFit = bottlenecks.length === 0;
+        const canFit = bottlenecks.length === 0 && totalH > 0;
 
-        return { ...proj, totalH, canFit, bottlenecks, status: canFit ? 'GO' : 'GOULOT' };
+        return { ...proj, totalH, canFit, bottlenecks, status: canFit ? 'GO' : (totalH === 0 ? 'NON AFFECTÉ' : 'GOULOT') };
     });
 
     return results;
@@ -2443,10 +2443,11 @@ function getYearlyCapacityResults() {
         });
         
         const blockedMonths = MONTHS.filter(m => monthlyStatus[m] === 'GOULOT');
-        const canFit = blockedMonths.length === 0;
         
         let yearTotalH = 0;
         MONTHS.forEach(m => yearTotalH += getProjectTotalHrs(proj.id, m));
+        
+        const canFit = (yearTotalH > 0) && (blockedMonths.length === 0);
         
         return {
             ...proj,
@@ -2455,7 +2456,7 @@ function getYearlyCapacityResults() {
             blockedMonths,
             worstMonth,
             bottlenecks: allBottlenecks,
-            status: canFit ? 'GO' : 'GOULOT'
+            status: canFit ? 'GO' : (yearTotalH === 0 ? 'NON AFFECTÉ' : 'GOULOT')
         };
     });
 }
@@ -2518,7 +2519,7 @@ function renderRecommend() {
     yearlyResults.forEach((r, i) => {
         const statusBadge = r.canFit 
             ? '<span class="badge badge-go">FAISABLE</span>' 
-            : '<span class="badge badge-attente">GOULOT</span>';
+            : (r.totalH === 0 ? '<span class="badge badge-attente" style="background:#fef3c7;color:#92400e;border-color:#fbbf24">NON AFFECTÉ</span>' : '<span class="badge badge-attente">GOULOT</span>');
         
         content += `<div style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.75rem 0.85rem;margin-bottom:0.45rem;background:${r.canFit?'rgba(56,161,105,0.04)':'rgba(229,62,62,0.04)'};border-radius:10px;border:1px solid ${r.canFit?'rgba(56,161,105,0.15)':'rgba(229,62,62,0.15)'}">
             <span style="width:24px;height:24px;border-radius:7px;background:${r.canFit?'var(--success-bg)':'var(--error-bg)'};color:${r.canFit?'var(--success)':'var(--error)'};display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;margin-top:0.1rem">${i+1}</span>
