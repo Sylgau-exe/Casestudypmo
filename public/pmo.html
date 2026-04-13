@@ -2406,9 +2406,9 @@ function getCapacityResults(month) {
             }
         });
 
-        const canFit = bottlenecks.length === 0 && totalH > 0;
+        const canFit = bottlenecks.length === 0;
 
-        return { ...proj, totalH, canFit, bottlenecks, status: canFit ? 'GO' : (totalH === 0 ? 'NON AFFECTÉ' : 'GOULOT') };
+        return { ...proj, totalH, canFit, bottlenecks, status: canFit ? 'GO' : 'GOULOT' };
     });
 
     return results;
