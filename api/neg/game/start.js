@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     // Generate Louis briefing (pass lang for bilingual support)
     const briefingPrompt = getBriefingPrompt(scenario, lang || 'en');
     const briefingResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 500,
       messages: [{ role: 'user', content: briefingPrompt }]
     });
