@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     // Generate AI scoring
     const scoringPrompt = getScoringPrompt(scenario, transcript, dealOutcome, effectiveLang);
     const scoringResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 500,
       messages: [{ role: 'user', content: scoringPrompt }]
     });
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
     // Generate debrief
     const debriefPrompt = getDebriefPrompt(scenario, transcript, scores, effectiveLang);
     const debriefResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1200,
       messages: [{ role: 'user', content: debriefPrompt }]
     });
