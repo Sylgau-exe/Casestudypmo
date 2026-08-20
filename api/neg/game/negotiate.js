@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       // Generate counterpart's opening
       const counterpartPrompt = getCounterpartPrompt(scenario, [], effectiveLang);
       const counterpartResponse = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 400,
         system: counterpartPrompt,
         messages: [{ role: 'user', content: `[The negotiation is beginning. You are ${scenario.counterpart.name}. Give your opening statement — introduce yourself and set the tone for the negotiation. Reference your objectives naturally.]` }]
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
       const history = await MessageDB.getBySession(sessionId);
       const counterpartPrompt = getCounterpartPrompt(scenario, history.filter(m => m.role !== 'louis'), effectiveLang);
       const counterpartResponse = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 300,
         system: counterpartPrompt,
         messages: [{ role: 'user', content: `[The other party has indicated they want to walk away. Give a brief reaction — express regret and optionally make one final concession attempt. Keep it to 2-3 sentences.]` }]
@@ -104,7 +104,7 @@ export default async function handler(req, res) {
       const history = await MessageDB.getBySession(sessionId);
       const counterpartPrompt = getCounterpartPrompt(scenario, history.filter(m => m.role !== 'louis'), effectiveLang);
       const counterpartResponse = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 300,
         system: counterpartPrompt,
         messages: [{ role: 'user', content: `[The other party has agreed to the terms discussed. Confirm the deal positively and briefly summarize what was agreed. Keep it to 2-3 sentences.]` }]
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
     }
 
     const counterpartResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 400,
       system: counterpartPrompt,
       messages: apiMessages
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
       try {
         const hintPrompt = getHintPrompt(scenario, negotiationHistory, message, effectiveLang);
         const hintResponse = await anthropic.messages.create({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: 100,
           messages: [{ role: 'user', content: hintPrompt }]
         });
